@@ -1,0 +1,41 @@
+9
+
+dir
+100
+http://subversion.assembla.com/svn/iub438gregeric/srouter
+http://subversion.assembla.com/svn/iub438gregeric
+
+
+
+2009-05-06T00:54:57.163706Z
+99
+erspence
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+080cfd25-d5d9-4c59-82ea-70d02a200d8b
+
+
+
+
+
+
+0
+
+trunk
+dir
+
+branches
+dir
+

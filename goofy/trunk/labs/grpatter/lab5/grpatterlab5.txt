@@ -1,0 +1,24 @@
+1)
+Goal:
+Learn how to write Goofy runnable code to control hardware
+To become familiar with LED peripheral hardware on Goofy and how it interfaces.
+Understand how to change state by modifying addresses and registers.
+
+2)
+Approach
+Read through the lab write-up, then follow the directions given.
+
+
+3)
+Problems
+This lab was fairly straightforward, and given the hardware port/bit table really
+helped us get this done. Things were easy to understand and made sense, given a little conversation
+about the addresses. 
+
+The first time through, we were able to get the functions working as intended, though we later
+realized we didn't design the second (loading bar type LED display) in a way that was exactly
+in line with what was requested. We determined how to re-design it (simply using loops and breaks in 
+different places) and could make the changes to make the behavior as expected.
+
+
+
