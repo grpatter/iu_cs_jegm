@@ -1,0 +1,57 @@
+/* Jonathan M. Stout
+** Project 0
+** 9/2/2009
+*/
+
+#include <stdio.h>
+
+int main()
+{
+  char name[50];
+  int patience;
+  FILE *song;
+
+  // Get and Set name
+  printf("Please enter your name.\n");
+  scanf("%s", name);
+  printf("Hello %s,\n", name);
+  
+  // Get and Set patience
+  printf("Just how patient are you?\n");
+  scanf("%d", &patience);
+  printf("Displaying %d line(s) of The Song that Never Ends\n", patience);
+
+  // Get and Print song
+  song = fopen("songThatNeverEnds.txt", "r");
+
+  char letter;
+  int rewindCount;
+  int whitespace;
+  letter = '.';
+  rewindCount = 0;
+  whitespace = 0;
+
+  while(patience > 0)
+    {
+      fscanf(song, "%c", &letter);
+      
+      if(letter == ' ')
+	whitespace++;
+
+      if(letter == '\n'){
+	patience--;
+	rewindCount++;
+	whitespace++;
+      }
+      
+      if(rewindCount == 4){
+	rewind(song);
+	rewindCount = 0;
+      }
+      
+      printf("%c", letter);
+    }
+  
+  fclose(song);
+  printf("Whitespace found: %d\n", whitespace);
+}
