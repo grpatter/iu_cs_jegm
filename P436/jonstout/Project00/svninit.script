@@ -1,0 +1,76 @@
+Script started on Sun 06 Sep 2009 08:12:48 PM EDT
+[jonstout@silo ~]$ cd P436/
+[jonstout@silo P436]$ mkdir tmp
+[jonstout@silo P436]$ mkdir branches
+[jonstout@silo P436]$ mkdri[K[Kir trunk
+[jonstout@silo P436]$ mkdir tags
+[jonstout@silo P436]$ mkdir trunk/p436
+[jonstout@silo P436]$ mv ./os161 tu[Krunksr[K[K/src
+mv: cannot stat `./os161': No such file or directory
+[jonstout@silo P436]$ ls
+[00m[01;34mbranches[00m  [01;34mProject00[00m  [01;34mtags[00m  [01;34mtmp[00m  [01;34mtrunk[00m
+[m[jonstout@silo P436]$ mv Project00/ trunk
+[jonstout@silo P436]$ ls
+[00m[01;34mbranches[00m  [01;34mtags[00m  [01;34mtmp[00m  [01;34mtrunk[00m
+[m[jonstout@silo P436]$ svn import -m "Creating the SVN" \ https://svn.osl.iu.edu /rep/p536_jonstout/p436
+svn: Unrecognized URL scheme for '%20https://svn.osl.iu.edu/rep/p536_jonstout/p436'
+[jonstout@silo P436]$ svn import -m "Creating the SVN" \ https://svn.osl.iu.edu//rep/p536_jonstout/p436[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Chttps://svn.osl.iu.edu/rep/p536_jonstout/p436[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+Error validating server certificate for 'https://svn.osl.iu.edu:443':
+ - The certificate is not issued by a trusted authority. Use the
+   fingerprint to validate the certificate manually!
+Certificate information:
+ - Hostname: svn.osl.iu.edu
+ - Valid: from Mar 30 19:31:32 2005 GMT until Mar 28 19:31:32 2015 GMT
+ - Issuer: Computer Science Department, Indiana University, Bloomington, Indiana, US
+ - Fingerprint: 2f:70:56:01:e9:cb:17:74:74:19:fc:94:93:26:c3:39:87:8d:24:87
+(R)eject, accept (t)emporarily or accept (p)ermanently? p
+Authentication realm: <https://svn.osl.iu.edu:443> OSL Repository Access: Powered by SVNManager
+Password for 'jonstout': 
+Adding         tmp
+Adding         trunk
+Adding         trunk/Project00
+Adding         trunk/Project00/constants.h
+Adding         trunk/Project00/setup.script
+Adding         trunk/Project00/main.c
+Adding         trunk/Project00/main.h
+Adding         trunk/p436
+Adding         branches
+Adding         tags
+
+Committed revision 1.
+[jonstout@silo P436]$ ls
+[00m[01;34mbranches[00m  [01;34mtags[00m  [01;34mtmp[00m  [01;34mtrunk[00m
+[m[jonstout@silo P436]$ rm -rf tmp branches/ tags/ trunk/
+[jonstout@silo P436]$ ls
+[00m[m[jonstout@silo P436]$ cd ..
+[jonstout@silo ~]$ cd P436/
+[jonstout@silo P436]$ svn checkout https://svn.osl.iu.edu/rep/p536_jonstout/p43 6/trunk
+A    trunk/Project00
+A    trunk/Project00/constants.h
+A    trunk/Project00/setup.script
+A    trunk/Project00/main.c
+A    trunk/Project00/main.h
+A    trunk/p436
+Checked out revision 1.
+[jonstout@silo P436]$ ls
+[00m[01;34mtrunk[00m
+[m[jonstout@silo P436]$ cd ..
+[jonstout@silo ~]$ ls
+[00m[01;34mBin[00m  [01;34mC343[00m  [01;34mDesktop[00m  [01;34mOldWork[00m  [01;34mP436[00m  [00mtypescript[00m  [01;34mworkspace[00m
+[m[jonstout@silo ~]$ mkdir P436_cs161
+[jonstout@silo ~]$ ls
+[00m[01;34mBin[00m  [01;34mC343[00m  [01;34mDesktop[00m  [01;34mOldWork[00m  [01;34mP436[00m  [01;34mP436_cs161[00m  [00mtypescript[00m  [01;34mworkspace[00m
+[m[jonstout@silo ~]$ cd P436_cs161/
+[jonstout@silo P436_cs161]$ svn copy https://svn.osl.iu.edu/rep/p5365[K_jonstout/p 436/trunk \https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-begin -m "S tart Assignment 0"
+
+Committed revision 2.
+[jonstout@silo P436_cs161]$ [K[jonstout@silo P436_cs161]$ [K[jonstout@silo P436_cs161]$ [K[jonstout@silo P436_cs161]$ ls
+[00m[m[jonstout@silo P436_cs161]$ lssvn copy https://svn.osl.iu.edu/rep/p536_jonstout/p4436/trunk \https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-begin -m "Sttart Assignment 0"[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Chttps://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-begin -m "Start Assignment 0"[K[A
+
+
+Committed revision 3.
+[jonstout@silo P436_cs161]$ exit
+exit
+
+Script done on Sun 06 Sep 2009 08:25:24 PM EDT
