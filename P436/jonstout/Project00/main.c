@@ -1,3 +1,5 @@
+// Jonathan M. Stout
+
 #include "main.h"
 
 int main()
