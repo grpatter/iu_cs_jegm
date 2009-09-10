@@ -1,0 +1,69 @@
+Script started on Wed 09 Sep 2009 08:00:21 PM EDT
+[grpatter@silo ~]$ ls
+[00m[01;34ma290[00m      [01;34mC335[00m     [00mfoo[00m                    [00mhello.c~[00m   [01;34mp438[00m
+[01;34ma290-Cpp[00m  [01;34mC335GN[00m   [01;31mgrpatter_linklist.tar[00m  [01;32mhello.exe[00m  [00mtest.txt[00m
+[01;34mbin[00m       [01;34mC343[00m     [00m#hello.c#[00m              [00mintro.c[00m    [00mtypescript[00m
+[01;34mc212[00m      [01;34mDesktop[00m  [00mhello.c[00m                [00mintro.c~[00m   [01;34munixstuff[00m
+[m[grpatter@silo ~]$ cd[K[Kmkdir p436
+[grpatter@silo ~]$ ls
+[00m[01;34ma290[00m      [01;34mC335[00m     [00mfoo[00m                    [00mhello.c~[00m   [01;34mp436[00m        [01;34munixstuff[00m
+[01;34ma290-Cpp[00m  [01;34mC335GN[00m   [01;31mgrpatter_linklist.tar[00m  [01;32mhello.exe[00m  [01;34mp438[00m
+[01;34mbin[00m       [01;34mC343[00m     [00m#hello.c#[00m              [00mintro.c[00m    [00mtest.txt[00m
+[01;34mc212[00m      [01;34mDesktop[00m  [00mhello.c[00m                [00mintro.c~[00m   [00mtypescript[00m
+[m[grpatter@silo ~]$ cd p4336
+bash: cd: p4336: No such file or directory
+[grpatter@silo ~]$ cd p4336[K[K5[K6
+[grpatter@silo p436]$ mkdir tmp[K[K[K[K[K[K[K[K[Kls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ mkdir tmp
+[grpatter@silo p436]$ mkdir branches
+[grpatter@silo p436]$ mkdir trunk
+[grpatter@silo p436]$ mkdir tags
+[grpatter@silo p436]$ mkdir trunk/p436
+[grpatter@silo p436]$ mkdir trunk/src
+[grpatter@silo p436]$ mkdir trunk/src/asst0
+[grpatter@silo p436]$ svn import -m "C[KRecreating SVN" https://svn.osl.iu.edu/rep/ p536_grpatter/p436
+svn: File '/rep/p536_grpatter/p436/p436.tar.gz' already exists
+[grpatter@silo p436]$ rm -rf tmp branches tags trunk
+[grpatter@silo p436]$ ls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ cd ~/p436
+[grpatter@silo p436]$ ls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ svn checkout https://svn.osl.iu.edu/rep/p536_grpatter/p436 /trunk .
+A    asst0
+A    p436
+Checked out revision 3.
+[grpatter@silo p436]$ ls
+[00m[00masst0[00m  [00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;34mp436[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ cd p436
+[grpatter@silo p436]$ ls
+[00m[m[grpatter@silo p436]$ pwd
+/u/grpatter/p436/p436
+[grpatter@silo p436]$ mkdir s[K[K[K[K[K[K[Kcd ..
+[grpatter@silo p436]$ ls
+[00m[00masst0[00m  [00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;34mp436[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ rm -rf asst0
+[grpatter@silo p436]$ ls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;34mp436[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ cd p[K[K[K[Ksvn commit -m "fixing files" https://svn.osl.iu.edu/rep/p5 36_grpatter/p436
+svn: 'https://svn.osl.iu.edu/rep/p536_grpatter' is not a working copy
+svn: Can't open file 'https://svn.osl.iu.edu/rep/p536_grpatter/.svn/entries': No such file or directory
+[grpatter@silo p436]$ svn commit -m "fixing files" https://svn.osl.iu.edu/rep/p5336_grpatter/p436
+svn: 'https://svn.osl.iu.edu/rep/p536_grpatter' is not a working copy
+svn: Can't open file 'https://svn.osl.iu.edu/rep/p536_grpatter/.svn/entries': No such file or directory
+[grpatter@silo p436]$ pwd
+/u/grpatter/p436
+[grpatter@silo p436]$ ls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;34mp436[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo p436]$ cd pls[K[K[Kcd p436
+[grpatter@silo p436]$ ls
+[00m[m[grpatter@silo p436]$ lscd p436ls[Kpwdsvn commit -m "fixing files" https://svn.osl.iu.edu/rep/p5336_grpatter/p436
+svn: 'https://svn.osl.iu.edu/rep/p536_grpatter' is not a working copy
+svn: Can't open file 'https://svn.osl.iu.edu/rep/p536_grpatter/.svn/entries': No such file or directory
+[grpatter@silo p436]$ svn copy https://svn.osl.iu.edu/rep/p536_grpatter/p436/tru nk https://svn.osl.iu.edu/rep/p536_grpatter/p436/tags/asst0-begin -m "Restart As sign0"
+svn: Path 'tags/asst0-begin/trunk' already exists
+[grpatter@silo p436]$ exit
+exit
+
+Script done on Wed 09 Sep 2009 08:07:05 PM EDT

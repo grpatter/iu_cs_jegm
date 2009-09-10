@@ -1,0 +1,25 @@
+1.) -A shows number of lines of trailing context after matching lines
+    -a Process a binary file as if text
+
+2.) -rf (or r)
+
+3.) connect via ssh, work as if i was right now from windows? just
+use the ssh tool as a connection from within the terminal and edit through
+emacs/filesystem as normal. (i normally work remotely anyhow)
+
+4.) open burrow.cs.indiana.edu
+	put data.txt /
+
+5.) chmod 755
+
+6.) ls -l
+
+7.) cat -n [file]
+
+8.) more: 1 page at a time
+	less: lines at a time
+
+9.) command parser that sources from standard in
+
+10.) optional commands
+
