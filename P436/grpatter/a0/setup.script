@@ -1,0 +1,17 @@
+Script started on Wed 09 Sep 2009 07:49:41 PM EDT
+[grpatter@silo P436]$ ls
+[00m[01;31mp436.tar.gz[00m  [00mtypescript[00m
+[m[grpatter@silo P436]$ mkdir a0
+[grpatter@silo P436]$ mv p436.tar.gz a0/
+[grpatter@silo P436]$ ls
+[00m[01;34ma0[00m  [00mtypescript[00m
+[m[grpatter@silo P436]$ cd a0/
+[grpatter@silo a0]$ ls
+[00m[01;31mp436.tar.gz[00m
+[m[grpatter@silo a0]$ tar zxf p436.tar.gz 
+[grpatter@silo a0]$ ls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;31mp436.tar.gz[00m
+[m[grpatter@silo a0]$ exit
+exit
+
+Script done on Wed 09 Sep 2009 07:50:55 PM EDT
