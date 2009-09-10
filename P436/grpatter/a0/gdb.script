@@ -1,0 +1,35 @@
+Script started on Wed 09 Sep 2009 08:12:24 PM EDT
+[grpatter@silo asst0]$ gcc -g main.c
+[grpatter@silo asst0]$ gdb a.out
+GNU gdb Fedora (6.8-27.el5)
+Copyright (C) 2008 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i386-redhat-linux-gnu"...
+(gdb) break copy
+Breakpoint 1 at 0x8048590: file main.c, line 62.
+(gdb) run a.out
+Starting program: /nfs/nfs1/home/grpatter/p436/p436/asst0/a.out a.out
+
+Breakpoint 1, copy (into=0x9677018 "", from=0x8048710 "Hello Dave")
+    at main.c:62
+62	  int len = strlen(from);
+(gdb) where
+#0  copy (into=0x9677018 "", from=0x8048710 "Hello Dave") at main.c:62
+#1  0x0804846b in main () at main.c:27
+(gdb) p from
+$1 = 0x8048710 "Hello Dave"
+(gdb) c
+Continuing.
+
+Breakpoint 1, copy (into=0xbfc754a0 "", from=0x9677018 "Hello ") at main.c:62
+62	  int len = strlen(from);
+(gdb) p from
+$2 = 0x9677018 "Hello "
+(gdb) quit
+The program is running.  Exit anyway? (y or n) y
+[grpatter@silo asst0]$ exit
+
+Script done on Wed 09 Sep 2009 08:13:22 PM EDT
