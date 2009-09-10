@@ -1,0 +1,17 @@
+Script started on Sun 06 Sep 2009 07:45:50 PM EDT
+[jonstout@silo P436]$ ls
+[00m[01;31mp436.tar.gz[00m  [00mtypescript[00m
+[m[jonstout@silo P436]$ mkdir Project00
+[jonstout@silo P436]$ mv p436.tar.gz Project00/
+[jonstout@silo P436]$ ls
+[00m[01;34mProject00[00m  [00mtypescript[00m
+[m[jonstout@silo P436]$ cd Project00/
+[jonstout@silo Project00]$ ls
+[00m[01;31mp436.tar.gz[00m
+[m[jonstout@silo Project00]$ tar zxf p436.tar.gz 
+[jonstout@silo Project00]$ ls
+[00m[00mconstants.h[00m  [00mmain.c[00m  [00mmain.h[00m  [01;31mp436.tar.gz[00m
+[m[jonstout@silo Project00]$ exit
+exit
+
+Script done on Sun 06 Sep 2009 07:46:35 PM EDT

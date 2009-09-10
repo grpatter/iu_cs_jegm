@@ -1,0 +1,53 @@
+1. Capitalize
+(a) Write a program that capitalizes all lowercase letters that it reads on
+its “standard input.” Hint, there is a standard library routine to do
+the heavy lifting. You can use getchar() to read a character (say c)
+from standard input. (c == EOF) is the standard termination test.
+(b) Suppose this program is called capital.c, compile the binary capital
+on a burrow workstation.
+(c) What will happen when you execute the following at the shell ?
+./capital < capital.c = will return source of file in all caps.
+./capital < capital.c > try.c = will put capitalized source into the file try.c
+(d) Will the file try.c compile ? = will not compile since compiler is case sensistive.
+-----------------
+2. Rewrite the following code as a single for loop with a body that consists
+of a simple statement (not a compound statement).
+i = 0;
+c = getchar();
+while (c != ’ ’ && c != ’\n’ && c != ’\t’ && c != EOF) {
+word[i++] = c;
+c = getchar();
+}
+
+ReWritten Version:
+	int i = 0;
+	for(c = getchar(); c != ’ ’ && c != ’\n’ && c != ’\t’ && c != EOF; i++){
+		word[i] = c;
+	}	
+------------------
+3. Write a program that asks the user to enter a string, then prints out the
+reversal of that string. The obvious functions to use to get input are
+’scanf’, ’fgets’ and ’gets’; you can look them up with the Unix man pages.
+What will happen if a user entered a string longer than your necessary
+character buffer?
+	The extra characters are removed. This is a hole that allows buffer overrun attacks.
+
+------------------
+4. Rewrite the loop while loop in problem 2 using if and goto
+	i = 0;
+	c = getchar();
+	  while (c != ’ ’ && c != ’\n’ && c != ’\t’ && c != EOF) {
+	    word[i++] = c;
+	    c = getchar();
+	  }
+
+	i=0;
+	grabKey: c=getchar();
+	if(c != ’ ’ && c != ’\n’ && c != ’\t’ && c != EOF){
+		setword: word[i++]=c;
+		goto grabKey;	
+	}
+
+------------------
+5. Modify your program for Problem 3 to print ”Palindrome” or ”Not Palindrome,”
+as appropriate, instead of printing the reversed string.
