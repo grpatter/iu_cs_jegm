@@ -1,10 +1,6 @@
 /*
 ** Jonathan M. Stout
 ** stack.c
-** 
-** TODO:
-** Finish struct Stack in stack.h
-** change mem type to Stack
 */
 
 #include <stdio.h>
@@ -55,4 +51,24 @@ void makeEmptyStack()
 {
   TOP = -1;
   return ; //Space is void
+}
+
+void printStack()
+{
+  if(isEmptyStack()){
+    return ;
+  }
+  else{
+    int t = pop();
+    printf("%d\n", t);
+    printStack();
+    push(t);
+  }
+}
+
+void wipeStack()
+{
+  while(!isEmptyStack()){
+    pop();
+  }
 }
