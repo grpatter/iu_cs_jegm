@@ -1,5 +1,10 @@
-void push();
-info pop();
+void push(int datum);
+int pop();
 void makeEmptyStack();
 bool isEmptyStack();
-info peek();
+int peek();
+
+typedef struct
+{
+  int data;
+} Stack;
