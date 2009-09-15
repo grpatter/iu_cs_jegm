@@ -3,8 +3,5 @@ int pop();
 void makeEmptyStack();
 bool isEmptyStack();
 int peek();
-
-typedef struct
-{
-  int data;
-} Stack;
+void wipeStack();
+void printStack();
