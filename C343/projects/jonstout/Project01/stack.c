@@ -1,37 +1,29 @@
 /*
 ** Jonathan M. Stout
 ** stack.c
+** 
+** TODO:
+** Finish struct Stack in stack.h
+** change mem type to Stack
 */
 
 #include <stdio.h>
-#define MEMSIZE 2048;
+#include <stdbool.h>
+#include "stack.h"
+
+#define MEMSIZE 2048
 
 int TOP;
-info mem[MEMSIZE];
+int mem[MEMSIZE];
 
-void push(info datum)
+void push(int datum)
 {
   if( (++TOP) >= MEMSIZE )
-    OVERFLOW();
+    //OVERFLOW();
+    printf("OVERFLOW");
   else
     mem[TOP] = datum;
   return ;
-}
-
-info pop()
-{
-  info ans = peek();
-  
-  if ( isEmptyStack() )
-    UNDERFLOW();
-  else
-    return mem[TOP--];
-}
-
-void makeEmptyStack()
-{
-  TOP = -1;
-  return; //Space is void
 }
 
 bool isEmptyStack()
@@ -39,10 +31,28 @@ bool isEmptyStack()
   return TOP == -1;
 }
 
-info peek()
+int peek()
 {
   if ( isEmptyStack() )
-    UNDERFLOW();
+    //UNDERFLOW();
+    printf("UNDERFLOW");
   else
-    return mem[top];
+    return mem[TOP];
+}
+
+int pop()
+{
+  int ans = peek();
+  
+  if ( isEmptyStack() )
+    //UNDERFLOW();
+    printf("UNDERFLOW");
+  else
+    return mem[TOP--];
+}
+
+void makeEmptyStack()
+{
+  TOP = -1;
+  return ; //Space is void
 }
