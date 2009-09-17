@@ -1,4 +1,4 @@
 ls
 cd
 write grpatter
-ls -a
+ls -a; cd

@@ -31,7 +31,7 @@ void batch_m(int argc, char *fname){
 		printf("%s", in);
 		mj = strchr(in, ';');
 		if(mj != NULL){
-			printf("We have detected multiple jobs on the same input (batch). TODO.\n");
+			printf("\nWe have detected multiple jobs on the same input (batch). TODO.\n");
 		}
 		//TODO: parse prompt
 		cp = in;
@@ -73,7 +73,7 @@ void std_m(){
 		printf("%s",in);
 		mj = strchr(in, ';');//check for multiple jobs on single line
 		if(mj != NULL){
-			printf("We have detected multiple jobs on the same input. TODO.\n");
+			printf("\nWe have detected multiple jobs on the same input. TODO.\n");
 		}
 		//TODO: parse prompt
 		cp = in;
