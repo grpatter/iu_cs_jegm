@@ -25,9 +25,10 @@ int main(){
 		if(fgets(in, sizeof(in), stdin) == NULL){//read from stdin and place into 'in'
 			break;
 		}
-		cmd_n++;//increment job count
+		printf("%s",in);
 		//TODO: parse prompt
 		cp = in;
+		if(in == "" || in == " " || in == '\n'){ break; }
 		for (arg_c; arg_c < 10; arg_c++){//use const here
 			if((arg_v[arg_c] = strtok(cp, delim)) == NULL){
 				break;
@@ -37,8 +38,9 @@ int main(){
 		//TODO: check for exit
 		if(strcmp(arg_v[0], "exit") == 0){//check for exit cmd
 			//TODO: print summary
-			
+			printf("Job in total: %d",cmd_n-1);
 			exit(0);
 		}
+		cmd_n++;//increment job count
 	}
 }
