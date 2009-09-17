@@ -23,8 +23,7 @@ int main(){
 		printf("GE_sh@:");
 		//read input
 		if(fgets(in, sizeof(in), stdin) == NULL){//read from stdin and place into 'in'
-			//TODO: print summary
-			exit(0);
+			break;
 		}
 		cmd_n++;//increment job count
 		//TODO: parse prompt
@@ -38,6 +37,7 @@ int main(){
 		//TODO: check for exit
 		if(strcmp(arg_v[0], "exit") == 0){//check for exit cmd
 			//TODO: print summary
+			
 			exit(0);
 		}
 	}
