@@ -7,11 +7,34 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "jobs.h"
 
 #define MAX_LEN 512;
 #define ARGS 10;
 
 int cmd_n = 1;//keep track of # cmds
+struct job jbs[512];
+
+
+void p_summary(){
+	printf("\nJobs in total: %d\n",(cmd_n-1));
+}
+
+void p_jobs(){
+int n = 1;//start at index = 1
+	for(n;n<cmd_n;n++){
+		int jn = jbs[n].job_n;
+		printf("Job[%d]:",jn);
+		char *args[10];
+		char *command = jbs[n].cmd_s;
+		printf("%s",command);
+		int an = 0;
+		for(an; an < 10; an++){
+			args[an] = jbs[an].cmd_a[an];
+			printf(" %s",args[an]);
+		}			
+	}
+}
 
 void batch_m(int argc, char *fname){
 	printf("batch.\n");
@@ -28,18 +51,21 @@ void batch_m(int argc, char *fname){
 			p_summary();//print summary
 			break;
 		}
-		printf("%s", in);
+		printf("Job[%d]:%s", cmd_n, in);
 		mj = strchr(in, ';');
 		if(mj != NULL){
 			printf("\nWe have detected multiple jobs on the same input (batch). TODO.\n");
 		}
 		//TODO: parse prompt
 		cp = in;
-		if(in == "" || in == " " || in == '\n'){ break; }
+		jbs[cmd_n].job_n = cmd_n;//add jobn to struct member
+		jbs[cmd_n].cmd_s = in;//add cmd to struct member
+		//if(in == "" || in == " " || in == '\n'){ break; }
 		for (arg_c; arg_c < 10; arg_c++){//use const here
 			if((arg_v[arg_c] = strtok(cp, delim)) == NULL){
 				break;
 			}
+			jbs[cmd_n].cmd_a[arg_c] = arg_v[arg_c];//add arg to struct member
 			cp = NULL;
 		}
 		//echo cmd + args (loop here)
@@ -70,18 +96,21 @@ void std_m(){
 			p_summary();//print summary
 			break;
 		}
-		printf("%s",in);
+		printf("Job[%d]:%s", cmd_n, in);
 		mj = strchr(in, ';');//check for multiple jobs on single line
 		if(mj != NULL){
 			printf("\nWe have detected multiple jobs on the same input. TODO.\n");
 		}
 		//TODO: parse prompt
 		cp = in;
-		if(in == "" || in == " " || in == '\n'){ break; }
+		jbs[cmd_n].job_n = cmd_n;//add jobn to struct member
+		jbs[cmd_n].cmd_s = in;//add cmd to struct member
+		//if(in == "" || in == " " || in == '\n'){ break; }
 		for (arg_c; arg_c < 10; arg_c++){//use const here
 			if((arg_v[arg_c] = strtok(cp, delim)) == NULL){
 				break;
 			}
+			jbs[cmd_n].cmd_a[arg_c] = arg_v[arg_c];//add arg to struct member
 			cp = NULL;
 		}
 		//echo cmd + args (loop here) in formatted syntax
@@ -89,13 +118,13 @@ void std_m(){
 			p_summary();//print summary
 			exit(0);
 		}
+		if(strcmp(arg_v[0], "jobs") == 0){//check for exit cmd
+			p_jobs();//print jobs
+		}
 		cmd_n++;//increment job count
 	}
 }
 
-void p_summary(){
-	printf("\nJobs in total: %d\n",(cmd_n-1));
-}
 
 int main(int argc, char *argv[]){
 	if(argc>1){
