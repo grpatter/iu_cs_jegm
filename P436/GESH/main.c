@@ -104,8 +104,8 @@ void std_m(){
 				p_summary();//print summary
 				exit(0);
 			}
-			if(strcmp(arg_v[0], "processes") == 0){//check for exit cmd
-				p_jobs();//print jobs
+			if(strcmp(arg_v[0], "jobs") == 0){//check for exit cmd
+				p_jobs();//TODO print jobs
 				b_out = 1;
 				break;
 			}
@@ -133,6 +133,9 @@ void std_m(){
 		}	
 		arg_c = 0;
 	}
+}
+void handle_job(int argc, char *argv[10]){
+
 }
 
 void child(int argc, char *argv[10]) {
