@@ -51,7 +51,7 @@ void batch_m(int argc, char *fname){
 		//TODO: parse prompt
 		cp = in;
 		jbs[cmd_n].job_n = cmd_n;//add jobn to struct member
-		jbs[cmd_n].cmd_s = in;//add cmd to struct member
+		jbs[cmd_n].cmd_s = "test";//add cmd to struct member
 		//if(in == "" || in == " " || in == '\n'){ break; }
 		for (arg_c; arg_c < 10; arg_c++){//use const here
 			if((arg_v[arg_c] = strtok(cp, delim)) == NULL){
@@ -74,7 +74,6 @@ void batch_m(int argc, char *fname){
 void std_m(){
 	printf("standard.\n");	
 	int arg_c = 0;
-	int b_out = 0;
 	char in[512];//will hold input cmd + args
 	char *arg_v[10];//will hold parsed args
 	char *cp; //temp to hold at parsing
@@ -82,6 +81,7 @@ void std_m(){
 	const char *delim = " \t\n"; //cmd delims
 	//loop
 	while(1){
+		int b_out = 0;
 		//show prompt
 		printf("GE_sh@:");
 		//read input
@@ -100,24 +100,22 @@ void std_m(){
 			if((arg_v[arg_c] = strtok(cp, delim)) == NULL){
 				break;
 			}
-			if(strcmp(arg_v[0], "exit") == 0){//check for exit cmd
-				p_summary();//print summary
-				exit(0);
-			}
-			if(strcmp(arg_v[0], "jobs") == 0){//check for exit cmd
-				p_jobs();//TODO print jobs
-				b_out = 1;
-				break;
-			}
 			jbs[cmd_n].cmd_a[arg_c] = arg_v[arg_c];//add arg to struct member
 			//printf("adding arg %s into jbs[%d].cmd_a[%d], result: %s\n",arg_v[arg_c], cmd_n, arg_c, jbs[cmd_n].cmd_a[arg_c]);
 			cp = NULL;
 		}
+		if(strcmp(arg_v[0], "exit") == 0){//check for exit cmd
+			p_summary();//print summary
+			exit(0);
+		}
+		if(strcmp(arg_v[0], "jobs") == 0){//check for exit cmd
+			p_jobs();//TODO print jobs
+			b_out = 1;
+		}
 		if(b_out != 1){
-			b_out = 0;
 			jbs[cmd_n].job_n = cmd_n;//add jobn to struct member
-			jbs[cmd_n].cmd_s = in;//add cmd to struct member
-			//printf("adding %s into jbs[%d.].cmd_s, result: %s\n",in, cmd_n, jbs[cmd_n].cmd_s);
+			jbs[cmd_n].cmd_s = arg_v[0];//add cmd to struct member
+			printf("adding %s into jbs[%d.].cmd_s, result: %s\n",in, cmd_n, jbs[cmd_n].cmd_s);
 			//echo cmd + args (loop here) in formatted syntax
 			cmd_n++;//increment job count
 		}
