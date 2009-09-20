@@ -83,13 +83,13 @@ void std_m(){
 	while(1){
 		int b_out = 0;
 		//show prompt
-		printf("GE_sh@:");
+		printf("[GE_sh@]$");
 		//read input
 		if(fgets(in, sizeof(in), stdin) == NULL){//read from stdin and place into 'in'
 			p_summary();//print summary
 			break;
 		}
-		printf("Job[%d]:%s", cmd_n, in);
+		//printf("Job[%d]:%s", cmd_n, in);
 		mj = strchr(in, ';');//check for multiple jobs on single line
 		if(mj != NULL){
 			printf("\nWe have detected multiple jobs on the same input. TODO.\n");
@@ -101,7 +101,7 @@ void std_m(){
 				break;
 			}
 			jbs[cmd_n].cmd_a[arg_c] = arg_v[arg_c];//add arg to struct member
-			//printf("adding arg %s into jbs[%d].cmd_a[%d], result: %s\n",arg_v[arg_c], cmd_n, arg_c, jbs[cmd_n].cmd_a[arg_c]);
+			printf("adding arg %s into jbs[%d].cmd_a[%d], result: %s\n",arg_v[arg_c], cmd_n, arg_c, jbs[cmd_n].cmd_a[arg_c]);
 			cp = NULL;
 		}
 		if(strcmp(arg_v[0], "exit") == 0){//check for exit cmd
@@ -121,14 +121,14 @@ void std_m(){
 		}
 		pid_t pid = fork();
 		int status;
-		if(pid == -1) {/* failed to fork() */
+		if(pid == -1) {// failed to fork()
 			perror("fork");
 			exit(1);
-		}else if(pid == 0) {/* child process */
+		}else if(pid == 0) {// child process
 			child(arg_c, arg_v);
-		}else {/* parent process */
+		}else {// parent process
 			wait(&status);
-		}	
+		}
 		arg_c = 0;
 	}
 }
