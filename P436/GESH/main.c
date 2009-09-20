@@ -111,11 +111,20 @@ void std_m(){
 		job->argc = 1;
 		printf("\n%s", PATH);//prompt
 		flush_io();
-		input = fgets(buffer, sizeof(buffer), stdin);
+		if(fgets(buffer, sizeof(buffer), stdin)!='\n'){
+			printf("buf not null\n");
+			printf("buf is:%s\n",buffer);
+			system(buffer);
+		}else{
+			printf("buf is null\n");
+			input = "";
+			break;
+		}
 		cmdlen = strlen(input);
 		if(input[cmdlen-1] == '\n'){
 			input[cmdlen-1] = '\0';
 		}
+		printf("input is:%s",input);
 		//printf("Job[%d]:%s", cmd_n, in);
 		mj = strchr(in, ';');//check for multiple jobs on single line
 		if(mj != NULL){
