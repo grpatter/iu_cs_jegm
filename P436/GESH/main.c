@@ -16,9 +16,13 @@ struct jobStore jbs[50];
 char * PATH = "[GE_SH@]$ ";
 char *path;
 
-
-
 int runJob(jobStruct * job);
+void flush_io();
+
+void flush_io(){
+	fflush(stdin);
+	fflush(stdout);
+}
 
 int runJob(jobStruct * job){
 	printf("Command: %s\n", job->cmd_path);
@@ -38,7 +42,7 @@ int n = 1;//start at index = 1
 	jbs[cmd_n].cmd_status = "Running";
 	for(n; n < cmd_n; n++){//loop over jobs
 		int arg_c = 0;
-		printf("Job[%d]:%s is currently: %s\n",jbs[n].job_n,jbs[n].cmd_s,jbs[n].cmd_status);
+		printf("Job[%d]:%s [%d] is currently: %s\n",jbs[n].job_n,jbs[n].jbs->cmd_path,jbs[n].jbs->argc,jbs[n].cmd_status);
 	}
 	jbs[cmd_n].cmd_status = "Completed";
 }
@@ -111,10 +115,10 @@ void std_m(){
 		job->argc = 1;
 		printf("\n%s", PATH);//prompt
 		flush_io();
-		if(fgets(buffer, sizeof(buffer), stdin)!='\n'){
+		if(fgets(buffer, sizeof(buffer), stdin)!=NULL){
 			printf("buf not null\n");
 			printf("buf is:%s\n",buffer);
-			system(buffer);
+			input = buffer;
 		}else{
 			printf("buf is null\n");
 			input = "";
@@ -167,12 +171,13 @@ void std_m(){
 		if(childstatus != 0){
 			jbs[cmd_n].cmd_status = "Waiting";
 			wait(&status);
+			jbs[cmd_n].cmd_s = cmd;
+			jbs[cmd_n].cmd_status = "Completed";
 		}else{
 			runJob(job);
 		}
 		cmd_n++;
 	}while (flag == 1);
-	return 0;
 	exit(0);
 }
 void handle_job(int argc, char *argv[10]){
@@ -196,7 +201,3 @@ int main(int argc, char *argv[]){
 	return;
 }
 
-void flush_io(){
-	fflush(stdin);
-	fflush(stdout);
-}
