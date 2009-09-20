@@ -9,12 +9,25 @@
 #include <unistd.h>
 #include "jobs.h"
 
-#define MAX_LEN 512;
-#define ARGS 10;
+#define MAX_LEN 512
 
 int cmd_n = 1;//keep track of # cmds
-struct job jbs[50];
+struct jobStore jbs[50];
+char * PATH = "[GE_SH@]$ ";
+char *path;
 
+
+
+int runJob(jobStruct * job);
+
+int runJob(jobStruct * job){
+	printf("Command: %s\n", job->cmd_path);
+	jbs[cmd_n].cmd_status = "Running";
+	jbs[cmd_n].cmd_s = job->cmd_path;
+	execvp(job->cmd_path, job->argv);
+	jbs[cmd_n].cmd_status = "Completed";
+	return 1;
+}
 
 void p_summary(){
 	printf("\nJobs in total: %d\n",(cmd_n-1));
@@ -22,10 +35,12 @@ void p_summary(){
 
 void p_jobs(){
 int n = 1;//start at index = 1
+	jbs[cmd_n].cmd_status = "Running";
 	for(n; n < cmd_n; n++){//loop over jobs
 		int arg_c = 0;
-		printf("Job[%d]:%s\n",n,jbs[n].cmd_s);
+		printf("Job[%d]:%s is currently: %s\n",jbs[n].job_n,jbs[n].cmd_s,jbs[n].cmd_status);
 	}
+	jbs[cmd_n].cmd_status = "Completed";
 }
 
 void batch_m(int argc, char *fname){
@@ -79,58 +94,77 @@ void std_m(){
 	char *cp; //temp to hold at parsing
 	char *mj; //to hold multi job indication
 	const char *delim = " \t\n"; //cmd delims
+	int flag = 1;
 	//loop
-	while(1){
-		int b_out = 0;
-		//show prompt
-		printf("[GE_sh@]$");
-		//read input
-		if(fgets(in, sizeof(in), stdin) == NULL){//read from stdin and place into 'in'
-			p_summary();//print summary
-			break;
+	do{
+		char buffer[512], *input;
+		pid_t child;
+		int childstatus, status;
+		
+		int x = 1;
+		char *cmd;
+		
+		char *command;
+		int cmdlen;
+		
+		jobStruct *job = (jobStruct*)malloc(sizeof(jobStruct));
+		job->argc = 1;
+		printf("\n%s", PATH);//prompt
+		flush_io();
+		input = fgets(buffer, sizeof(buffer), stdin);
+		cmdlen = strlen(input);
+		if(input[cmdlen-1] == '\n'){
+			input[cmdlen-1] = '\0';
 		}
 		//printf("Job[%d]:%s", cmd_n, in);
 		mj = strchr(in, ';');//check for multiple jobs on single line
 		if(mj != NULL){
 			printf("\nWe have detected multiple jobs on the same input. TODO.\n");
 		}
-		//TODO: parse prompt
-		cp = in;
-		for (arg_c; arg_c < 10; arg_c++){//use const here
-			if((arg_v[arg_c] = strtok(cp, delim)) == NULL){
+		
+		cmd = strtok(input, " ");
+		command = cmd;
+		if(strcmp(command, "exit") == 0){
+			flag = 0;
+			p_summary();
+			int i = 0;
+			for(i; i < cmd_n; i++){
+				exit(1);
+			}
+			break;//why isn't this exiting...
+		}
+		if(strcmp(command, "jobs") == 0){
+			p_jobs();
+		}
+		job->cmd_path = command;
+		job->argv[0] = job->cmd_path;
+		while(1){
+			cmd = strtok(NULL, " ");
+			//printf("parsed: %s ", cmd);
+			if(cmd == NULL){
 				break;
 			}
-			jbs[cmd_n].cmd_a[arg_c] = arg_v[arg_c];//add arg to struct member
-			printf("adding arg %s into jbs[%d].cmd_a[%d], result: %s\n",arg_v[arg_c], cmd_n, arg_c, jbs[cmd_n].cmd_a[arg_c]);
-			cp = NULL;
+			job->argv[job->argc] = cmd;
+			job->argc = job->argc+1;
 		}
-		if(strcmp(arg_v[0], "exit") == 0){//check for exit cmd
-			p_summary();//print summary
-			exit(0);
-		}
-		if(strcmp(arg_v[0], "jobs") == 0){//check for exit cmd
-			p_jobs();//TODO print jobs
-			b_out = 1;
-		}
-		if(b_out != 1){
-			jbs[cmd_n].job_n = cmd_n;//add jobn to struct member
-			jbs[cmd_n].cmd_s = arg_v[0];//add cmd to struct member
-			printf("adding %s into jbs[%d.].cmd_s, result: %s\n",in, cmd_n, jbs[cmd_n].cmd_s);
-			//echo cmd + args (loop here) in formatted syntax
-			cmd_n++;//increment job count
-		}
-		pid_t pid = fork();
-		int status;
-		if(pid == -1) {// failed to fork()
-			perror("fork");
-			exit(1);
-		}else if(pid == 0) {// child process
-			child(arg_c, arg_v);
-		}else {// parent process
+		//printf("\nNum args: %d\n",job->argc);		
+		jbs[cmd_n].jbs = job;
+		jbs[cmd_n].job_n = cmd_n;
+		jbs[cmd_n].cmd_s = input;
+		printf("cmd_s: %s\n",jbs[cmd_n].cmd_s);
+		jbs[cmd_n].cmd_status = "Scheduled";
+		
+		childstatus = fork();
+		if(childstatus != 0){
+			jbs[cmd_n].cmd_status = "Waiting";
 			wait(&status);
+		}else{
+			runJob(job);
 		}
-		arg_c = 0;
-	}
+		cmd_n++;
+	}while (flag == 1);
+	return 0;
+	exit(0);
 }
 void handle_job(int argc, char *argv[10]){
 
@@ -142,6 +176,8 @@ void child(int argc, char *argv[10]) {
 
 
 int main(int argc, char *argv[]){
+	system("clear");//clear anything currently oustanding
+	flush_io();
 	if(argc>1){
 		char *fname = argv[1];
 		batch_m(argc, fname);
@@ -149,4 +185,9 @@ int main(int argc, char *argv[]){
 		std_m();
 	}
 	return;
+}
+
+void flush_io(){
+	fflush(stdin);
+	fflush(stdout);
 }
