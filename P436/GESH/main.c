@@ -10,6 +10,7 @@
 #include "jobs.h"
 
 #define MAX_LEN 512
+int countchar(const char[], char);
 
 int cmd_n = 1;//keep track of # cmds
 struct jobStore jbs[50];
@@ -101,18 +102,10 @@ void std_m(){
 	int flag = 1;
 	//loop
 	do{
-		char buffer[512], *input;
-		pid_t child;
-		int childstatus, status;
-		
-		int x = 1;
-		char *cmd;
-		
-		char *command;
+ 		char buffer[512], *input;
+
 		int cmdlen;
 		
-		jobStruct *job = (jobStruct*)malloc(sizeof(jobStruct));
-		job->argc = 1;
 		printf("\n%s", PATH);//prompt
 		flush_io();
 		if(fgets(buffer, sizeof(buffer), stdin)!=NULL){
@@ -124,70 +117,111 @@ void std_m(){
 			input = "";
 			break;
 		}
+		
 		cmdlen = strlen(input);
 		if(input[cmdlen-1] == '\n'){
 			input[cmdlen-1] = '\0';
 		}
 		printf("input is:%s",input);
 		//printf("Job[%d]:%s", cmd_n, in);
-		mj = strchr(in, ';');//check for multiple jobs on single line
+		
+		mj = strchr(input, ';');//check for multiple jobs on single line
+		int mjn = 0;
 		if(mj != NULL){
-			printf("\nWe have detected multiple jobs on the same input. TODO.\n");
-		}
-		
-		cmd = strtok(input, " ");
-		command = cmd;
-		if(strcmp(command, "exit") == 0){
-			flag = 0;
-			p_summary();
-			int i = 0;
-			for(i; i < cmd_n; i++){
-				exit(1);
+			mjn = countchar(input, ';');
+			printf("\nWe have detected %d jobs on the same input. TODO.\n",mjn+1);
+			char *mjtok = strtok(input, ";");
+			char *mjcmds[mjn];
+			int cn = 0;
+			while(mjtok != NULL){
+				printf("[%s]\n", mjtok);
+				mjcmds[cn] = mjtok;
+				mjtok = strtok(NULL, ";");
+				cn++;
 			}
-			break;//why isn't this exiting...
-		}
-		if(strcmp(command, "jobs") == 0){
-			p_jobs();
-		}
-		job->cmd_path = command;
-		job->argv[0] = job->cmd_path;
-		while(1){
-			cmd = strtok(NULL, " ");
-			//printf("parsed: %s ", cmd);
-			if(cmd == NULL){
-				break;
+			int mjcount = 0;
+			for(mjcount;mjcount<=mjn;mjcount++){
+				printf("trying to handle: %s\n",mjcmds[mjcount]);
+				handle_job(mjcmds[mjcount]);
 			}
-			job->argv[job->argc] = cmd;
-			job->argc = job->argc+1;
-		}
-		//printf("\nNum args: %d\n",job->argc);		
-		jbs[cmd_n].jbs = job;
-		jbs[cmd_n].job_n = cmd_n;
-		jbs[cmd_n].cmd_s = input;
-		printf("cmd_s: %s\n",jbs[cmd_n].cmd_s);
-		jbs[cmd_n].cmd_status = "Scheduled";
-		
-		childstatus = fork();
-		if(childstatus != 0){
-			jbs[cmd_n].cmd_status = "Waiting";
-			wait(&status);
-			jbs[cmd_n].cmd_s = cmd;
-			jbs[cmd_n].cmd_status = "Completed";
 		}else{
-			runJob(job);
+			flag = handle_job(input);
 		}
-		cmd_n++;
+
 	}while (flag == 1);
 	exit(0);
 }
-void handle_job(int argc, char *argv[10]){
-
+int handle_job(char *input){
+	int flag = 1;
+	pid_t child;
+	int childstatus, status;
+	
+	int x = 1;
+	char *cmd;
+	
+	char *command;
+	int cmdlen;
+			
+	jobStruct *job = (jobStruct*)malloc(sizeof(jobStruct));
+	job->argc = 1;
+	
+	cmd = strtok(input, " ");
+	command = cmd;
+	if(strcmp(command, "exit") == 0){
+		flag = 0;
+		p_summary();
+		int i = 0;
+		for(i; i < cmd_n; i++){
+			exit(1);
+		}
+		return;//why isn't this exiting...
+	}
+	if(strcmp(command, "jobs") == 0){
+		p_jobs();
+	}
+	job->cmd_path = command;
+	job->argv[0] = job->cmd_path;
+	while(1){
+		cmd = strtok(NULL, " ");
+		//printf("parsed: %s ", cmd);
+		if(cmd == NULL){
+			break;
+		}
+		job->argv[job->argc] = cmd;
+		job->argc = job->argc+1;
+	}
+	//printf("\nNum args: %d\n",job->argc);		
+	jbs[cmd_n].jbs = job;
+	jbs[cmd_n].job_n = cmd_n;
+	jbs[cmd_n].cmd_s = input;
+	printf("cmd_s: %s\n",jbs[cmd_n].cmd_s);
+	jbs[cmd_n].cmd_status = "Scheduled";
+	
+	childstatus = fork();
+	if(childstatus != 0){
+		jbs[cmd_n].cmd_status = "Waiting";
+		wait(&status);
+		jbs[cmd_n].cmd_s = cmd;
+		jbs[cmd_n].cmd_status = "Completed";
+	}else{
+		runJob(job);
+	}
+	cmd_n++;
+	return flag;
 }
 
 void child(int argc, char *argv[10]) {
   execvp(argv[0], argv);
 }
 
+int countchar(const char list[], char what ){
+	int i=0;
+	int count = 0;
+	for( ; list[i] != 0 ; ++i ){
+        if( list[i] == what ) ++count ;
+	}
+  return count;
+}
 
 int main(int argc, char *argv[]){
 	system("clear");//clear anything currently oustanding
