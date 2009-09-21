@@ -27,10 +27,10 @@ void flush_io(){
 
 int runJob(jobStruct * job){
 	printf("Command: %s\n", job->cmd_path);
-	jbs[cmd_n].cmd_status = "Running";
+	change_status("Running");
 	jbs[cmd_n].cmd_s = job->cmd_path;
 	execvp(job->cmd_path, job->argv);
-	jbs[cmd_n].cmd_status = "Completed";
+	change_status("Completed");
 	return 1;
 }
 
@@ -40,12 +40,12 @@ void p_summary(){
 
 void p_jobs(){
 int n = 1;//start at index = 1
-	jbs[cmd_n].cmd_status = "Running";
+	change_status("Running");
 	for(n; n < cmd_n; n++){//loop over jobs
 		int arg_c = 0;
 		printf("Job[%d]:%s [%d] is currently: %s\n",jbs[n].job_n,jbs[n].jbs->cmd_path,jbs[n].jbs->argc,jbs[n].cmd_status);
 	}
-	jbs[cmd_n].cmd_status = "Completed";
+	change_status("Completed");
 }
 
 void batch_m(int argc, char *fname){
@@ -103,7 +103,6 @@ void std_m(){
 	//loop
 	do{
  		char buffer[512], *input;
-
 		int cmdlen;
 		
 		printf("\n%s", PATH);//prompt
@@ -147,7 +146,6 @@ void std_m(){
 		}else{
 			flag = handle_job(input);
 		}
-
 	}while (flag == 1);
 	exit(0);
 }
@@ -199,10 +197,10 @@ int handle_job(char *input){
 	
 	childstatus = fork();
 	if(childstatus != 0){
-		jbs[cmd_n].cmd_status = "Waiting";
+		change_status("Waiting");
 		wait(&status);
 		jbs[cmd_n].cmd_s = cmd;
-		jbs[cmd_n].cmd_status = "Completed";
+		change_status("Completed");
 	}else{
 		runJob(job);
 	}
@@ -210,7 +208,12 @@ int handle_job(char *input){
 	return flag;
 }
 
+void change_status(char *status){
+	jbs[cmd_n].cmd_status = status;
+}
+
 void child(int argc, char *argv[10]) {
+	printf("in child method\n");
   execvp(argv[0], argv);
 }
 
