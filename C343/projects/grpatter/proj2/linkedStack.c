@@ -17,10 +17,14 @@ void push(int datum){
 }
 
 int pop(){
-  int data =  memory[cur_pt].data.queueData;//grab the data
-  toAVAIL(cur_pt);//clear the mem space
-  cur_pt--;//decrease index (hopefully above + this happen very fast ;))
-  return data;//return the data grabbed
+	if(!isEmptyStack()){
+		int data =  memory[cur_pt].data.queueData;//grab the data
+		toAVAIL(cur_pt);//clear the mem space
+		cur_pt--;//decrease index (hopefully above + this happen very fast ;))
+		return data;//return the data grabbed
+	}else{
+		return 0;//nothing
+	}
 }
 
 void makeEmptyStack(){
@@ -37,6 +41,10 @@ bool isEmptyStack(){
 }
 
 int peek(){
-  return memory[cur_pt].data.queueData;//return data here, but dont change any access params
+	if(!isEmptyStack()){
+		return memory[cur_pt].data.queueData;//return data here, but dont change any access params
+	}else{
+		return 0;//nothing
+	}
 }
 

@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include "stack.h"
 
-#define MEMSIZE 2048
+#define MEMSIZE 1024
 
 int TOP;
 int mem[MEMSIZE];

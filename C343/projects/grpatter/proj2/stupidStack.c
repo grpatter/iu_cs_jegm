@@ -9,7 +9,7 @@
 #include "stack.h"
 #include "queue.h"
 
-#define MEMSIZE 2048
+#define MEMSIZE 1024
 
 int mem[MEMSIZE];
 
