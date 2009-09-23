@@ -47,7 +47,7 @@ void stack_ops(char *input){
 
   if(*input == '+'){
     int result =  pop() + pop();//hold result
-	//push(result); //put result on stack
+	push(result); //put result on stack
   }else if(*input == '-'){
     int v1 = pop();//val 1
     int v2 = pop();//val 2

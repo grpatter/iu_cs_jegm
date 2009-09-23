@@ -31,6 +31,6 @@ arrayStack.o: seqStack.c stack.h
 	gcc $(CFLAGS) -c seqStack.c -o arrayStack.o
 	
 AVAIL.o: AVAIL.c AVAIL.h
-	gcc $(CFLAGS) -c AVAIL.c -DMEMORY_SIZE=2048 -o AVAIL.o
+	gcc $(CFLAGS) -c AVAIL.c -DMEMORY_SIZE=1024 -o AVAIL.o
 queue.o: queue.c queue.h AVAIL.h
 	gcc $(CFLAGS) -c queue.c -o queue.o
