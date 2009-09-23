@@ -11,6 +11,8 @@
 
 #define MEMSIZE 1024
 
+Queue q;
+
 int mem[MEMSIZE];
 
 void push(int datum){
@@ -22,11 +24,25 @@ bool isEmptyStack(){
 }
 
 int peek(){
-  //Nothing to see here, move along.
+	int d;
+	if(isEmptyStack()){
+		printf("Nothing to see here, move along...\n");
+		return 0;
+	}else{
+		d = fromQueue();
+		return d;
+	}
 }
 
 int pop(){
-  return fromQueue();//return top from queue
+	int d;
+	if(isEmptyStack()){
+		printf("Nothing to see here, move along...\n");
+		return 0;
+	}else{
+		d = fromQueue();
+		return d;
+	}
 }
 
 void makeEmptyStack(){
