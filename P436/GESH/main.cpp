@@ -67,18 +67,103 @@ void p_summary(){
 void p_jobs(){//TODO: rewrite
 	change_status("Running");
 	for(int n = 0; n < jobStore.size(); n++){//loop over jobs
-		printf("Job[%d]:%s [%d] is currently: %s\n",jobStore[n].job_n,jobStore[n].cmd_name,jobStore[n].realJob->argc,jobStore[n].cmd_status);
+		if(jobStore[n].is_bg){//bg * shown		
+			printf("Job[%d]*:\t%s ",jobStore[n].job_n,jobStore[n].cmd_name);
+		}else{
+			printf("Job[%d]:\t%s ",jobStore[n].job_n,jobStore[n].cmd_name);
+		}
+		for(int c = 0; c<jobStore[n].realJob->argc; c++){
+			printf("%s ", jobStore[n].realJob->argv[c]);
+		}
+		printf(" \t[%d] is currently: \t%s\n", jobStore[n].realJob->argc,jobStore[n].cmd_status);
 	}
 	
 	change_status("Completed");
 }
 
 void batch_m(int argc, char *fname){
-
+	printf("batch mode.\n");	
+	int arg_c = 0;
+	char in[512];//will hold input cmd + args
+	char *arg_v[10];//will hold parsed args
+	char *cp; //temp to hold at parsing
+	char *mj; //to hold multi job indication
+	const char *delim = " \t\n"; //cmd delims
+	int flag = 1;
+	FILE *fin;
+	fin = fopen(fname, "r");
+	//loop
+	do{
+ 		char buffer[512], *input;
+		int cmdlen;
+		
+		printf("\n%s", PATH);//prompt
+		flush_io();
+		if(fgets(buffer, sizeof(buffer), fin)!=NULL){
+			//printf("buf not null\n");
+			//printf("buf is:%s\n",buffer);
+			input = buffer;
+		}else{
+			printf("Batch complete...\n");
+			input = "";
+			break;
+		}
+		
+		cmdlen = strlen(input);
+		if(input[cmdlen-1] == '\n'){
+			input[cmdlen-1] = '\0';
+		}
+		//printf("input is:%s",input);
+		//printf("Job[%d]:%s", cmd_n, in);
+		
+		mj = strchr(input, ';');//check for multiple jobs on single line
+		char *background_j = strchr(input, '&');//check for background jobs
+		int bjn = 0;
+		int mjn = 0;
+		if(background_j != NULL){
+			bjn = countchar(input, '&');
+			printf("Detected %d jobs to run in background.\n", bjn);
+			char *bjtok = strtok(input, "&");
+			char *bjcmds[bjn];
+			int bn = 0;
+			while(bjtok != NULL){
+				printf("[%s]\n", bjtok);
+				bjcmds[bn] = bjtok;
+				bjtok = strtok(NULL, "&");
+				bn++;
+			}
+			int bjcount = 0;
+			for(bjcount;bjcount<bjn;bjcount++){
+				//printf("trying to handle: %s\n",bjcmds[bjcount]);
+				flag = handle_job(bjcmds[bjcount], true);
+			}
+		}else if(mj != NULL){
+			mjn = countchar(input, ';');
+			printf("\nWe have detected %d jobs on the same input. \n",mjn+1);
+			char *mjtok = strtok(input, ";");
+			char *mjcmds[mjn];
+			int cn = 0;
+			while(mjtok != NULL){
+				printf("[%s]\n", mjtok);
+				mjcmds[cn] = mjtok;
+				mjtok = strtok(NULL, ";");
+				cn++;
+			}
+			int mjcount = 0;
+			for(mjcount;mjcount<=mjn;mjcount++){
+				//printf("trying to handle: %s\n",mjcmds[mjcount]);
+				flag = handle_job(mjcmds[mjcount], false);
+			}
+		}else{
+			flag = handle_job(input, false);
+		}
+	}while (flag == 1);
+	fclose(fin);
+	exit(0);
 }
 
 void std_m(){
-	printf("standard.\n");	
+	printf("standard mode.\n");	
 	int arg_c = 0;
 	char in[512];//will hold input cmd + args
 	char *arg_v[10];//will hold parsed args
@@ -200,7 +285,11 @@ int handle_job(char *input, bool bg){
 	tempStore.job_n = cmd_n;
 	tempStore.cmd_status = "Scheduled";
 	tempStore.cmd_name = command;
-	
+	if(bg){
+		tempStore.is_bg = true;
+	}else{
+		tempStore.is_bg = false;
+	}
 	jobStore.push_back(tempStore);
 	
 	int loc = get_job_position(cmd_n, jobStore);
