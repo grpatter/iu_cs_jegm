@@ -10,6 +10,7 @@ struct jobStore{
 	char *cmd_status;
 	char *cmd_name;
 	//string cmd_location;
+	bool is_bg;
 	struct jobStruct *realJob;
 }; 
 
