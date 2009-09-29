@@ -16,7 +16,7 @@ CPPFLAGS+=-DMEMORY_SIZE=1024 # Define the MEMORY_SIZE of the heap
 
 LDFLAGS+=-W -Wall -pedantic # Turn on all link-time warnings
 
-PROGRAMS=linkedCalculator seqCalculator stupidCalculator
+PROGRAMS=linkedCalculator
 OBJECTS=AVAIL.o linkedStack.o seqStack.o stupidStack.o queue.o linkedCalculator.o seqCalculator.o stupidCalculator.o
 SOURCES=AVAIL.c linkedStack.c seqStack.c stupidStack.c queue.c linkedCalculator.c seqCalculator.c stupidCalculator.c AVAIL.h stack.h queue.h Makefile
 TAR_FILE=project2.tar

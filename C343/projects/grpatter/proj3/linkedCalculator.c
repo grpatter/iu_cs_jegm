@@ -20,16 +20,24 @@ bool isnumber(char *str) {
   return result;
 }
 
+bool isvariable(char *str){
+	bool result = false;
+	if(strcmp(str, "X") == 0 || strcmp(str, "Y") == 0 || strcmp(str, "Z") == 0){
+		result = true;
+	}
+	return result;
+}
+
 void printStack() {
   if (!isEmpty()) {
 	QData temp = pop();
     printStack();
 	if(temp.tag == 0){
-		printf("%d\n", t.myunion.num);
+		printf("%d\n", temp.myunion.num);
 	}else if(temp.tag == 1){
-		printf("%c\n", t.myunion.var);
+		printf("%c\n", temp.myunion.var);
 	}else{
-		printf("%c\n", t.myunion.op);
+		printf("%c\n", temp.myunion.op);
 	}
     push(temp);
   }
@@ -37,6 +45,24 @@ void printStack() {
 
 void smallStackError(char *input) {
   printf("Ignoring '%s': Stack too small\n", input);
+}
+
+QData qd_create_int(int n){
+	QData qd;
+	qd.tag = 0;
+	qd.myunion.num = n;
+	return qd;
+}
+QData qd_create_char(char n, int type){
+	QData qd;
+	if(type == 1){
+		qd.tag = 1;
+		qd.myunion.var = n;
+	}else{
+		qd.tag = 2;
+		qd.myunion.op = n;
+	}
+	return qd;
 }
 
 int main() {
@@ -53,13 +79,23 @@ int main() {
       done = true;
     } else if (isnumber(input)) {
       // push number on stack
-      push(atoi(input));
-    } else if (strcmp(input, "+") == 0) {
+	  QData tempQD = qd_create_int(atoi(input));
+      push(tempQD);
+    } else if (isvariable(input)){
+		//push var on stack
+		QData tempQD = qd_create_char(input, (int)1);
+		push(tempQD);
+	}else if (strcmp(input, "+") == 0) {
       // integer add
       if (length() < 2) {
         smallStackError(input);
       } else {
-        push(pop() + pop());
+        //push(pop() + pop());
+		QData p1 = pop();
+		QData p2 = pop();
+		int t = p1.myunion.num + p2.myunion.num;
+		QData tempQD = qd_create_int(t);
+		push(tempQD);
       }
     } else if (strcmp(input, "-") == 0) {
       // integer subtract
@@ -67,16 +103,26 @@ int main() {
         smallStackError(input);
       } else {
         // subtract is non-commutative so we can't inline the pops
-        int a = pop();
-        int b = pop();
-        push(b - a);
+        //int a = pop();
+        //int b = pop();
+        //push(b - a);
+		QData p1 = pop();
+		QData p2 = pop();
+		int t = p2.myunion.num - p1.myunion.num;
+		QData tempQD = qd_create_int(t);
+		push(tempQD);
       }
     } else if (strcmp(input, "*") == 0) {
       // integer multiply
       if (length() < 2) {
         smallStackError(input);
-      } else {
-        push(pop() | pop());
+      } else {		
+        //push(pop() | pop());
+		QData p1 = pop();
+		QData p2 = pop();
+		int t = p2.myunion.num * p1.myunion.num;
+		QData tempQD = qd_create_int(t);
+		push(tempQD);
       }
     } else if (strcmp(input, "/") == 0) {
       // integer divide
@@ -84,7 +130,7 @@ int main() {
         smallStackError(input);
       } else {
         // divide is non-commutative so we can't inline the pops
-        int a = pop();
+/*         int a = pop();
         int b = pop();
         if (a == 0) {
           printf("Ignoring illegal division by zero\n");
@@ -92,25 +138,47 @@ int main() {
           push(a);
         } else {
           push(b / a);
-        }
+        } */
+		
+		QData p1 = pop();
+		QData p2 = pop();
+		if(p1.myunion.num == 0){
+			printf("Ignoring illegal division by zero\n");
+			push(p2);
+			push(p1);
+		}else{
+		int t = p2.myunion.num / p1.myunion.num;
+		QData tempQD = qd_create_int(t);
+		push(tempQD);
+		}
       }
     } else if (strcmp(input, "|") == 0) {
       // bitwise or
       if (length() < 2) {
         smallStackError(input);
       } else {
-        push(pop() | pop());
+        //push(pop() | pop());
+		QData p1 = pop();
+		QData p2 = pop();
+		int t = p1.myunion.num | p2.myunion.num;
+		QData tempQD = qd_create_int(t);
+		push(tempQD);
       }
     }else if (strcmp(input, "^") == 0){
 		//exponentiation
 		if(length() < 2){
 			smallStackError(input);
 		}else{
-			if(peek() >= 0){
-				int n = pop();//loop #
+			if(peek().myunion.num >= 0){
+				/* int n = pop();//loop #
 				int base = pop();//init value
 				base = pow(base, n);
-				push(base);
+				push(base); */
+				QData n = pop();
+				QData base = pop();
+				int t = pow(base.myunion.num, n.myunion.num);
+				QData tempQD = qd_create_int(t);
+				push(tempQD);
 			}
 		}
 	}else if (strcmp(input, "p") == 0) {
@@ -122,7 +190,14 @@ int main() {
       if (length() < 1) {
         smallStackError(input);
       } else {
-        printf("%d\n", peek());
+        QData temp = peek();
+		if(temp.tag == 0){
+			printf("%d\n", temp.myunion.num);
+		}else if(temp.tag == 1){
+			printf("%c\n", temp.myunion.var);
+		}else{
+			printf("%c\n", temp.myunion.op);
+		}
       }
     } else if (strcmp(input, "w") == 0) {
       // wipe stack

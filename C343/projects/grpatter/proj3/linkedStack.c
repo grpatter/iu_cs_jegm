@@ -34,17 +34,17 @@ int length() {
   return stackLength;
 }
 
-void pushzzz(int value) {
+void push(QData value) {//
   assert(initialized);
   Pointer p = fromAVAIL();
-  memory[p].data.value = value;
+  memory[p].data.qData = value;//
   memory[p].data.next = top;
   top = p;
   stackLength++;
   return;
 }
 
-int pop() {
+QData pop() {//
   assert(initialized);
   if (isEmpty()) {
     printf("UNDERFLOW\n");
@@ -53,18 +53,18 @@ int pop() {
     stackLength--;
     Pointer p = top;
     top = memory[p].data.next;
-    int value = memory[p].data.value;
+    QData value = memory[p].data.qData;//
     toAVAIL(p);
     return value;
   }
 }
 
-int peek() {
+QData peek() {//
   assert(initialized);
   if (isEmpty()) {
     printf("UNDERFLOW\n");
     exit(-1);
   } else {
-    return memory[top].data.value;
+    return memory[top].data.qData;//
   }
 }
