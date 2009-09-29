@@ -1,7 +1,8 @@
-// Project 2, C343: Data Structures, Indiana University
+// Project 3, C343: Data Structures, Indiana University
 // File: linkedStack.c
-// Name: Michael Adams
-// Username: adamsmd
+// Name: Greg Patterson
+// Username: grpatter
+// Credit: Michael Adams
 // Date: 2009 Sept.
 
 #include "stack.h"
