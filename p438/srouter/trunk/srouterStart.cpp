@@ -1,0 +1,230 @@
+#include <stdio.h>
+#include <iostream>
+#include <cstdlib>
+#include <fstream>
+#include <string>//to support strings
+#include <vector>//to support vecs
+#include <sstream>
+#include <cctype>
+#include <ctype.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+#include <arpa/inet.h>
+#include <sys/param.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#include "parse_config_file.hpp"
+#include "time_func.hpp"
+//#include "search_func.hpp"
+
+#define BUFLEN 512
+#define NPACK 10
+#define PORT 8660
+#define SRV_IP "129.79.245.108"
+static ofstream out_stream;
+static ofstream rec_stream;
+static int global_bufsize;
+string my_ip;
+void rmode();
+void hmode();
+void diep(char *s);
+void msleep(int s);
+
+using namespace std;
+
+void msleep(int s){
+  usleep(s * 1000);
+  long delay = s * 1000;
+  out_stream<<"Packet Delay of: " << delay <<endl;
+  cout<<"Packet caused a delay of: " << delay <<endl;
+}
+
+string get_rec_name(){
+  string rec_name = "Rec-File-";
+  rec_name += itoa(get_ehid_rip(my_ip), 10);
+  rec_name += "-";
+  rec_name += file_name_time();
+  rec_name += ".txt";
+  return rec_name;
+ }
+
+int main(int argc, char* argv[]){
+  global_bufsize = 1000 + sizeof(our_ip) + sizeof(our_udp);
+  //admin log stuff
+  string log_name = "AdminLog";
+  log_name += file_name_time();
+  cout<<"Starting up SoftRouter Network..."<<endl;
+  read_cfg();
+  cout<<"Configuration processing complete. Now determining machine IP..."<<endl;
+  string myip = this_ip();
+  my_ip = myip;
+  cout<<"Now determining host or router mode..."<<endl;  
+  int mode = 0;
+  if(search_routers(myip)){	mode = 1; }else{ mode = 0; }  
+  
+  log_name += "-";
+  string mde;
+  stringstream lg;
+  lg<<mode;
+  mde = lg.str();
+  log_name += itoa(get_ehid_rip(my_ip), 10);
+  log_name += ".txt";
+  out_stream.open(log_name.c_str());
+  if(out_stream.fail()){
+    cout<<"Output file opening failed.\n";
+  }
+  out_stream<<"BEGIN Administrative log for Virtual Router. (C) Greg Patterson and Eric Spencer 2009 \n"<<endl;
+  out_stream<<"MODE is:"<<mode<<endl;
+  
+  if(mode == 1){
+    cout<<"Now starting Router mode..."<<endl;
+	rmode();
+  }else{
+    cout<<"Now starting EndHost mode..."<<endl;
+	hmode();
+  }
+  out_stream.close();
+  return 0;
+}
+
+void diep(char *s){
+  perror(s);
+  exit(1);
+}
+
+char* strip_headers(char *buf){
+	char *tmp;
+	tmp = (char *)malloc(1000);
+	memcpy(tmp, buf + sizeof(struct ip) + sizeof(struct udphdr), 1000);
+
+	return tmp;
+}
+
+char *get_dstIP(char *buf){
+	struct ip dst_ip;
+	//char *ip_pointer, *ip_pointer2;
+	memcpy(&dst_ip, buf, sizeof(struct ip));
+	return inet_ntoa(dst_ip.ip_dst);
+}
+
+
+char *rcv_ip(char *buf){
+	struct ip srcIP;
+	char *ipt;
+
+	memcpy(&srcIP, buf, sizeof(struct ip));
+	ipt =  inet_ntoa(srcIP.ip_src);
+	return ipt;
+}
+
+void rmode(){
+  out_stream<<"Router mode initiated. Attempting a socket bind request..."<<endl;
+  char buf[global_bufsize];
+  struct sockaddr_in si_me, si_other;
+  struct our_udp *tmp_udp;
+  struct our_ip *tmp_ip;
+  int s, i, slen=sizeof(si_other);
+  s = create_p438_socket();
+  while(1){
+    int n = p438_recv(s, buf, 1028);
+    cout << "Router: size received: " << n << endl;
+    if (n==-1) diep("recvfrom()");
+    cout <<"Router Received packet at: "<< get_time() <<endl; 
+    out_stream<<"Router Received packet at: "<< get_time() <<endl; 
+	//char *buf_r = strip_headers(buf, 1000);	
+	//
+	char target_ip_address[15];
+	int path_id = -1;
+	char *buffer_pointer;
+	char *src_ip, *dest_ip;
+	char src_ip_str[15], dest_ip_str[15];
+	int delay;
+	int my_id;
+	int next_id;
+	
+	src_ip = rcv_ip(buf);
+	memcpy(src_ip_str, src_ip, sizeof(src_ip_str));
+	dest_ip = get_dstIP(buf);
+	memcpy(dest_ip_str, dest_ip, sizeof(dest_ip_str));	
+	//
+	char *buf_r = strip_headers(buf);
+    //printf("Router Received packet with Data: %s\n\n",buf_r);
+    out_stream<<"Router Received packet with Data: "<<buf_r<<endl;
+    if(n > 0) {
+		//Get the lookup value and use it not the following.
+	    unsigned long nextIP;
+	    string nx = next_hop(dest_ip, my_ip);
+	    nextIP = inet_addr(nx.c_str());
+	    cout<<"ROUTER: Attempting to reply to "<<nx<<endl;
+	    out_stream<<"ROUTER: Attempting to reply to "<<nx<<endl;
+		my_id = get_router_id(my_ip);
+		next_id = get_next_id(nx);
+		delay = get_router_delay(my_id, next_id);
+		msleep(delay);
+		//char *ack = "Packet received. Continue if you have more.\n";
+		int size = p438_send(s, buf, sizeof(buf), nextIP);
+		cout<<"ROUTER: Send attempt finished. size =: "<< size <<endl;
+    }
+	bzero(buf, sizeof(buf));
+  }
+  close(s);
+}
+	
+	
+void hmode(){
+  out_stream<<"EndHost mode initiated. Attempting a socket bind request..."<<endl;
+  struct sockaddr_in si_other;
+  int s, i, slen=sizeof(si_other);
+  char *buf = read_send_file(my_ip);
+ 
+	if(buf != ""){
+		s = create_p438_socket();
+		//Get the lookup value and use it not the following.
+		//string nx = next_hop(global_dst_vir, this_ip());
+		int ehid = get_ehid_rip(this_ip());
+		int rid = get_ehlinkid(ehid);
+		string nx = get_rip(rid);
+		unsigned long nextIP;
+		nextIP = inet_addr(nx.c_str());
+		cout<<"Attempting to send to: "<<nx<<endl<<endl;
+
+		msleep(3000);//sleep 1 second
+		//send stuff
+		int n = p438_send(s, buf, 1028, nextIP);
+		cout << "HostMode size sent: " << n << endl;
+		out_stream<< "HostMode size sent: " << n << endl;
+		if(n==-1) diep("sendto()");
+
+		close(s);
+	}
+	s = create_p438_socket();
+	cout<<"End of Host SEND Mode. Switching to receive... *******"<<endl;
+	out_stream<<"End of Host SEND Mode. Switching to receive... *******"<<endl;
+	//receive stuff
+	char buf2[global_bufsize];
+	//open a file to write to when message is received
+	string rec_name = get_rec_name();
+	rec_stream.open(rec_name.c_str());
+	if(rec_stream.fail()){
+		cout<<"Output file opening failed.\n";
+	}
+    while(1){
+		cout<<"HostMode ready to receive next packet..."<<endl;
+		out_stream<<"HostMode ready to receive next packet..."<<endl;
+		int n = p438_recv(s, buf2, sizeof(buf2));
+		cout << "size received: " << n << endl;
+		if (n==-1){ diep("recvfrom()");}
+		cout <<"Host Received packet at: "<< get_time() <<endl; 
+		out_stream <<"Host Received packet at: "<< get_time() <<endl;
+		char *buf_r = strip_headers(buf2);
+		printf("Host Received packet with Data: %s\n\n", buf_r);
+		rec_stream<<buf_r<<endl;
+		out_stream<<"Host Received packet with Data: "<<buf_r<<endl;
+	}
+  close(s);
+}

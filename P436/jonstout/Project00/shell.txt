@@ -1,0 +1,25 @@
+1.) -A prints num lines of traileing context after matching lines
+    -a Process a binary file as if it were text
+
+2.) -dr
+
+3.) I've done it before. Needless to say, it's not worth the 
+trouble to figure out. I think I spent 2 hours getting the commands 
+just right the first time I did it. Afterwords a friend showed me 
+how to do it graphicly from the burrow. So much better.
+
+4.) open burrow.cs.indiana.edu
+	put data.txt /
+
+5.) chmod 755
+
+6.) ls -l
+
+7.) cat -n [file]
+
+8.) more shows a page of text at a time, less shows lines at a time
+
+9.) command interpreter that reads commands from standard in
+
+10.) could be a list of commands
+
