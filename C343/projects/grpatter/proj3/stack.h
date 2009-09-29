@@ -8,12 +8,13 @@
 #define STACK_H
 
 #include <stdbool.h>
+#include "AVAIL.h"
 
 void initStack();
 bool isEmpty();
 int length();
-void push(int value);
-int pop();
-int peek();
+void push(QData value);
+QData pop();
+QData peek();
 
 #endif // STACK_H

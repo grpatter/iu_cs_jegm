@@ -16,8 +16,7 @@ typedef int Pointer;
 //-------- The user should change the "Data" type as needed --------
 typedef struct{	
   int tag;//0 int, 1 var,2 op
-  union
-    {
+  union {
       int num;
       char op;
 	  char var;
@@ -31,7 +30,8 @@ typedef struct {
 //-------- Do not change code below here --------
 
 // The null pointer.  (Use this instead of NULL.)
-#define NIL ((Pointer)-1
+#define NIL ((Pointer)-1)
+
 typedef union {
   Pointer nextFree; // Should only ever be used by AVAIL.c
   Data data;
