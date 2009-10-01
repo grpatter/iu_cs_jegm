@@ -1,0 +1,36 @@
+Script started on Sun 06 Sep 2009 10:11:54 PM EDT
+[jonstout@silo Project00]$ gcc -g main.c
+[jonstout@silo Project00]$ gdb a.out
+GNU gdb Fedora (6.8-27.el5)
+Copyright (C) 2008 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i386-redhat-linux-gnu"...
+(gdb) break copy
+Breakpoint 1 at 0x8048590: file main.c, line 62.
+(gdb) run a.out
+Starting program: /nfs/nfs1/home/jonstout/P436/trunk/Project00/a.out a.out
+
+Breakpoint 1, copy (into=0x8cfd018 "", from=0x8048710 "Hello Dave")
+    at main.c:62
+62	  int len = strlen(from);
+(gdb) where
+#0  copy (into=0x8cfd018 "", from=0x8048710 "Hello Dave") at main.c:62
+#1  0x0804846b in main () at main.c:27
+(gdb) p from
+$1 = 0x8048710 "Hello Dave"
+(gdb) c
+Continuing.
+
+Breakpoint 1, copy (into=0xbfa69fa0 "", from=0x8cfd018 "Hello ") at main.c:62
+62	  int len = strlen(from);
+(gdb) p from
+$2 = 0x8cfd018 "Hello "
+(gdb) quick[K[Kt
+The program is running.  Exit anyway? (y or n) y
+[jonstout@silo Project00]$ exit
+exit
+
+Script done on Sun 06 Sep 2009 10:14:36 PM EDT

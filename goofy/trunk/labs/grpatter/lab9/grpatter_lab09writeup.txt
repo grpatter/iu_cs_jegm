@@ -1,0 +1,8 @@
+1.) The goal of this lab was to get Goofy back to it's original state. To make him be able to move forward, rotate, do it's little sing / play sound thingy and optionally have him dance.
+
+2.) We approached this lab by extending the message handling code we wrote in labs 7 and 8. We print out the actions we wrote and make a call to the appropriate function to perform the action it defaults to. 
+
+3.) No real problems on this one. Mostly it was just copy and paste from previous labs.
+
+4.) This lab was very straightforward. We simply extended the work we did over the previous two labs and
+	integrated it with the motors and sound code we did earlier. 
