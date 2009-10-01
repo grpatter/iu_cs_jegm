@@ -1,7 +1,8 @@
 // Project 2, C343: Data Structures, Indiana University
 // File: stack.h
-// Name: Michael Adams
-// Username: adamsmd
+// Name: Greg Patterson
+// Username: grpatter
+// Credit: Michael Adams
 // Date: 2009 Sept.
 
 #ifndef STACK_H
