@@ -17,129 +17,23 @@ typedef struct{
 	bool visited;
 } Leaf;
 
+// Family Tree
 Leaf tree[500];
 
-void init() {
-	
-	for(int i = 0; i < 500; i++) {
-		tree[i].data = -1;
-		tree[i].parent = -1;
-		tree[i].visited = false;
-	}
-}
-
-bool isnumber(char *str) {
-  bool result = true;
-  for (int i = 0; str[i] != '\0'; i++) {
-    result = result && isdigit(str[i]);
-  }
-  return result;
-}
-
-void input_rel(int child, int par) {
-	//check array index at child, if nil set it. otherwise dont
-	if(tree[child].parent == -1){
-		tree[child].parent = par;//set it
-	}else{
-		//it exists, dont change
-		printf("You can't change your parents.\n");
-	}
-
-}
-
-void determine_relationship(int i, int j){
-	int rem = abs(j - i);
-	printf("%dth cousin %d times removed.`\n", i-1, rem);
-}
-
-int calc_dist(int a, int b){
-	int d = 0;
-	int x = a;
-	while(x != b){
-		x = tree[x].parent;
-		d++;
-	}
-	return d;
-}
-
-bool in_ancestry(int val, int x){
-	int cur = val;
-	while(cur != -1){
-		if(cur == x){
-			return true;
-		}else{
-			cur = tree[cur].parent;
-		}
-	}
-return false;
-}
-
-int find_common(int val1, int val2){
-int common = -1;
-int count1 = 0;
-  int count2 = 0;
-  if(val2 < val1){
-	int tmp = val1;
-	val1 = val2;
-	val2 = tmp;
-  }
-  int cur = val1;
-  while(cur != -1) {
-	if(count2> 500){
-		return -1;
-	}
-	tree[cur].visited = true;
-	cur = tree[cur].parent;
-	count1 = count1 + 1;
-  }
-  cur = val2;
-  while(cur != -1) {
-	if(count2 > 500){
-		return -1;
-	}
-	if(tree[cur].visited){
-		common = cur;
-		break;
-	}else{
-		cur = tree[cur].parent;
-		count2 = count2 + 1;
-	}
-  }
-return common;
-}
-
-int runquery (int val1, int val2) {
-  int common = find_common(val1, val2);
-  int di = calc_dist(val1, common);
-  int dj = calc_dist(val2, common);
-  printf("common:%d di:%d dj:%d\n", common, di, dj);
-  if(common == -1){
-	printf("No relation.\n");
-  	return 0;
-  }else{
-  	determine_relationship(di, dj);
-  }  
-  return di+dj;
-}
-
-
-void fflushstdin( void ){
-    int c;
-    while( (c = fgetc( stdin )) != EOF && c != '\n' );
-}
-
-
-void print_parents(){
-	for(int i = 0; i < 500; i++){
-		if(tree[i].parent != -1){
-			printf("tree[%d].parent=%d\n",i,tree[i].parent);
-		}
-	}
-}
+// Functions
+void printParents();
+int runquery (int val1, int val2);
+int getAnsestor(int val1, int val2);
+bool inAncestory(int val, int x);
+int calc_dist(int a, int b);
+void getRelationship(int i, int j);
+void initRelationship(int child, int parent);
+bool isnumber(char *str);
+void init();
 
 int main() {
 
-    char input[101]; // max input is 100 plus 1 for '\0' char
+    char input[101]; // Input is size 100 plus 1 for '\0'
     bool done = false;
 	int num_arr[2];
 	char oper;
@@ -166,26 +60,145 @@ int main() {
 					printf("Problem resolving ancestry. Request aborted.\n");
 				}
 			} else if (oper == '<') {
-				if(in_ancestry(num_arr[0], num_arr[1]) || in_ancestry(num_arr[1], num_arr[0])){
+				if(inAncestory(num_arr[0], num_arr[1]) || inAncestory(num_arr[1], num_arr[0])){
 					printf("This would cause a cyclical tree. Ignoring.\n");
 				}else{
-					input_rel(num_arr[0], num_arr[1]);
+					initRelationship(num_arr[0], num_arr[1]);
 				}
 			} else if (oper == '>') {
-				if(in_ancestry(num_arr[0], num_arr[1]) || in_ancestry(num_arr[1], num_arr[0])){
+				if(inAncestory(num_arr[0], num_arr[1]) || inAncestory(num_arr[1], num_arr[0])){
 					printf("This would cause a cyclical tree. Ignoring.\n");
 				}else{
-					input_rel(num_arr[1], num_arr[0]);
+					initRelationship(num_arr[1], num_arr[0]);
 				}
 			} else {
 				printf("Invalid Operator. Ignoring.\n");
 			}
 			index = 0;
 		} else if(strcmp(input, "pr") == 0){
-			print_parents();
+			printParents();
 		}else {
 			printf("Invalid input, flushing stdin.\n");
-			fflushstdin();
+		}
+	}
+}
+
+// Initilize tree to NULL (basically)
+void init() {
+	for(int i = 0; i < 500; i++) {
+		tree[i].data = -1;
+		tree[i].parent = -1;
+		tree[i].visited = false;
+	}
+}
+
+/*
+** FUNC: isnumber(char *str)
+** SRC : David Wise
+*/
+bool isnumber(char *str) {
+  bool result = true;
+  for (int i = 0; str[i] != '\0'; i++) {
+    result = result && isdigit(str[i]);
+  }
+  return result;
+}
+
+// Sets a childs parent
+void initRelationship(int child, int parent) {
+	// If the parent is equal to -1 then set the parent
+	if (tree[child].parent == -1)
+		tree[child].parent = parent;
+	else
+		printf("Sorry we don't belive in divorce.\n");
+}
+
+// Finds the number of hops to relative
+void getRelationship(int i, int j){
+	int relationship = abs(j - i);
+	printf("%dth cousin %d times removed.`\n", i - 1, relationship);
+}
+
+// Distance around the tree
+int calc_dist(int a, int b){
+	int c = 0;
+	int d = a;
+	while(d != b){
+		d = tree[d].parent;
+		c++;
+	}
+	return c;
+}
+
+// Check to see if the child exists in the tree.
+bool inAncestory(int val, int x){
+	int current = val;
+	while(current != -1){
+		if(current == x){
+			return true;
+		}
+		else{
+			current = tree[current].parent;
+		}
+	}
+return false;
+}
+
+// Get the index of the common ansestor
+int getAnsestor(int val1, int val2){
+int common = -1;
+int count1 = 0;
+  int count2 = 0;
+  if(val2 < val1){
+	int tmp = val1;
+	val1 = val2;
+	val2 = tmp;
+  }
+  int current = val1;
+  while(current != -1) {
+	if(count2> 500){
+		return -1;
+	}
+	tree[current].visited = true;
+	current = tree[current].parent;
+	count1 = count1 + 1;
+  }
+  current = val2;
+  while(current != -1) {
+	if(count2 > 500){
+		return -1;
+	}
+	if(tree[current].visited){
+		common = current;
+		break;
+	}else{
+		current = tree[current].parent;
+		count2 = count2 + 1;
+	}
+  }
+return common;
+}
+
+// Runs query
+int runquery (int val1, int val2) {
+  int com = getAnsestor(val1, val2);
+  int di = calc_dist(val1, com);
+  int dj = calc_dist(val2, com);
+  printf("common:%d di:%d dj:%d\n", com, di, dj);
+  if(com == -1){
+	printf("No relation.\n");
+  	return 0;
+  }else{
+  	getRelationship(di, dj);
+  }  
+  return di+dj;
+}
+
+// Print Parents
+void printParents(){
+	for(int i = 0; i < 500; i++){
+		if(tree[i].parent != -1){
+			printf("tree[%d].parent=%d\n",i,tree[i].parent);
 		}
 	}
 }
