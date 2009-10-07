@@ -1,0 +1,141 @@
+Script started on Tue 08 Sep 2009 07:44:06 PM EDT
+[jonstout@silo Project00]$ exitsvn commit main.c -m "Finished project00"[K -m "Finished project00"[K./a.out[Kgcc main.c./a.out[Kgcc main.c./a.out[Ksvn commit main.c -m "Finished project00"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K[Ksvn diff main.c
+Index: main.c
+===================================================================
+--- main.c	(revision 7)
++++ main.c	(working copy)
+@@ -1,3 +1,5 @@
++// Jonathan M. Stout
++
+ #include "main.h"
+ 
+ int main()
+[jonstout@silo Project00]$ commin[Kt -m "Added name"
+bash: commit: command not found
+[jonstout@silo Project00]$ commit -m "Added name"scommit -m "Added name"vcommit -m "Added name"ncommit -m "Added name" commit -m "Added name"
+Sending        Project00/main.c
+Transmitting file data .
+Committed revision 8.
+[jonstout@silo Project00]$ gcc main.c
+main.c:2: warning: data definition has no type or storage class
+main.c:2: error: ‘copy’ undeclared here (not in a function)
+main.c:3: warning: data definition has no type or storage class
+main.c:3: error: conflicting types for ‘f’
+main.c:2: error: previous definition of ‘f’ was here
+main.c:3: error: ‘ypoc’ undeclared here (not in a function)
+main.c:5: error: expected identifier or ‘(’ before ‘for’
+main.c:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+main.c:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘++’ token
+main.c:10: error: expected identifier or ‘(’ before ‘for’
+main.c:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+main.c:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘++’ token
+main.c:23: error: expected identifier or ‘(’ before ‘for’
+main.c:23: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+main.c:23: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘++’ token
+main.c:35: error: expected declaration specifiers or ‘...’ before string constant
+main.c:35: error: expected declaration specifiers or ‘...’ before ‘b’
+main.c:35: warning: data definition has no type or storage class
+main.c:35: warning: conflicting types for built-in function ‘printf’
+main.c:37: error: expected identifier or ‘(’ before ‘return’
+main.c:38: error: expected identifier or ‘(’ before ‘}’ token
+main.c: In function ‘find’:
+main.c:43: warning: incompatible implicit declaration of built-in function ‘strlen’
+main.c: In function ‘copy’:
+main.c:55: warning: incompatible implicit declaration of built-in function ‘strlen’
+main.c: In function ‘ypoc’:
+main.c:66: warning: incompatible implicit declaration of built-in function ‘strlen’
+[jonstout@silo Project00]$ svn revert mainc[K.c
+Reverted 'main.c'
+[jonstout@silo Project00]$ gcc main.c
+[jonstout@silo Project00]$ svn commit -m "Added my name"
+[jonstout@silo Project00]$ svn copy htts://svn.osl.iu.edu/rep/p546_jonstout/p43 6/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assign ment 0 done"
+svn: Source and dest appear not to be in the same repository (src: 'htts://svn.osl.iu.edu/rep/p546_jonstout/p436/trunk'; dst: 'https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end')
+[jonstout@silo Project00]$ svn copy htts://svn.osl.iu.edu/rep/p546_jonstout/p4366/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignmment 0 done"[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ammit -m "Added my name"[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cpy htts://svn.osl.iu.edu/rep/p546_jonstout/p4366/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignmment 0 done"[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cmmit -m "Added my name"[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cpy htts://svn.osl.iu.edu/rep/p546_jonstout/p4366/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignmment 0 done"[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C6_jonstout/p436/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignment 0 done"[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C36_jonstout/p436/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignment 0 done"[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+
+svn: Source and dest appear not to be in the same repository (src: 'htts://svn.osl.iu.edu/rep/p536_jonstout/p436/trunk'; dst: 'https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end')
+[jonstout@silo Project00]$ svn copy htts://svn.osl.iu.edu/rep/p536_jonstout/p4366/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignmment 0 done"[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cclear
+[H[J[jonstout@silo Project00]$ clearsvn copy htts://svn.osl.iu.edu/rep/p536_jonstout/p4366/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignmment 0 done"[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cps://svn.osl.iu.edu/rep/p536_jonstout/p436/trunk https://svn.osl.iu.edu/rep/p536_jonstout/p436/tags/asst0-end -m "Assignment 0 done"[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+
+
+Committed revision 9.
+[jonstout@silo Project00]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.c~[00m  [00msetup.script[00m    [00mtypescript[00m
+[00mconstants.h[00m  [00mmain.c[00m      [00mmain.h[00m   [00msvninit.script[00m
+[m[jonstout@silo Project00]$ svn export \[Khttps://svn.osl.iu.edu/rep/-536_jonstout/ p436/trunk[K[K[K[Kags/asst0-end . --f
+svn: invalid option: --f
+Type 'svn help' for usage.
+[jonstout@silo Project00]$ svn export https://svn.osl.iu.edu/rep/-536_jonstout/pp436/tags/asst0-end . --force
+svn: PROPFIND request failed on '/rep/-536_jonstout/p436/tags/asst0-end'
+svn: PROPFIND of '/rep/-536_jonstout/p436/tags/asst0-end': 403 Forbidden (https://svn.osl.iu.edu)
+[jonstout@silo Project00]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.c~[00m  [00msetup.script[00m    [00mtypescript[00m
+[00mconstants.h[00m  [00mmain.c[00m      [00mmain.h[00m   [00msvninit.script[00m
+[m[jonstout@silo Project00]$ exit[K[K[K[Kcd ..
+[jonstout@silo trunk]$ ls
+[00m[01;34mProject00[00m
+[m[jonstout@silo trunk]$ tar -xvzf Project00/[K.tar.gz
+tar: Project00.tar.gz: Cannot open: No such file or directory
+tar: Error is not recoverable: exiting now
+tar: Child returned status 2
+tar: Error exit delayed from previous errors
+[jonstout@silo trunk]$ tar -xvzf Project00.tar.gz\[K[K[K[K[K[K[K[K
+tar: Project00: Cannot read: Is a directory
+tar: At beginning of tape, quitting now
+tar: Error is not recoverable: exiting now
+
+gzip: stdin: unexpected end of file
+tar: Child returned status 2
+tar: Error exit delayed from previous errors
+[jonstout@silo trunk]$ tar -xvzf Project00vzf Project00[Kcvzf Project00
+tar: Cowardly refusing to create an empty archive
+Try `tar --help' or `tar --usage' for more information.
+[jonstout@silo trunk]$ tar -cvzf Project00.tar.gz Project00/
+Project00/
+Project00/main.c~
+Project00/svninit.script
+Project00/constants.h
+Project00/setup.script
+Project00/.svn/
+Project00/.svn/prop-base/
+Project00/.svn/props/
+Project00/.svn/format
+Project00/.svn/text-base/
+Project00/.svn/text-base/main.c.svn-base
+Project00/.svn/text-base/constants.h.svn-base
+Project00/.svn/text-base/gdb.script.svn-base
+Project00/.svn/text-base/main.h.svn-base
+Project00/.svn/text-base/setup.script.svn-base
+Project00/.svn/text-base/svninit.script.svn-base
+Project00/.svn/all-wcprops
+Project00/.svn/entries
+Project00/.svn/tmp/
+Project00/.svn/tmp/prop-base/
+Project00/.svn/tmp/props/
+Project00/.svn/tmp/text-base/
+Project00/main.c
+Project00/a.out
+Project00/gdb.script
+Project00/main.h
+Project00/typescript
+[jonstout@silo trunk]$ ls
+[00m[01;34mProject00[00m  [01;31mProject00.tar.gz[00m
+[m[jonstout@silo trunk]$ mv Project00.tar.gz Project00
+[jonstout@silo trunk]$ ls
+[00m[01;34mProject00[00m
+[m[jonstout@silo trunk]$ cd ..[K[KProject00/
+[jonstout@silo Project00]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.c~[00m  [01;31mProject00.tar.gz[00m  [00msvninit.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [00mmain.h[00m   [00msetup.script[00m      [00mtypescript[00m
+[m[jonstout@silo Project00]$ svn add Project00.tar.gz 
+A  (bin)  Project00.tar.gz
+[jonstout@silo Project00]$ svn commit Project00.tar.gz 
+[1;1H[J[7m   UW PICO(tm) 4.10               New Buffer                                   [m[25;1H[K[26;1H[K[25;1H[7m^[m[7mG[m Get Help  [7m^[m[7mO[m WriteOut  [7m^[m[7mR[m Read File [7m^[m[7mY[m Prev Pg   [7m^[m[7mK[m Cut Text  [7m^[m[7mC[m Cur Pos   [K[26;1H[7m^[m[7mX[m Exit      [7m^[m[7mJ[m Justify   [7m^[m[7mW[m Where is  [7m^[m[7mV[m Next Pg   [7m^[m[7mU[m UnCut Text[7m^[m[7mT[m To Spell  [K[3;1H[24;1H[K[24;32H[7m[ Reading file ][m[24;1H[K[24;32H[7m[ Read 4 lines ][m[1;33H[7mFile: svn-commit.tmp[m[4;1H--This line, and those below, will be ignored--[6;1HAM   Project00.tar.gz[3;1H[1;69H[7mM

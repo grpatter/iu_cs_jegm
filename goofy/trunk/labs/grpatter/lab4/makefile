@@ -1,0 +1,41 @@
+ARM_PATH = /l/arm/gnuarm/
+ARM_EXEC_PATH = $(ARM_PATH)/bin
+CC = $(ARM_EXEC_PATH)/arm-elf-gcc
+CFLAGS = -g -Wall -DGOOFY -mcpu=arm7tdmi -O0
+LFLAGS = -nostdlib -nostartfiles \
+		-T/l/arm/gnuarm/arm-elf/lib/ldscripts/2138_rom_gdb.ld \
+		-lggbsp
+
+OBJECTCOPY = $(ARM_EXEC_PATH)/arm-elf-objcopy
+
+OBJECTS = hello.o
+OBJECTS2 = wordC.o
+TARGET = hello.elf
+TARGET2 = wordC.elf
+
+all : $(TARGET) $(TARGET2)
+
+$(TARGET) : $(OBJECTS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(OBJECTS) -o $(TARGET)
+$(OBJECTS) : hello.c
+	$(CC) -c $(CFLAGS) hello.c 
+objectcopy : $(TARGET)
+	$(OBJECTCOPY) -O binary -R .eeprom $(TARGET) hello.hex
+downloadhello : hello.hex
+	arm-elf-download hello.hex
+
+$(TARGET2) : $(OBJECTS2)
+	$(CC) $(CFLAGS) $(LFLAGS) $(OBJECTS2) -o $(TARGET2)
+$(OBJECTS2) : wordC.c
+	$(CC) -c $(CFLAGS) wordC.c
+objectcopy2 : $(TARGET2)
+	$(OBJECTCOPY) -O binary -R .eeprom $(TARGET2) wordC.hex
+downloadwc : wordC.hex
+	arm-elf-download wordC.hex
+CLEAN:
+	rm hello.o
+	rm hello.elf
+	rm hello.hex
+	rm wordC.o
+	rm wordC.elf
+	rm wordC.hex

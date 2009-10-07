@@ -1,0 +1,34 @@
+9
+
+dir
+100
+http://subversion.assembla.com/svn/iub438gregeric/srouter/branches
+http://subversion.assembla.com/svn/iub438gregeric
+
+
+
+2009-04-11T21:26:13.597153Z
+94
+grpatter
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+080cfd25-d5d9-4c59-82ea-70d02a200d8b
+
+init
+dir
+
+pre_forwarding
+dir
+

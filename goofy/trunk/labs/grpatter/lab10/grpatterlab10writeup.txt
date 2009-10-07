@@ -1,0 +1,7 @@
+1.) The goal of this lab was to get Goofy to act as a 'state machine'. Another goal was to learn how to control the speed of Goofy's motors. To do this, we played with 'pulse width modulation (PWM)'. 
+
+2.) We approached this lab by reading through the lab instructions and discussing how to implement (organize) the multiple states for Goofy. We implemented this by extending the message handler to call seperate functions after checking a 'state' variable that is adjusted based upon which function was called last.
+
+3.) No real problems on this one. The only issue we ran into was not realizing we needed to use GG_INIT(11) (not 10) after experiencing strange motor control behavior and instruction receiving. Once we figured that out, it was pretty smooth sailing.
+
+4.) The lab was a bit confusing to understand what functionality the state machine diagram wanted us to implement, but after figuring out how to read it the process made sense. This lab wasn't right on target in my opinion, not too confusing, and had some planning aspect to it.
