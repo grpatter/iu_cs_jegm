@@ -1,0 +1,16 @@
+1.) The idea was to take into streams of 1's and 0's and produce legible instructions (8bit) that
+	emulate a message decoder. The instructions are used to understand signals from the Goofy remote
+	control device (puck).
+
+2.) The approach is to watch for strings of 0's or 1's. A string of 0's identifies the beginning of a message, and 
+	when a 1 is seen the payload of the message had started. You then count the number of bits until the next low->high
+	transition which indicates the entire first bit. You do this 8 times until you recieve a full instruction. Then you 
+	repeat as long as data is still being sent.
+
+3.) The issues we had were simply understanding and approaching the task. The instructions were somewhat vague in
+	specifics. Our 'real' issue was that we get a 1 bit at the beginning of every instruction after the first one.
+	Jon is taking a look at it now.
+
+4.) We read instructions properly, but have somethign wrong in the output of the instructions after the first one.
+	Jon has done alot on this lab, as I've been very busy with a family emergency and getting caught up there. I understand
+	the general concepts and the code (helped on some of it) but Jon has a far better grasp than I do for this lab.

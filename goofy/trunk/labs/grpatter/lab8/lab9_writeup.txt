@@ -1,0 +1,15 @@
+1.) The idea was to return Goofy to 'default' behavior by programming him to 
+	execute actions as requested from the remote puck. It has 3 buttons, so we
+	must support at least 3 actions and they should be the standard 'understood'
+	functions as it would be used by a child. We were instructed to target
+	'play sound', 'move forward', and 'rotate' behavior as the goals of the lab.
+
+2.) The approach was to simply extend the message handling code we wrote in labs 7 and 8.
+	When we print out what message is being read, we also make a call to the appropriate
+	function to perform the action it defaults to. We have play music, move forward, and rotate.
+
+3.) //TODO
+	//UNTESTED as of this time.
+
+4.) This lab was very straightforward. We simply extended the work we did over the previous two labs and
+	integrated it with the motors and sound code we did earlier. 
