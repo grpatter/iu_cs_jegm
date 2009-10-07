@@ -17,10 +17,8 @@ typedef struct{
 	bool visited;
 } Leaf;
 
-// Tree to store data
 Leaf tree[500];
 
-// Initialize tree to NULL
 void init() {
 	
 	for(int i = 0; i < 500; i++) {
@@ -30,10 +28,6 @@ void init() {
 	}
 }
 
-/*
-** FUNC: isnumber(char *str)
-** SRC : David Wise
-*/
 bool isnumber(char *str) {
   bool result = true;
   for (int i = 0; str[i] != '\0'; i++) {
@@ -42,41 +36,105 @@ bool isnumber(char *str) {
   return result;
 }
 
-void input_rel(int parent, int child) {
-	//check and create parent
-	if (tree[parent].data != -1) {
-		Leaf temp;
-		temp.data = par;
-		tree[parent] = temp;
+void input_rel(int child, int par) {
+	//check array index at child, if nil set it. otherwise dont
+	if(tree[child].parent == -1){
+		tree[child].parent = par;//set it
+	}else{
+		//it exists, dont change
+		printf("You can't change your parents.\n");
 	}
-	
-	//check and create child
-	if (tree[child].data != -1) {
-		node kid;
-		kid.data = child;
-		kid.parent = par;
-		tree[child] = kid;
-	} else {
-		//if it already exist just set the parent
-		tree[child].parent = par;
+
+}
+
+void determine_relationship(int i, int j){
+	int rem = abs(j - i);
+	printf("%dth cousin %d times removed.`\n", i-1, rem);
+}
+
+int calc_dist(int a, int b){
+	int d = 0;
+	int x = a;
+	while(x != b){
+		x = tree[x].parent;
+		d++;
 	}
+	return d;
+}
+
+bool in_ancestry(int val, int x){
+	int cur = val;
+	while(cur != -1){
+		if(cur == x){
+			return true;
+		}else{
+			cur = tree[cur].parent;
+		}
+	}
+return false;
+}
+
+int find_common(int val1, int val2){
+int common = -1;
+int count1 = 0;
+  int count2 = 0;
+  if(val2 < val1){
+	int tmp = val1;
+	val1 = val2;
+	val2 = tmp;
+  }
+  int cur = val1;
+  while(cur != -1) {
+	if(count2> 500){
+		return -1;
+	}
+	tree[cur].visited = true;
+	cur = tree[cur].parent;
+	count1 = count1 + 1;
+  }
+  cur = val2;
+  while(cur != -1) {
+	if(count2 > 500){
+		return -1;
+	}
+	if(tree[cur].visited){
+		common = cur;
+		break;
+	}else{
+		cur = tree[cur].parent;
+		count2 = count2 + 1;
+	}
+  }
+return common;
 }
 
 int runquery (int val1, int val2) {
-  int counter = 0;
-  printf("val1: %d, val2: %d \n", val1, val2);
-  while(tree[val1].parent != -1) {
-	printf("parent: %d\n", tree[val1].parent);
-	tree[val1].visited = true;
-	val1 = tree[val1].parent;
-  }
-  
-  while(tree[val2].parent != -1 || tree[val2].visited == true) {
-	val2 = tree[val2].parent;
-	counter++;
-  }
-  
-  return counter;
+  int common = find_common(val1, val2);
+  int di = calc_dist(val1, common);
+  int dj = calc_dist(val2, common);
+  printf("common:%d di:%d dj:%d\n", common, di, dj);
+  if(common == -1){
+	printf("No relation.\n");
+  	return 0;
+  }else{
+  	determine_relationship(di, dj);
+  }  
+  return di+dj;
+}
+
+
+void fflushstdin( void ){
+    int c;
+    while( (c = fgetc( stdin )) != EOF && c != '\n' );
+}
+
+
+void print_parents(){
+	for(int i = 0; i < 500; i++){
+		if(tree[i].parent != -1){
+			printf("tree[%d].parent=%d\n",i,tree[i].parent);
+		}
+	}
 }
 
 int main() {
@@ -100,22 +158,34 @@ int main() {
 			oper = input[0];
 		} else if (strcmp(input, ".") == 0) {
 			//run data det
-			printf("%c\n", oper);
-			if (oper == '?') {
+			if(num_arr[0] == num_arr[1]){
+				printf("You are yourself. Ignoring.\n");
+			}else if (oper == '?') {
 				int result = runquery(num_arr[0], num_arr[1]);
-				printf("%d\n", result);
+				if(result == -1){
+					printf("Problem resolving ancestry. Request aborted.\n");
+				}
 			} else if (oper == '<') {
-				printf("child: %d parent: %d\n", num_arr[0], num_arr[1]);
-				input_rel(num_arr[0], num_arr[1]);
+				if(in_ancestry(num_arr[0], num_arr[1]) || in_ancestry(num_arr[1], num_arr[0])){
+					printf("This would cause a cyclical tree. Ignoring.\n");
+				}else{
+					input_rel(num_arr[0], num_arr[1]);
+				}
 			} else if (oper == '>') {
-				input_rel(num_arr[1], num_arr[0]);
+				if(in_ancestry(num_arr[0], num_arr[1]) || in_ancestry(num_arr[1], num_arr[0])){
+					printf("This would cause a cyclical tree. Ignoring.\n");
+				}else{
+					input_rel(num_arr[1], num_arr[0]);
+				}
 			} else {
-				printf("Incorrect operator\n");
+				printf("Invalid Operator. Ignoring.\n");
 			}
 			index = 0;
-			printf("num1: %d num2: %d oper: %c\n", num_arr[0], num_arr[1], oper);
-		} else {
-			printf("incorrect input\n");
+		} else if(strcmp(input, "pr") == 0){
+			print_parents();
+		}else {
+			printf("Invalid input, flushing stdin.\n");
+			fflushstdin();
 		}
 	}
 }
