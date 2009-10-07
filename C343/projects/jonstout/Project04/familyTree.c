@@ -10,14 +10,17 @@
 #include <ctype.h>
 #include <string.h>
 
+// Leaf struct
 typedef struct{
 	int data;
 	int parent;
 	bool visited;
-} node;
+} Leaf;
 
-node tree[500];
+// Tree to store data
+Leaf tree[500];
 
+// Initialize tree to NULL
 void init() {
 	
 	for(int i = 0; i < 500; i++) {
@@ -27,6 +30,10 @@ void init() {
 	}
 }
 
+/*
+** FUNC: isnumber(char *str)
+** SRC : David Wise
+*/
 bool isnumber(char *str) {
   bool result = true;
   for (int i = 0; str[i] != '\0'; i++) {
@@ -35,14 +42,12 @@ bool isnumber(char *str) {
   return result;
 }
 
-void input_rel(int par, int child) {
+void input_rel(int parent, int child) {
 	//check and create parent
-	if (tree[par].data != -1) {
-		node parent;
-		parent.data = par;
-		tree[par] = parent;
-	} else {
-		//parent already exist don't do anything
+	if (tree[parent].data != -1) {
+		Leaf temp;
+		temp.data = par;
+		tree[parent] = temp;
 	}
 	
 	//check and create child
