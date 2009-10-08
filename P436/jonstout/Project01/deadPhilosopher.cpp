@@ -19,6 +19,7 @@ int stateCount[PHILO_COUNT][2];
 pthread_mutex_t chopstick[PHILO_COUNT];
 pthread_mutex_t printLock;// = PTHREAD_MUTEX_INITIALIZER;
 int userCount;
+bool end = false;
 
 // Functions
 int main(int argc, char **argv);
@@ -37,7 +38,7 @@ void *doYourJob(void *tID){
      pickUpChops(id);
      eat(id);
      putDownChops(id);
-   } while (true);
+   } while (!end);
 }
 
 int main(int argc, char *argv[]) {
@@ -54,6 +55,10 @@ int main(int argc, char *argv[]) {
     userCount = PHILO_COUNT;
   }
 
+  // print out time and number of Philosophers
+  printf("Time                  : %d\n", userTime);
+  printf("Number of Philosophers: %d\n\n", userCount);
+
   //Initalize chopstick[]
   pthread_mutex_init(&printLock, NULL);
   for(int i = 0; i < userCount; i++){
@@ -62,16 +67,15 @@ int main(int argc, char *argv[]) {
 
   //Create 5 threads that run doYourJob(void *tID)
   for(int i = 0; i < userCount; i++){
-    printf("Creating Thread\n");
     pthread_create(&thread[i], NULL, doYourJob, (void *)i);
   }
   
   // Continue to run main until specified time has expired
   sleep(userTime);
+  end = true;
   
   // Print out resulting data
   for(int i = 0; i < userCount; i++) {
-    pthread_kill(thread[i], 0);
     printf("Philosopher %d ate %d and thought %d\n", i, stateCount[i][0], stateCount[i][1]);
   }
   
