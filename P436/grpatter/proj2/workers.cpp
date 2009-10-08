@@ -11,173 +11,193 @@
 #define STARTING_WORK 50
 #define WORK_ARRIVAL 5
 #define RESOURCES 20
-#define WORK_RESOURCES 20
+#define WORK_RESOURCES 6
 #define WORK_TIME 10
 #define QUEUE_SIZE 1000
 
 using namespace std;
 
-// Work struct
 typedef struct {
   int id;
+  int resource_count;
   int resources[1000];
   int time;
 } Work;
 
-// Global Variables
 int worker = WORKER;
-int startingWork = STARTING_WORK;
-int workArrival = WORK_ARRIVAL;
+int work_t_max = WORK_TIME;
+int start_work = STARTING_WORK;
+int q_size = QUEUE_SIZE;
+int work_arr_t = WORK_ARRIVAL;
 int resources = RESOURCES;
-int workResources = WORK_RESOURCES;
-int workTime = WORK_TIME;
-int queueSize = QUEUE_SIZE;
-pthread_mutex_t printLock;
-int nextID = 0;
+int req_workres = WORK_RESOURCES;
+pthread_mutex_t output_lock;
+pthread_mutex_t *resource_locks;
+int cur_ind = 0;
 queue<Work> work;
 
-// Function Declerations
-void printAddedWork(int requiredResources[], int uniqueID, int timeToFinish);
-void *executeWork(void *tID);
-void *addWork(void *tID);
-bool unduplicate(int index, int x, int tempRec[]);
+void initThreads();
+void reportNewWork(Work cur_job);
+void reportWorkDone(Work cur_job, int exec_time);
+void *executeWork(void *id);
+void *createWork(void *id);
+bool hasDupeResource(int index, int x, int rec[]);
+void lockResources(Work cur_job, int num);
+void unlockResources(Work cur_job, int num);
 
 int main(int argc, char *argv[]) {
-
-  // Check for user arguments
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-worker") == 0) {
       worker = atoi(argv[i+1]);
-    }
-    else if (strcmp(argv[i], "-starting-work") == 0) {
-      startingWork = atoi(argv[i+1]);
-    }
-    else if (strcmp(argv[i], "-work-arrival") == 0) {
-      workArrival = atoi(argv[i+1]);
-    }
-    else if (strcmp(argv[i], "-resources") == 0) {
+    }else if (strcmp(argv[i], "-starting-work") == 0) {
+      start_work = atoi(argv[i+1]);
+    }else if (strcmp(argv[i], "-work-arrival") == 0) {
+      work_arr_t = atoi(argv[i+1]);
+    }else if (strcmp(argv[i], "-resources") == 0) {
       resources = atoi(argv[i+1]);
-    }
-    else if (strcmp(argv[i], "-work-resources") == 0) {
-      workResources = atoi(argv[i+1]);
-    }
-    else if (strcmp(argv[i], "-work-time") == 0) {
-      workTime = atoi(argv[i+1]);
-    }
-    else if (strcmp(argv[i], "-queue-size") == 0) {
-      queueSize = atoi(argv[i+1]);
-    }
-    // Check for Invalid Arguments
-    else {
+    }else if (strcmp(argv[i], "-work-resources") == 0) {
+      req_workres = atoi(argv[i+1]);
+    }else if (strcmp(argv[i], "-work-time") == 0) {
+      work_t_max = atoi(argv[i+1]);
+    }else if (strcmp(argv[i], "-queue-size") == 0) {
+      q_size = atoi(argv[i+1]);
+    }else {
       if(argc%2 == 0) {
-	fprintf(stderr, "Invalid Arguments.\n");
-	exit(1);
+		fprintf(stderr, "Invalid Arguments. Exiting.\n");
+		exit(1);
       }
     }
   }
 
-  // Print arguments
-  printf("\nWorker Problem Arguments\n");
   printf("------------------------\n");
-  printf("Worker         : %d\n", worker);
-  printf("Staring Work   : %d\n", startingWork);
-  printf("Work Arrival   : %d\n", workArrival);
-  printf("Resources      : %d\n", resources);
-  printf("Work Resources : %d\n", workResources);
-  printf("Work Time      : %d\n", workTime);
-  printf("Queue Size     : %d\n", queueSize);
+  printf("Workers:\t%d\n", worker);
+  printf("Starting Work:\t%d\n", start_work);
+  printf("Work Arrival:\t%d\n", work_arr_t);
+  printf("Resources:\t%d\n", resources);
+  printf("Work Resources:\t%d\n", req_workres);
+  printf("Work Time:\t%d\n", work_t_max);
+  printf("Queue Size:\t%d\n", q_size);
   printf("------------------------\n\n");
-
-  // Initialize Mutexs
-  pthread_mutex_init(&printLock, NULL);
-
-  // Worker Threads
-  pthread_t *workerThread;
-  workerThread = new pthread_t[worker];
-  // Delivery Thread
-  pthread_t deliveryThread;
-  pthread_create(&deliveryThread, NULL, addWork, (void *)NULL);
-  // Resources
-  pthread_mutex_t *resourceLock;
-  resourceLock = new pthread_mutex_t[resources];
-
-  for(int x = 0; x < worker; x++){
-	pthread_mutex_init(&resourceLock[x], NULL);	
-    pthread_create(&workerThread[x], NULL, executeWork, (void *)x);
-  }
-  while(1);
   
+  srand(time(NULL));//DONT SEED in the function (same pseudo sequence)
+  for(int a = 0; a < start_work; a++){
+	createWork((void *)true);
+  }
+  printf("Added Work items before thread creation, IDs: 0-%d\n", start_work);
+  
+  initThreads();
+  while(1);  
 }
 
-void *executeWork(void *tID) {
+void initThreads(){
+  pthread_mutex_init(&output_lock, NULL);
+  
+  pthread_t *worker_th;
+  worker_th = new pthread_t[worker];
+  pthread_t workadd_th;
+  pthread_create(&workadd_th, NULL, createWork, (void *)false);
+  
+  resource_locks = new pthread_mutex_t[resources];
+  for(int x = 0; x < worker; x++){
+	pthread_mutex_init(&resource_locks[x], NULL);	
+    pthread_create(&worker_th[x], NULL, executeWork, (void *)x);
+  }
+}
+
+void *executeWork(void *id) {
   do {
-	printf("Thread[%d] picking up work.\n",(int)tID);
 	if(!work.empty()){
-		Work thisJob = work.front();
+		Work cur_job = work.front();
 		work.pop();
-		int arraySize = sizeof(thisJob.resources)/sizeof(thisJob.resources[0]);
-		//lockResources();
-		//sleepForWork();
-		//print();
-		//unlockResources();
+		int num = cur_job.resource_count;
+		time_t start, end;
+		time(&start);
+		lockResources(cur_job, num);
+		unlockResources(cur_job, num);
+		reportWorkDone(cur_job, difftime(time(&end),start));
 	}else{
 		sleep(1);
 	}
   } while (true);
 }
 
-void *addWork(void *i) {
-  srand(time(NULL));
-  
-  do {
-    sleep( rand() % workArrival + 1);
+void lockResources(Work cur_job, int num) {
+  for(int i = 0; i < num; i++) {
+    pthread_mutex_lock(&resource_locks[cur_job.resources[i]]);
+	sleep(cur_job.time);
+  }
+}
 
-    int numberOfResources = rand() % workResources + 1;
-    int newResources[numberOfResources];
+void unlockResources(Work cur_job, int num){
+  for(int i = 0; i < num; i++) {
+    pthread_mutex_unlock(&resource_locks[cur_job.resources[i]]);
+  }
+}
+
+void *createWork(void *i) {
+  bool initial_build = (bool)i;  
+  do {
+	if(!initial_build){
+		sleep( rand() % work_arr_t + 1);
+	}
+
+    int resource_count = rand() % req_workres + 1;
+    int rand_res_requests[resource_count];
     
-    Work moreWork;
-    moreWork.id = nextID++;
-    moreWork.time = rand() % workTime;
-    // Array newResources is given resource numbers
-    for (int i = 0; i < numberOfResources; i++) {
-      newResources[i] = rand() % resources;
+    Work new_work;
+    new_work.id = cur_ind++;
+	new_work.resource_count = resource_count;
+    new_work.time = rand() % work_t_max;
+    for (int i = 0; i < resource_count; i++) {
+      rand_res_requests[i] = rand() % resources;
     }
     
     int i = 0;
-    while(i < numberOfResources) {
-      if (!unduplicate(i, newResources[i], newResources)){
-	i++;
-      }
-      else {
-	newResources[i] = rand() % resources;
+    while(i < resource_count) {
+      if (!hasDupeResource(i, rand_res_requests[i], rand_res_requests)){
+		i++;
+      }else {
+		rand_res_requests[i] = rand() % resources;
       }
     }
     
-    for (int i = 0; i < numberOfResources; i++) {
-      moreWork.resources[i] = newResources[i];
+    for (int i = 0; i < resource_count; i++) {
+      new_work.resources[i] = rand_res_requests[i];
     }
     
-    printAddedWork(numberOfResources, moreWork.resources, moreWork.id, moreWork.time);
-    work.push(moreWork);
-  } while (true);
+	if(!initial_build){
+		reportNewWork(new_work);
+	}
+    work.push(new_work);
+  } while (true && !initial_build);
 }
 
-bool unduplicate(int index, int x, int tempRec[]) {
+bool hasDupeResource(int index, int x, int rec[]) {
   bool result = false;
-  for (int i = 0; i < sizeof(tempRec); i++) {
-    if(tempRec[i] == x && i != index) {
+  for(int i = 0; i < sizeof(rec); i++) {
+    if(rec[i] == x && i != index) {
       return true;      
     }
   }
   return result;
 }
 
-
-void printAddedWork(int requiredResources[], int uniqueID, int timeToFinish) {
-  pthread_mutex_lock(&printLock);
-  printf("Added ID:      %d Time: %d Resources: ", uniqueID, timeToFinish);
-  for  (int i = 0; i < sizeof(requiredResources); i++) {
-    printf("%d ", requiredResources[i]);
+void reportNewWork(Work cur_job) {
+  pthread_mutex_lock(&output_lock);
+  printf("Added ID:      %d Time: %d Resources: ", cur_job.id, cur_job.time);
+  for(int i = 0; i < cur_job.resource_count; i++) {
+    printf("%d ", cur_job.resources[i]);
   }
-  pthread_mutex_unlock(&printLock);
+  printf("\n");
+  pthread_mutex_unlock(&output_lock);
+}
+
+void reportWorkDone(Work cur_job, int exec_time) {
+   pthread_mutex_lock(&output_lock);
+  printf("Completed ID:  %d Time: %d Actual Time: %d Resources: ", cur_job.id, cur_job.time, exec_time);
+  for(int i = 0; i < cur_job.resource_count; i++) {
+    printf("%d ", cur_job.resources[i]);
+  }
+  printf("\n");
+  pthread_mutex_unlock(&output_lock);
 }
