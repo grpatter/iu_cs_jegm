@@ -1,0 +1,8 @@
+buf[0] main = 0x1fffb4 --- buf[0] in main
+buf[0] trgt = 0x1fffa8 --- target_procedure
+pc = 0x8224 --- program counter
+sp = 0x1fffa8 --- stack pointer
+
+never_called = 0x8208
+puts = 0x841c
+gets = 0x82fc

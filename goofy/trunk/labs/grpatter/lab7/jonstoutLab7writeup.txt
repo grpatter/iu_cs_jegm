@@ -1,0 +1,14 @@
+1.) The goal of this lab was to create a message decoder that took in multiple 1's and 0's and turned
+	them into a readable 8 bit instruction that can be used to decode signals from Gooofy's controller.
+
+2.) The idea is to look for a long line of 0's. This is the begining of each message. Once you have this long line
+	of 0's if you come across a 1 then your message has started. From there on you count your 1's and 0's untill
+	your next low to high transition occours. This is your first bit. You continue untill you have all 8 bits and
+	then you repeat the process to look for more instuctions.
+
+3.) There where to main issues. The first was actually finding out what to do. The lab was pretty vauge in 
+	making that point. The second issue, which has yet to be fixed, is that we get a 1 at the begining 
+	of every instruction prior to the first. Not sure where that problem is but I'm working on it.
+
+4.) As stated above, the decoded reads the first instruction but fails on providing the correct following
+	instructions.
