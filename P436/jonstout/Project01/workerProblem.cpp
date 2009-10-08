@@ -20,6 +20,7 @@ using namespace std;
 // Work struct
 typedef struct {
   int id;
+  int numberOfResources;
   int resources[1000];
   int time;
 } Work;
@@ -34,6 +35,8 @@ int workTime = WORK_TIME;
 int queueSize = QUEUE_SIZE;
 pthread_mutex_t printLock;
 int nextID = 0;
+pthread_mutex_t *resourceLock;
+
 
 // Queue
 queue<Work> work;
@@ -92,17 +95,19 @@ int main(int argc, char *argv[]) {
   printf("Queue Size     : %d\n", queueSize);
   printf("------------------------\n\n");
 
-  // Initialize Mutexs
-  pthread_mutex_init(&printLock, NULL);
-
   // Worker Threads
   pthread_t *workerThread;
   workerThread = new pthread_t[worker];
   // Delevery Thread
   pthread_t deleveryThread;
   // Resources
-  pthread_mutex_t *resourceLock;
   resourceLock = new pthread_mutex_t[resources];
+
+  // Initialize Mutexs
+  pthread_mutex_init(&printLock, NULL);
+  for (int i = 0; i < resources; i++) {
+    pthread_mutex_init(&resourceLock[i], NULL);
+  }
 
     // Do Work Thread
   for (int i = 0; i < worker; i++) {
@@ -123,7 +128,8 @@ void *executeWork(void *i) {
     }
     Work thisJob = work.front();
     work.pop();
-    //lockResources(thisJob);
+    //printf("Complete %d\n",thisJob.id);
+    lockResources(thisJob);
     //printCompleteWork();
     //unlockResources();
   } while (true);
@@ -131,6 +137,10 @@ void *executeWork(void *i) {
 
 void lockResources(Work thisJob) {
   // TODO
+  for (int i = 0; i < thisJob.numberOfResources; i++) {
+    printf("lock job %d\n", thisJob.resources[i]);
+    pthread_mutex_lock(&resourceLock[thisJob.resources[i]]);
+  }
 }
 
 void *addWork(void *i) {
@@ -145,6 +155,7 @@ void *addWork(void *i) {
     Work moreWork;
     moreWork.id = nextID++;
     moreWork.time = rand() % workTime;
+    moreWork.numberOfResources = numberOfResources;
     // Array newResources is given resource numbers
     for (int i = 0; i < numberOfResources; i++) {
       newResources[i] = rand() % resources;
