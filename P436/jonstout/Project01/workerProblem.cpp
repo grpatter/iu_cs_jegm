@@ -11,7 +11,7 @@
 #define STARTING_WORK 50
 #define WORK_ARRIVAL 5
 #define RESOURCES 20
-#define WORK_RESOURCES 20
+#define WORK_RESOURCES 6
 #define WORK_TIME 10
 #define QUEUE_SIZE 1000
 
@@ -39,9 +39,12 @@ int nextID = 0;
 queue<Work> work;
 
 // Function Declerations
-void printAddedWork(int requiredResources[], int uniqueID, int timeToFinish);
+void printAddedWork(int j, int requiredResources[], int uniqueID, int timeToFinish);
 void *addWork(void *i);
 bool unduplicate(int index, int x, int tempRec[]);
+void *executeWork(void *i);
+void lockResources(Work thisJob);
+void printCompletedWork(int j, int requiredResources[], int uniqueID, int timeToFinish, int ActualTime);
 
 int main(int argc, char *argv[]) {
 
@@ -101,30 +104,44 @@ int main(int argc, char *argv[]) {
   pthread_mutex_t *resourceLock;
   resourceLock = new pthread_mutex_t[resources];
 
-  // Do Work Thread
+    // Do Work Thread
+  for (int i = 0; i < worker; i++) {
+    pthread_create(&workerThread[i], NULL, executeWork, (void *)NULL);
+  }
+  // Do Delevery Thread
+  pthread_create(&deleveryThread, NULL, addWork, (void *)NULL);
+ 
+  // Never exit main();
   while(1){
-    // Do Delevery Thread
-    pthread_create(&deleveryThread, NULL, addWork, (void *)NULL);
   }
 }
 
-void *exicuteWork(void *tID) {
+void *executeWork(void *i) {
   do {
-    //lockResources();
-    //sleepForWork();
-    //print();
+    while (work.empty()){
+      sleep(1);
+    }
+    Work thisJob = work.front();
+    work.pop();
+    //lockResources(thisJob);
+    //printCompleteWork();
     //unlockResources();
   } while (true);
 }
 
+void lockResources(Work thisJob) {
+  // TODO
+}
+
 void *addWork(void *i) {
-    srand(time(NULL));
-
+  srand(time(NULL));
+  
   do {
-    int numberOfResources = rand() % workResources;
-    
-    int newResources[numberOfResources];
+    sleep( rand() % workArrival + 1);
 
+    int numberOfResources = rand() % workResources + 1;
+    int newResources[numberOfResources];
+    
     Work moreWork;
     moreWork.id = nextID++;
     moreWork.time = rand() % workTime;
@@ -147,7 +164,7 @@ void *addWork(void *i) {
       moreWork.resources[i] = newResources[i];
     }
     
-    printAddedWork(moreWork.resources, moreWork.id, moreWork.time);
+    printAddedWork(numberOfResources, moreWork.resources, moreWork.id, moreWork.time);
     work.push(moreWork);
   } while (true);
 }
@@ -162,12 +179,24 @@ bool unduplicate(int index, int x, int tempRec[]) {
   return result;
 }
 
-void printAddedWork(int requiredResources[], int uniqueID, int timeToFinish) {
+void printAddedWork(int j, int requiredResources[], int uniqueID, int timeToFinish) {
   pthread_mutex_lock(&printLock);
   printf("Added ID:      %d Time: %d Resources: ", uniqueID, timeToFinish);
-  for  (int i = 0; i < sizeof(requiredResources); i++) {
+  for  (int i = 0; i < j; i++) {
     printf("%d ", requiredResources[i]);
   }
+  printf("\n");
+  pthread_mutex_unlock(&printLock);
+}
+
+void printCompletedWork(int j, int requiredResources[], int uniqueID, int timeToFinish, int ActualTime) {
+   pthread_mutex_lock(&printLock);
+  printf("Completed ID:      %d Time: %d Resources: ", uniqueID, timeToFinish);
+  for  (int i = 0; i < j; i++) {
+    printf("%d ", requiredResources[i]);
+  }
+  // print ActualTime
+
   printf("\n");
   pthread_mutex_unlock(&printLock);
 }
