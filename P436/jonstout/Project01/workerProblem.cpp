@@ -179,12 +179,13 @@ bool unduplicate(int index, int x, int tempRec[]) {
   return result;
 }
 
-void printAddedWork(int requiredResources[], int uniqueID, int timeToFinish) {
+void printAddedWork(int j, int requiredResources[], int uniqueID, int timeToFinish) {
   pthread_mutex_lock(&printLock);
   printf("Added ID:      %d Time: %d Resources: ", uniqueID, timeToFinish);
-  for  (int i = 0; i < sizeof(requiredResources); i++) {
+  for  (int i = 0; i < j; i++) {
     printf("%d ", requiredResources[i]);
   }
+  printf("\n");
   pthread_mutex_unlock(&printLock);
 }
 
