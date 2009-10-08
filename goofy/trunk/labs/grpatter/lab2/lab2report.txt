@@ -1,0 +1,18 @@
+1)
+Goal:
+To learn about both the gdb and arm-elf debugging tools.
+Also, to write a simple word count program.
+
+2)
+Approach
+Follow the directions in the tutorials. 
+
+
+3)
+Problems
+The tutorials pointed us to files that did not exist and were not created.
+Also, the arm-elf has KNOWN issues, but yet we are still using it and not mentioning
+this issues prior to use.
+I couldn't make it to any of the office hours due to other classes and did not recieve helpful responses
+via email.
+

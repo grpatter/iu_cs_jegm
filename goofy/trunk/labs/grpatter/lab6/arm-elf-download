@@ -1,0 +1,81 @@
+#!/usr/bin/perl -w
+use Socket;
+
+print "\nGoofy Giggles Downloader\n";
+if (@ARGV != 1) {
+    print "\nUSAGE arm-elf-download hex_file\n";
+    exit;
+}
+$hexfile=shift;
+
+if (! -e $hexfile) {
+    printf("Error: hexfile -> $hexfile does not exist, quitting downloader\n");
+    exit(1);
+}
+
+
+$openocd_cfg="/var/tmp/openocd.$$";
+$commands="/var/tmp/commands.$$";
+
+open (OPENOCD_CFG,">$openocd_cfg") || die "could not open $openocd_cfg for writing\n";
+print OPENOCD_CFG "telnet_port 4444\n";
+print OPENOCD_CFG "gdb_port 3333\n";
+print OPENOCD_CFG "interface ftd2xx\n";
+print OPENOCD_CFG "ftd2xx_device_desc \"Goofy Giggles\"\n";
+print OPENOCD_CFG "ftd2xx_layout \"usbjtag\"\n";
+print OPENOCD_CFG "jtag_speed 3\n";
+print OPENOCD_CFG "reset_config trst_and_srst combined\n";
+print OPENOCD_CFG "jtag_device 4 0x1 0xf 0xe\n";
+print OPENOCD_CFG "target arm7tdmi little reset_run 0 arm7tdmi0-s_r4\n";
+print OPENOCD_CFG "daemon_startup reset\n";
+print OPENOCD_CFG "working_area 0 0x40000040 0x2000 nobackup\n";
+print OPENOCD_CFG "flash bank lpc2000 0x0 0x7D000 0 0 lpc2000_v2 0 14745 calc_checksum\n";
+close (OPENOCD_CFG);
+close (STDERR);
+print ">> Starting openocd server\n";
+$pid=open(OPENOCD,"/l/arm/gnuarm/bin/openocd -f $openocd_cfg |") || die "could not run openocd\n";
+sleep(1);
+
+open (COMMANDS,">$commands") || die "could not open $commands for writing\n";
+# print COMMANDS "soft_reset_halt\n";
+print COMMANDS "halt\n";
+print COMMANDS "wait_halt\n";
+print COMMANDS "flash probe 0\n";
+print COMMANDS "flash erase 0 0 26\n";
+print COMMANDS "flash write 0 $hexfile 0\n";
+print COMMANDS "reset\n";
+print COMMANDS "soft_reset_halt\n";
+print COMMANDS "resume 0\n";
+print COMMANDS "shutdown\n";
+close (COMMANDS);
+
+print ">> Opening socket to server\n";
+$iaddr = inet_aton("localhost") || die "no host: localhost";
+$paddr = sockaddr_in("4444",$iaddr) || die "port number resolution\n";
+$proto = getprotobyname("tcp");
+socket(S,PF_INET,SOCK_STREAM,$proto) || die "socket: $!";
+connect(S, $paddr)                   || die "connect: $!";
+select(S); $|=1; select("stdout");
+sleep 2;
+print ">> Sending commands to server\n";
+print S "script $commands\n";
+print ">> Erasing flash and programming hexfile\n";
+$done=0;
+while (!$done) {
+    $current_line=<S>;
+    if ($current_line=~/Debugger/) {
+    }
+    else {
+#        print "$current_line";
+    }
+    if ($current_line=~/resumed/) {
+        $done=1;
+    }
+}
+close (S);
+`kill $pid`;
+close (OPENOCD);
+print ">> Cleaning up temporary files\n";
+`rm -f $openocd_cfg`;
+`rm -f $commands`;
+print "Done\n";

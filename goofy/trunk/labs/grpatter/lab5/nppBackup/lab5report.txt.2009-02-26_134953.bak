@@ -1,0 +1,34 @@
+1)
+Goal:
+To learn how to modify existing code for usage on Goofy Giggles.
+To learn how to connect to Goofy Giggles platform.
+To learn how to compile (and use makefile) specifically for the ARM processor.
+To learn how to move code from terminal to ARM platform (Goofy)
+
+2)
+Approach
+Read through the lab write-up, then follow the directions given.
+
+
+3)
+Problems
+There were very few problems with this lab, other than the confusion about
+the best way to write a makefile. Once we got that working, things went smoothly
+until we tried to move the word count program to run on goofy. We recieved several
+errors, but after discussing with Eric (who met with you for office hours), we
+realized we hadn't done the gg_init call and weren't printing properly. We fixed
+the issue, but the trace is below for reference.
+
+Errors below:
+/l/arm/gnuarm//bin/arm-elf-gcc -g -Wall -DGOOFY -mcpu=arm7tdmi -O0 -nostdlib -nostartfiles -T/l/arm/gnuarm/arm-elf/lib/ldscripts/2138_rom_gdb.ld -lggbsp wordC.o -o wordC.elf
+/nfs/nfs2/home/data/hardware/arm/gnuarm-4.0.2/bin/../lib/gcc/arm-elf/4.0.2/../../../../arm-elf/lib/libnewlib-lpc.a(_close_r.o): In function `_close_r':
+_close_r.c:(.text+0x38): undefined reference to `device_table'
+/nfs/nfs2/home/data/hardware/arm/gnuarm-4.0.2/bin/../lib/gcc/arm-elf/4.0.2/../../../../arm-elf/lib/libnewlib-lpc.a(_read_r.o): In function `_read_r':
+_read_r.c:(.text+0xa0): undefined reference to `device_table'
+/nfs/nfs2/home/data/hardware/arm/gnuarm-4.0.2/bin/../lib/gcc/arm-elf/4.0.2/../../../../arm-elf/lib/libnewlib-lpc.a(_write_r.o): In function `_write_r':
+_write_r.c:(.text+0xe8): undefined reference to `device_table'
+/nfs/nfs2/home/data/hardware/arm/gnuarm-4.0.2/bin/../lib/gcc/arm-elf/4.0.2/../../../../arm-elf/lib/libnewlib-lpc.a(_ioctl_r.o): In function `_ioctl_r':
+_ioctl_r.c:(.text+0x48): undefined reference to `device_table'
+collect2: ld returned 1 exit status
+
+
