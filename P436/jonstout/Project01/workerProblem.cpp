@@ -6,6 +6,8 @@
 #include <string.h>
 #include <time.h>
 #include <queue>
+#include <vector>
+#include <algorithm>
 
 #define WORKER 10
 #define STARTING_WORK 50
@@ -47,7 +49,9 @@ void *addWork(void *i);
 bool unduplicate(int index, int x, int tempRec[]);
 void *executeWork(void *i);
 void lockResources(Work thisJob);
-void printCompletedWork(int j, int requiredResources[], int uniqueID, int timeToFinish, int ActualTime);
+void printCompletedWork(int j, int requiredResources[], int uniqueID, int timeToFinish, double ActualTime);
+void unlockResources(Work thisJob);
+void printAddedWork(int j, int requiredResources[], int uniqueID, int timeToFinish);
 
 int main(int argc, char *argv[]) {
 
@@ -109,7 +113,37 @@ int main(int argc, char *argv[]) {
     pthread_mutex_init(&resourceLock[i], NULL);
   }
 
-    // Do Work Thread
+  // Initialize Queue
+  for (int i = 0; i < startingWork; i++) {
+    int numberOfResources = rand() % workResources + 1;
+    int newResources[numberOfResources];
+    
+    Work moreWork;
+    moreWork.id = nextID++;
+    moreWork.time = rand() % workTime;
+    moreWork.numberOfResources = numberOfResources;
+    // Array newResources is given resource numbers
+    for (int i = 0; i < numberOfResources; i++) {
+      newResources[i] = rand() % resources;
+    }
+    
+    int i = 0;
+    while(i < numberOfResources) {
+      if (!unduplicate(i, newResources[i], newResources)){
+	i++;
+      }
+      else {
+	newResources[i] = rand() % resources;
+      }
+    }
+    
+    for (int i = 0; i < numberOfResources; i++) {
+      moreWork.resources[i] = newResources[i];
+    }
+    work.push(moreWork);
+  }
+
+  // Do Work Thread
   for (int i = 0; i < worker; i++) {
     pthread_create(&workerThread[i], NULL, executeWork, (void *)NULL);
   }
@@ -126,20 +160,34 @@ void *executeWork(void *i) {
     while (work.empty()){
       sleep(1);
     }
+    time_t start;
+    time(&start);
     Work thisJob = work.front();
     work.pop();
-    //printf("Complete %d\n",thisJob.id);
     lockResources(thisJob);
-    //printCompleteWork();
-    //unlockResources();
+    time_t end;
+    time(&end);
+    double dif = difftime(end, start);
+    printCompletedWork(thisJob.numberOfResources, thisJob.resources, thisJob.id, thisJob.time, dif);
+    unlockResources(thisJob);
   } while (true);
 }
 
 void lockResources(Work thisJob) {
-  // TODO
-  for (int i = 0; i < thisJob.numberOfResources; i++) {
-    printf("lock job %d\n", thisJob.resources[i]);
+  vector<int> myVect (thisJob.resources, thisJob.resources + thisJob.numberOfResources);
+  sort (myVect.begin(), myVect.end());
+  /*for (int i = 0; i < thisJob.numberOfResources; i++) {
     pthread_mutex_lock(&resourceLock[thisJob.resources[i]]);
+    }*/
+  for (int i = 0; i < thisJob.numberOfResources; i++) {
+    pthread_mutex_lock(&resourceLock[myVect[i]]);
+  }
+  sleep(thisJob.time);
+}
+
+void unlockResources(Work thisJob) {
+ for (int i = 0; i < thisJob.numberOfResources; i++) {
+    pthread_mutex_unlock(&resourceLock[thisJob.resources[i]]);
   }
 }
 
@@ -177,7 +225,7 @@ void *addWork(void *i) {
     
     printAddedWork(numberOfResources, moreWork.resources, moreWork.id, moreWork.time);
     work.push(moreWork);
-  } while (true);
+  } while (true && work.size() < queueSize);
 }
 
 bool unduplicate(int index, int x, int tempRec[]) {
@@ -200,14 +248,14 @@ void printAddedWork(int j, int requiredResources[], int uniqueID, int timeToFini
   pthread_mutex_unlock(&printLock);
 }
 
-void printCompletedWork(int j, int requiredResources[], int uniqueID, int timeToFinish, int ActualTime) {
+void printCompletedWork(int j, int requiredResources[], int uniqueID, int timeToFinish, double ActualTime) {
    pthread_mutex_lock(&printLock);
-  printf("Completed ID:      %d Time: %d Resources: ", uniqueID, timeToFinish);
+  printf("Completed ID:  %d Time: %d Resources: ", uniqueID, timeToFinish);
   for  (int i = 0; i < j; i++) {
     printf("%d ", requiredResources[i]);
   }
   // print ActualTime
-
+  printf("Actual Time: %1.0f", ActualTime);
   printf("\n");
   pthread_mutex_unlock(&printLock);
 }
