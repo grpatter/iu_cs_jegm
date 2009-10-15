@@ -6,10 +6,10 @@
 #include <pthread.h>
 #include <time.h>
 
-#define PHILCOUNT 5
 #define THINKING 0
 #define HUNGRY 1
 #define EATING 2
+#define PHILCOUNT 5
 
 using namespace std;
 int state[PHILCOUNT];
@@ -20,14 +20,17 @@ int num_users;
 bool time_out = false;
 
 int main(int argc, char **argv);
-void pickChopsticks(int id);
-void dropChopsticks(int id);
-void eat(int id);
-void think(int id);
-void *doWork(void *tID);
-void ouputInfo(char *str1, int i, char *str2);
+void pickChopsticks(int id);//to handle locking on picking up sticks
+void dropChopsticks(int id);//to handle unlockig on dropping sticks
+void eat(int id);//to perform 'eat' action
+void think(int id);//to perform 'think' action
+void *doWork(void *tID);//main controller chain
+void ouputInfo(char *str1, int i, char *str2);//to handle ouput
 
 //threads default
+/********************************************//**
+ *  handles execution strategy.
+ ***********************************************/
 void *doWork(void *tID){
   int id = (int) tID;
   do {
@@ -38,6 +41,11 @@ void *doWork(void *tID){
   } while (!time_out);
 }
 
+/********************************************//**
+ *  Handles locking of mutexs and simulates picking up
+ *  the chopsticks. Does this in and Odd-Even fashion
+ *  to ensure deadlock and starvation prevention.
+ ***********************************************/
 void pickChopsticks(int id){
   if(id%2 == 0){
     pthread_mutex_lock(&chopsticks[id]);
@@ -48,6 +56,11 @@ void pickChopsticks(int id){
   }
 }
 
+/********************************************//**
+ *  Handles unlocking of mutexs and simulates dropping
+ *  them back on the table. Does this in and Odd-Even fashion
+ *  to ensure deadlock and starvation prevention.
+ ***********************************************/
 void dropChopsticks(int id){
   if(id%2 == 0){
     pthread_mutex_unlock(&chopsticks[id]);
@@ -58,30 +71,47 @@ void dropChopsticks(int id){
   }
 }
 
+/********************************************//**
+ *  Simulates a think action by setting state,
+ *  adjusting counts, and pausing the thread for 
+ *  a random amount of time.
+ ***********************************************/
 void think(int id){
-  state[id] = THINKING;
-  state_counts[id][1]++;
   ouputInfo("Philosopher ", id, ": \tTHINKING!");
-  srand( time(NULL) );
+  state_counts[id][1]++;
+  state[id] = THINKING;
+  srand(time(NULL));
   int r_num = rand() % 5000 + 1;
-  usleep( (useconds_t)r_num);
+  usleep((useconds_t)r_num);
 }
 
+/********************************************//**
+ *  Simulates a eat action by setting state,
+ *  adjusting counts, and pausing the thread for 
+ *  a random amount of time.
+ ***********************************************/
 void eat(int id){
-  state[id] = EATING;
-  state_counts[id][0]++;
   ouputInfo("Philosopher ", id, ": EATING!");
-  srand( time(NULL) );
+  state_counts[id][0]++;
+  state[id] = EATING;
+  srand(time(NULL));
   int r_num = rand() % 5000 + 1;
-  usleep( (useconds_t)r_num);
+  usleep((useconds_t)r_num);
 }
 
+/********************************************//**
+ *  Outputs information to the user.
+ ***********************************************/
 void ouputInfo(char *str1, int i, char *str2){
   pthread_mutex_lock(&output_lock);
   printf("%s%d %s\n", str1, i, str2);
   pthread_mutex_unlock(&output_lock);
 }
 
+/********************************************//**
+ *  Handles organzation and setup of threads intially.
+ *  Sends them to appropriate kickoff.
+ ***********************************************/
 int main(int argc, char *argv[]) {
   pthread_t *threads;
   

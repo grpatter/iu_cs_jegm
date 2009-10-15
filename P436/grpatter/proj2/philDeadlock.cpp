@@ -6,10 +6,10 @@
 #include <pthread.h>
 #include <time.h>
 
-#define PHILCOUNT 5
 #define THINKING 0
 #define HUNGRY 1
 #define EATING 2
+#define PHILCOUNT 5
 
 using namespace std;
 int state[PHILCOUNT];
@@ -28,6 +28,9 @@ void *doWork(void *tID);
 void ouputInfo(char *str1, int i, char *str2);
 
 //threads default
+/********************************************//**
+ *  handles execution strategy.
+ ***********************************************/
 void *doWork(void *tID){
    int id = (int) tID;
    do {
@@ -39,44 +42,69 @@ void *doWork(void *tID){
 }
 
 //locks
+/********************************************//**
+ *  Handles locking of mutexs and simulates picking up
+ *  the chopsticks.
+ ***********************************************/
 void pickChopsticks(int id){
     pthread_mutex_lock(&chopsticks[id]);
     pthread_mutex_lock(&chopsticks[(id + 1) % num_users]);
 }
 
 //unlock mutexes
+/********************************************//**
+ *  Handles unlocking of mutexs and simulates dropping
+ *  them back on the table. 
+ ***********************************************/
 void dropChopsticks(int id){
   pthread_mutex_unlock(&chopsticks[id]);
   pthread_mutex_unlock(&chopsticks[(id + 1) % num_users]);
 }
 
 //adjust state, change count, get random sleep value
+/********************************************//**
+ *  Simulates a think action by setting state,
+ *  adjusting counts, and pausing the thread for 
+ *  a random amount of time.
+ ***********************************************/
 void think(int id){
-  state[id] = THINKING;
-  state_counts[id][1]++;
   ouputInfo("Philosopher ", id, ": \tTHINKING!");
-  srand( time(NULL) );
+  state_counts[id][1]++;
+  state[id] = THINKING;
+  srand(time(NULL));
   int r_num = rand() % 5000 + 1;
-  usleep( (useconds_t)r_num);
+  usleep((useconds_t)r_num);
 }
 
 //adjust state, change count, get random sleep value
+/********************************************//**
+ *  Simulates a eat action by setting state,
+ *  adjusting counts, and pausing the thread for 
+ *  a random amount of time.
+ ***********************************************/
 void eat(int id){
-  state[id] = EATING;
-  state_counts[id][0]++;
   ouputInfo("Philosopher ", id, ": EATING!");
-  srand( time(NULL) );
+  state_counts[id][0]++;
+  state[id] = EATING;
+  srand(time(NULL));
   int r_num = rand() % 5000 + 1;
-  usleep( (useconds_t)r_num);
+  usleep((useconds_t)r_num);
 }
 
 //make sure we lock this
+/********************************************//**
+ *  Outputs information to the user.
+ ***********************************************/
 void ouputInfo(char *str1, int i, char *str2){
   pthread_mutex_lock(&output_lock);
   printf("%s%d %s\n", str1, i, str2);
   pthread_mutex_unlock(&output_lock);
 }
 
+/********************************************//**
+ *  Handles organzation and setup of threads intially.
+ *  Sends them to appropriate kickoff.
+ ***********************************************/
 int main(int argc, char *argv[]) {
   pthread_t *threads;
 

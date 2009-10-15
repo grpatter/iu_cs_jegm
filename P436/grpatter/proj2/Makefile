@@ -1,5 +1,5 @@
 # Makefile
-# Greg Patterson (grpatter at indiana dot edu)
+# Greg Patterson (grpatter at indiana), Eric Spencer (erspence at indiana)
 # 09/21/2009
 .PHONY: clean all
 

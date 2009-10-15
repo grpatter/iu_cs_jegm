@@ -1,0 +1,163 @@
+\hypertarget{phil_no_deadlock_8cpp}{
+\section{C:/Users/Administrator/Desktop/IU\_\-CS\_\-jegm/P436/grpatter/proj2/philNoDeadlock.cpp File Reference}
+\label{phil_no_deadlock_8cpp}\index{C:/Users/Administrator/Desktop/IU\_\-CS\_\-jegm/P436/grpatter/proj2/philNoDeadlock.cpp@{C:/Users/Administrator/Desktop/IU\_\-CS\_\-jegm/P436/grpatter/proj2/philNoDeadlock.cpp}}
+}
+{\ttfamily \#include $<$iostream$>$}\par
+{\ttfamily \#include $<$stdio.h$>$}\par
+{\ttfamily \#include $<$stdlib.h$>$}\par
+{\ttfamily \#include $<$unistd.h$>$}\par
+{\ttfamily \#include $<$signal.h$>$}\par
+{\ttfamily \#include $<$pthread.h$>$}\par
+{\ttfamily \#include $<$time.h$>$}\par
+Include dependency graph for philNoDeadlock.cpp:\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{phil_no_deadlock_8cpp_ac00795c14d87e8d7ac80b1833cbdaf49}{THINKING}~0
+\item 
+\#define \hyperlink{phil_no_deadlock_8cpp_a7b98f8e1ebd9fad556acbf6e335883d9}{HUNGRY}~1
+\item 
+\#define \hyperlink{phil_no_deadlock_8cpp_a63fd25c9f152be96776db41710b90ebd}{EATING}~2
+\item 
+\#define \hyperlink{phil_no_deadlock_8cpp_aea8f514662e0543e0d0cad42b0754689}{PHILCOUNT}~5
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{phil_no_deadlock_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main} (int argc, char $\ast$$\ast$argv)
+\item 
+void \hyperlink{phil_no_deadlock_8cpp_a2152bc178902b1379f99dd18405dae37}{pickChopsticks} (int id)
+\item 
+void \hyperlink{phil_no_deadlock_8cpp_a4e7c2845304b2afd0c233228944513e0}{dropChopsticks} (int id)
+\item 
+void \hyperlink{phil_no_deadlock_8cpp_ace7cb1cb5779c043183051e234bb8bb0}{eat} (int id)
+\item 
+void \hyperlink{phil_no_deadlock_8cpp_ae005d6610a6082f1f77053d0c55b196a}{think} (int id)
+\item 
+void $\ast$ \hyperlink{phil_no_deadlock_8cpp_ae4f8b85c77363df911e0b457de7a6525}{doWork} (void $\ast$tID)
+\item 
+void \hyperlink{phil_no_deadlock_8cpp_a9d41299e9bf762ac1e8d0f7b599ede3b}{ouputInfo} (char $\ast$str1, int i, char $\ast$str2)
+\item 
+int \hyperlink{phil_no_deadlock_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{phil_no_deadlock_8cpp_acbc23ce76aa606b40cbaeffc5f938fca}{state} \mbox{[}PHILCOUNT\mbox{]}
+\item 
+int \hyperlink{phil_no_deadlock_8cpp_aa055bc6a74b5ed9261cd4583b7a43171}{state\_\-counts} \mbox{[}PHILCOUNT\mbox{]}\mbox{[}2\mbox{]}
+\item 
+pthread\_\-mutex\_\-t \hyperlink{phil_no_deadlock_8cpp_a5417111de8850eab27418e41a8aa0ea7}{chopsticks} \mbox{[}PHILCOUNT\mbox{]}
+\item 
+pthread\_\-mutex\_\-t \hyperlink{phil_no_deadlock_8cpp_a032311e99c7de33395a713a083f93152}{output\_\-lock}
+\item 
+int \hyperlink{phil_no_deadlock_8cpp_a443e412772221eceb9a426ff7fe9beca}{num\_\-users}
+\item 
+bool \hyperlink{phil_no_deadlock_8cpp_aec5dfb27af2d90fe51f96825332e9ea9}{time\_\-out} = false
+\end{DoxyCompactItemize}
+
+
+\subsection{Define Documentation}
+\hypertarget{phil_no_deadlock_8cpp_a63fd25c9f152be96776db41710b90ebd}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!EATING@{EATING}}
+\index{EATING@{EATING}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{EATING}]{\setlength{\rightskip}{0pt plus 5cm}\#define EATING~2}}
+\label{phil_no_deadlock_8cpp_a63fd25c9f152be96776db41710b90ebd}
+\hypertarget{phil_no_deadlock_8cpp_a7b98f8e1ebd9fad556acbf6e335883d9}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!HUNGRY@{HUNGRY}}
+\index{HUNGRY@{HUNGRY}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{HUNGRY}]{\setlength{\rightskip}{0pt plus 5cm}\#define HUNGRY~1}}
+\label{phil_no_deadlock_8cpp_a7b98f8e1ebd9fad556acbf6e335883d9}
+\hypertarget{phil_no_deadlock_8cpp_aea8f514662e0543e0d0cad42b0754689}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!PHILCOUNT@{PHILCOUNT}}
+\index{PHILCOUNT@{PHILCOUNT}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{PHILCOUNT}]{\setlength{\rightskip}{0pt plus 5cm}\#define PHILCOUNT~5}}
+\label{phil_no_deadlock_8cpp_aea8f514662e0543e0d0cad42b0754689}
+\hypertarget{phil_no_deadlock_8cpp_ac00795c14d87e8d7ac80b1833cbdaf49}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!THINKING@{THINKING}}
+\index{THINKING@{THINKING}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{THINKING}]{\setlength{\rightskip}{0pt plus 5cm}\#define THINKING~0}}
+\label{phil_no_deadlock_8cpp_ac00795c14d87e8d7ac80b1833cbdaf49}
+
+
+\subsection{Function Documentation}
+\hypertarget{phil_no_deadlock_8cpp_ae4f8b85c77363df911e0b457de7a6525}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!doWork@{doWork}}
+\index{doWork@{doWork}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{doWork}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ doWork (void $\ast$ {\em tID})}}
+\label{phil_no_deadlock_8cpp_ae4f8b85c77363df911e0b457de7a6525}
+handles execution strategy. 
+
+Here is the call graph for this function:\hypertarget{phil_no_deadlock_8cpp_a4e7c2845304b2afd0c233228944513e0}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!dropChopsticks@{dropChopsticks}}
+\index{dropChopsticks@{dropChopsticks}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{dropChopsticks}]{\setlength{\rightskip}{0pt plus 5cm}void dropChopsticks (int {\em id})}}
+\label{phil_no_deadlock_8cpp_a4e7c2845304b2afd0c233228944513e0}
+Handles unlocking of mutexs and simulates dropping them back on the table. Does this in and Odd-\/Even fashion to ensure deadlock and starvation prevention. \hypertarget{phil_no_deadlock_8cpp_ace7cb1cb5779c043183051e234bb8bb0}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!eat@{eat}}
+\index{eat@{eat}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{eat}]{\setlength{\rightskip}{0pt plus 5cm}void eat (int {\em id})}}
+\label{phil_no_deadlock_8cpp_ace7cb1cb5779c043183051e234bb8bb0}
+Simulates a eat action by setting state, adjusting counts, and pausing the thread for a random amount of time. 
+
+Here is the call graph for this function:\hypertarget{phil_no_deadlock_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!main@{main}}
+\index{main@{main}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (int {\em argc}, \/  char $\ast$ {\em argv}\mbox{[}$\,$\mbox{]})}}
+\label{phil_no_deadlock_8cpp_a0ddf1224851353fc92bfbff6f499fa97}
+Handles organzation and setup of threads intially. Sends them to appropriate kickoff. 
+
+Here is the call graph for this function:\hypertarget{phil_no_deadlock_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!main@{main}}
+\index{main@{main}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (int {\em argc}, \/  char $\ast$$\ast$ {\em argv})}}
+\label{phil_no_deadlock_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}
+\hypertarget{phil_no_deadlock_8cpp_a9d41299e9bf762ac1e8d0f7b599ede3b}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!ouputInfo@{ouputInfo}}
+\index{ouputInfo@{ouputInfo}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{ouputInfo}]{\setlength{\rightskip}{0pt plus 5cm}void ouputInfo (char $\ast$ {\em str1}, \/  int {\em i}, \/  char $\ast$ {\em str2})}}
+\label{phil_no_deadlock_8cpp_a9d41299e9bf762ac1e8d0f7b599ede3b}
+Outputs information to the user. \hypertarget{phil_no_deadlock_8cpp_a2152bc178902b1379f99dd18405dae37}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!pickChopsticks@{pickChopsticks}}
+\index{pickChopsticks@{pickChopsticks}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{pickChopsticks}]{\setlength{\rightskip}{0pt plus 5cm}void pickChopsticks (int {\em id})}}
+\label{phil_no_deadlock_8cpp_a2152bc178902b1379f99dd18405dae37}
+Handles locking of mutexs and simulates picking up the chopsticks. Does this in and Odd-\/Even fashion to ensure deadlock and starvation prevention. \hypertarget{phil_no_deadlock_8cpp_ae005d6610a6082f1f77053d0c55b196a}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!think@{think}}
+\index{think@{think}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{think}]{\setlength{\rightskip}{0pt plus 5cm}void think (int {\em id})}}
+\label{phil_no_deadlock_8cpp_ae005d6610a6082f1f77053d0c55b196a}
+Simulates a think action by setting state, adjusting counts, and pausing the thread for a random amount of time. 
+
+Here is the call graph for this function:
+
+\subsection{Variable Documentation}
+\hypertarget{phil_no_deadlock_8cpp_a5417111de8850eab27418e41a8aa0ea7}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!chopsticks@{chopsticks}}
+\index{chopsticks@{chopsticks}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{chopsticks}]{\setlength{\rightskip}{0pt plus 5cm}pthread\_\-mutex\_\-t {\bf chopsticks}\mbox{[}PHILCOUNT\mbox{]}}}
+\label{phil_no_deadlock_8cpp_a5417111de8850eab27418e41a8aa0ea7}
+\hypertarget{phil_no_deadlock_8cpp_a443e412772221eceb9a426ff7fe9beca}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!num\_\-users@{num\_\-users}}
+\index{num\_\-users@{num\_\-users}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{num\_\-users}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf num\_\-users}}}
+\label{phil_no_deadlock_8cpp_a443e412772221eceb9a426ff7fe9beca}
+\hypertarget{phil_no_deadlock_8cpp_a032311e99c7de33395a713a083f93152}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!output\_\-lock@{output\_\-lock}}
+\index{output\_\-lock@{output\_\-lock}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{output\_\-lock}]{\setlength{\rightskip}{0pt plus 5cm}pthread\_\-mutex\_\-t {\bf output\_\-lock}}}
+\label{phil_no_deadlock_8cpp_a032311e99c7de33395a713a083f93152}
+\hypertarget{phil_no_deadlock_8cpp_acbc23ce76aa606b40cbaeffc5f938fca}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!state@{state}}
+\index{state@{state}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{state}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf state}\mbox{[}PHILCOUNT\mbox{]}}}
+\label{phil_no_deadlock_8cpp_acbc23ce76aa606b40cbaeffc5f938fca}
+\hypertarget{phil_no_deadlock_8cpp_aa055bc6a74b5ed9261cd4583b7a43171}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!state\_\-counts@{state\_\-counts}}
+\index{state\_\-counts@{state\_\-counts}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{state\_\-counts}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf state\_\-counts}\mbox{[}PHILCOUNT\mbox{]}\mbox{[}2\mbox{]}}}
+\label{phil_no_deadlock_8cpp_aa055bc6a74b5ed9261cd4583b7a43171}
+\hypertarget{phil_no_deadlock_8cpp_aec5dfb27af2d90fe51f96825332e9ea9}{
+\index{philNoDeadlock.cpp@{philNoDeadlock.cpp}!time\_\-out@{time\_\-out}}
+\index{time\_\-out@{time\_\-out}!philNoDeadlock.cpp@{philNoDeadlock.cpp}}
+\subsubsection[{time\_\-out}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf time\_\-out} = false}}
+\label{phil_no_deadlock_8cpp_aec5dfb27af2d90fe51f96825332e9ea9}
