@@ -1,0 +1,26 @@
+1)
+Goal:
+Become familiar with motor hardware on Goofy
+Become familiar with the sound processor on Goofy
+Begin to understand analog<->digital sound
+
+2)
+Approach
+Read through the lab write-up, then follow the directions given.
+We wrote the motor based part of the lab first, and tested it until
+we understood how the different bits interact. We then updated our makefile
+and moved on to the sound part of the lab. 
+
+3)
+Problems
+The lab was fairly straightforward, though the bits for each motor were a bit
+confusing as to how they interacted at first. After some testing, it made sense however.
+The sound processing is still a bit unclear, but at least we got some exposure to it
+and began to understand it. What exactly is the wav-processor doing and how does it generate
+the results it does?
+
+We were able to get both parts of the lab functioning, correctly, at least as far as we
+could tell. It was cool to actually make goofy do something, and to begin to understand
+the system as a whole, or at least the possibilities of integration that are present.
+
+
