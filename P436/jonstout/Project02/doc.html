@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>p436 - Project02</title>
+</head>
+
+<body>
+<H1>Author</H1>
+<p>Jonathan M. Stout and Munir Khabibullaev | 10/06/09</p>
+
+<H1>Summary</H1>
+<h3>Philosopher Problem</h3>
+<p>The dining philosophers problem is summarized as five philosophers sitting at a table doing one 
+of two things: eating or thinking. While eating, they are not thinking, and while thinking, they are 
+not eating. The five philosophers sit at a circular table with a large bowl of rice in the center. 
+Chopsticks are placed in between each pair of adjacent philosophers, and as such, each philosopher
+ has one Chopstick to his left and one fork to his right. As Rice is difficult to serve and eat with
+ a Chopstick, it is assumed that a philosopher must eat with two Chopsticks. Each philosopher can 
+only use the Chopsticks on his immediate left and immediate right.</p>
+<h3>Worker Problem</h3>
+<p>In this problem, there is a pool of work to be done, and we have a pool of threads to use to
+do it. The pool of work should be drawn from using a rst in rst out policy (it is a queue).
+Furthermore, the workers require exclusive access to shared resources to complete the tasks -
+the resources that are needed are task dependent. Each task takes a certian amount of time,
+at which point the worker can proceed to a new task. New work enters the queue at random
+intervals. If the queue is empty, workers should wait brie
+y, then check for more work.</p>
+
+<H1>How to Build</H1>
+<ul>
+<li><b>Philosopher:</b> make philosopher</li>
+<li><b>Dead Philosopher:</b> make deadPhilosopher</li>
+<li><b>Worker Problem:</b> make workerProblem</li>
+</ul>
+
+<H1>Software Usage</H1>
+<ul>
+<li><b>Philosopher:</b> <ul>1. To run philosopher type "./philosopher"</ul> <ul>2. Args: &lt;seconds to run&gt;, &lt;number of philosophers&gt;(optional)</ul></li>
+<li><b>Dead Philosopher:</b> <ul>1. To run deadPhilosopher type "./deadPhilosopher"</ul> <ul>2. Args: &lt;seconds to run&gt;, &lt;number of philosophers&gt;(optional)</ul></li>
+<li><b>Worker Problem:</b> <ul>1. To run philosopher type "./philosopher"</ul> <ul>2. Args: &lt;number of workers&gt;(optional), &lt;initial amount of work&gt;(optional) &lt;time till new work&gt;(optional), &lt;number of resources&gt;(optional) &lt;max number of resources per job&gt;(optional), &lt;maximum amount of time a task should take&gt;(optional) &lt;maximum size of work queue&gt;(optional)</ul></li>
+</ul>
+
+<H1>Know Bugs/Issues</H1>
+<ul><h3>Issues</h3>
+<li> Variable Print Outs at the beginning of each philosopher program is hard to see. In order to see them you must exit the program before more lines are printed than are allowed by your shell.</li>
+</ul>
+
+<H1>Question Answers</H1>
+<ul>
+<li>If the philosophers are in deadlock, they will continue to be in the "THINKING" state forever.</li>
+<li>If one or more philosophers are starving, we will see some stuck in the "THINKING" state while others remain in the "EATING" state.</li>
+<li>If the program is run for an extended period deadlock always occoured in my dead lock implementation of the philsopher problem.</li>
+<li>The philosophers all ate for the same amount of time for my dead lock free implementation of the philosopher problem.</li>
+</ul>
+
+</body>
+</html>
