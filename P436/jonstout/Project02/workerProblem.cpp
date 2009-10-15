@@ -176,9 +176,6 @@ void *executeWork(void *i) {
 void lockResources(Work thisJob) {
   vector<int> myVect (thisJob.resources, thisJob.resources + thisJob.numberOfResources);
   sort (myVect.begin(), myVect.end());
-  /*for (int i = 0; i < thisJob.numberOfResources; i++) {
-    pthread_mutex_lock(&resourceLock[thisJob.resources[i]]);
-    }*/
   for (int i = 0; i < thisJob.numberOfResources; i++) {
     pthread_mutex_lock(&resourceLock[myVect[i]]);
   }
