@@ -1,0 +1,82 @@
+Script started on Wed 09 Sep 2009 08:16:08 PM EDT
+[grpatter@silo asst0]$ svn diff main.c
+Index: main.c
+===================================================================
+--- main.c	(revision 5)
++++ main.c	(working copy)
+@@ -1,3 +1,5 @@
++//Greg Patterson
++//grpatter
+ #include "main.h"
+ 
+ int main()
+[grpatter@silo asst0]$ svn commit -m "added name comment"
+Sending        asst0/main.c
+Transmitting file data .
+Committed revision 8.
+[grpatter@silo asst0]$ svn revert main.c
+[grpatter@silo asst0]$ gcc main.c [K
+[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00msvninit.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvn-use.script[00m
+[m[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00msvninit.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvn-use.script[00m
+[m[grpatter@silo asst0]$ svn commit -m "added name and email"
+Sending        asst0/main.c
+Transmitting file data .
+Committed revision 9.
+[grpatter@silo asst0]$ svn ad[K[K[K[K[K[Kls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00mshell.txt[00m       [00msvn-use.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[m[grpatter@silo asst0]$ svn add shell.txt
+A         shell.txt
+[grpatter@silo asst0]$ svn commit -m "sa[K[Kadding shell.txt"
+Adding         asst0/shell.txt
+Transmitting file data .
+Committed revision 10.
+[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00mshell.txt[00m       [00msvn-use.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[m[grpatter@silo asst0]$ gcc main.c
+[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00mshell.txt[00m       [00msvn-use.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[m[grpatter@silo asst0]$ ./ao[K.out
+Hello world
+[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00mshell.txt[00m       [00msvn-use.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[m[grpatter@silo asst0]$ svn copy https://v[Ksvn.osl.iu.edu/rep/p536_grpatter/p436/tr unk https://svn.osl.iu.edu/rep/p536_grpatter/p436/a[Ktags/asst0-end -m "Assignment  0 done"
+
+Committed revision 11.
+[grpatter@silo asst0]$ svn export https://svn.osl.iu.edu/rep/p536_grpatter/p436/ asst0-end . --force
+Export complete.
+[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m  [00mmain.h[00m       [00mshell.txt[00m       [00msvn-use.script[00m
+[00mconstants.h[00m  [00mmain.c[00m      [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[m[grpatter@silo asst0]$ tar cf - src | gzip -c > grpatter-asst0.tar.gz
+tar: src: Cannot stat: No such file or directory
+tar: Error exit delayed from previous errors
+[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m             [00mmain.c[00m  [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[00mconstants.h[00m  [01;31mgrpatter-asst0.tar.gz[00m  [00mmain.h[00m  [00mshell.txt[00m    [00msvn-use.script[00m
+[m[grpatter@silo asst0]$ ls
+[00m[01;32ma.out[00m        [00mgdb.script[00m             [00mmain.c[00m  [01;31mp436.tar.gz[00m  [00msvninit.script[00m
+[00mconstants.h[00m  [01;31mgrpatter-asst0.tar.gz[00m  [00mmain.h[00m  [00mshell.txt[00m    [00msvn-use.script[00m
+[m[grpatter@silo asst0]$ ls -l
+[00mtotal 80
+-rwx------ 1 grpatter students 5565 Sep  9 20:29 [01;32ma.out[00m
+-rw-r--r-- 1 grpatter students   16 Sep  4 00:57 [00mconstants.h[00m
+-rw------- 1 grpatter students 1268 Sep  9 20:13 [00mgdb.script[00m
+-rw------- 1 grpatter students   45 Sep  9 20:31 [01;31mgrpatter-asst0.tar.gz[00m
+-rw-r--r-- 1 grpatter students 1419 Sep  9 20:28 [00mmain.c[00m
+-rw-r--r-- 1 grpatter students  211 Sep  4 00:57 [00mmain.h[00m
+-rw-r--r-- 1 grpatter students    0 Sep  4 01:15 [01;31mp436.tar.gz[00m
+-rw-r--r-- 1 grpatter students  550 Sep  9 20:24 [00mshell.txt[00m
+-rw-r--r-- 1 grpatter students 4472 Sep  9 20:07 [00msvninit.script[00m
+-rw------- 1 grpatter students    0 Sep  9 20:16 [00msvn-use.script[00m
+[m[grpatter@silo asst0]$ exit
+exit
+
+Script done on Wed 09 Sep 2009 08:32:04 PM EDT

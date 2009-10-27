@@ -1,0 +1,10 @@
+CC = gcc
+CFLAGS = -g -O
+all : wc test
+test : test.c print.o
+	$(CC) $(CFLAGS) -o test test.c print.o
+wc : wc.c print.o
+	$(CC) $(CFLAGS) -o wc wc.c print.o
+print.o : print.c
+	$(CC) $(CFLAGS) -c print.c
+To build your programs type make -f

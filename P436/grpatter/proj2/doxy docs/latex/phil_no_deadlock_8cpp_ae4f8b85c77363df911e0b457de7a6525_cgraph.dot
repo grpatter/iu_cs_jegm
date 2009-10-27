@@ -1,0 +1,18 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir=LR;
+  Node1 [label="doWork",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid"];
+  Node2 [label="dropChopsticks",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$phil_deadlock_8cpp.html#a4e7c2845304b2afd0c233228944513e0"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid"];
+  Node3 [label="eat",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$phil_deadlock_8cpp.html#ace7cb1cb5779c043183051e234bb8bb0"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid"];
+  Node4 [label="ouputInfo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$phil_deadlock_8cpp.html#a9d41299e9bf762ac1e8d0f7b599ede3b"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid"];
+  Node5 [label="pickChopsticks",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$phil_deadlock_8cpp.html#a2152bc178902b1379f99dd18405dae37"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid"];
+  Node6 [label="think",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$phil_deadlock_8cpp.html#ae005d6610a6082f1f77053d0c55b196a"];
+  Node6 -> Node4 [color="midnightblue",fontsize="10",style="solid"];
+}

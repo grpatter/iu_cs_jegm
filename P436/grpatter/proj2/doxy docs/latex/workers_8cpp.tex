@@ -1,0 +1,252 @@
+\hypertarget{workers_8cpp}{
+\section{C:/Users/Administrator/Desktop/IU\_\-CS\_\-jegm/P436/grpatter/proj2/workers.cpp File Reference}
+\label{workers_8cpp}\index{C:/Users/Administrator/Desktop/IU\_\-CS\_\-jegm/P436/grpatter/proj2/workers.cpp@{C:/Users/Administrator/Desktop/IU\_\-CS\_\-jegm/P436/grpatter/proj2/workers.cpp}}
+}
+{\ttfamily \#include $<$stdio.h$>$}\par
+{\ttfamily \#include $<$stdlib.h$>$}\par
+{\ttfamily \#include $<$pthread.h$>$}\par
+{\ttfamily \#include $<$unistd.h$>$}\par
+{\ttfamily \#include $<$signal.h$>$}\par
+{\ttfamily \#include $<$string.h$>$}\par
+{\ttfamily \#include $<$vector$>$}\par
+{\ttfamily \#include $<$algorithm$>$}\par
+{\ttfamily \#include $<$queue$>$}\par
+{\ttfamily \#include $<$time.h$>$}\par
+Include dependency graph for workers.cpp:\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{struct_work}{Work}
+\end{DoxyCompactItemize}
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{workers_8cpp_a61fc173cd03db618eb2f64b60f42b55b}{WORKER}~10
+\item 
+\#define \hyperlink{workers_8cpp_a0694133c9941d8173576df5318cde179}{STARTING\_\-WORK}~50
+\item 
+\#define \hyperlink{workers_8cpp_a4a5447957b9c7eae05f8a32034f7aa83}{WORK\_\-ARRIVAL}~5
+\item 
+\#define \hyperlink{workers_8cpp_a5ca61a2d015fe404a446435a3d1efee0}{RESOURCES}~20
+\item 
+\#define \hyperlink{workers_8cpp_a376befea4795868713868a2ad193ee6c}{WORK\_\-RESOURCES}~6
+\item 
+\#define \hyperlink{workers_8cpp_ae4667a4416e75e57b8545cb6c9f883f2}{WORK\_\-TIME}~10
+\item 
+\#define \hyperlink{workers_8cpp_a142810068f1b99cd93d3fc9f0e160e02}{QUEUE\_\-SIZE}~1000
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{workers_8cpp_a91874cf49bdb9f4fa048099c3f4c4274}{initThreads} ()
+\item 
+void $\ast$ \hyperlink{workers_8cpp_a9272184ade8e8f09ae3d7634f00e360a}{executeWork} (void $\ast$id)
+\item 
+void $\ast$ \hyperlink{workers_8cpp_a6f4556c2f8c3128be26f126dd60a6e67}{createWork} (void $\ast$id)
+\item 
+bool \hyperlink{workers_8cpp_a799cb789c61c2b659aab35a33e74dd09}{hasDupeResource} (int index, int x, int rec\mbox{[}$\,$\mbox{]})
+\item 
+void \hyperlink{workers_8cpp_a692e70cf3aa802e87212bd425ebedaec}{lockResources} (\hyperlink{struct_work}{Work} cur\_\-job, int num)
+\item 
+void \hyperlink{workers_8cpp_a9bab6267b23d0c94669684554a0a9282}{unlockResources} (\hyperlink{struct_work}{Work} cur\_\-job, int num)
+\item 
+void \hyperlink{workers_8cpp_ac3a7fa3f4f7d6b34c74191db615ca77b}{reportHandler} (\hyperlink{struct_work}{Work} cur\_\-job, int exec\_\-time)
+\item 
+vector$<$ int $>$ \hyperlink{workers_8cpp_ae9adbf2615d2c47550a8652d0f0650ec}{createSortVec} (\hyperlink{struct_work}{Work} cur\_\-job)
+\item 
+int \hyperlink{workers_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{workers_8cpp_aba8c110b2d8ea2d6093e5698c66aa289}{worker} = WORKER
+\item 
+int \hyperlink{workers_8cpp_af6bb178306a28617fc04ac823426c8f9}{work\_\-t\_\-max} = WORK\_\-TIME
+\item 
+int \hyperlink{workers_8cpp_a3297084f5d2564dea4bf5853f271e517}{start\_\-work} = STARTING\_\-WORK
+\item 
+int \hyperlink{workers_8cpp_ae41d494683ef4c38d0f92b35500f3eb2}{q\_\-size} = QUEUE\_\-SIZE
+\item 
+int \hyperlink{workers_8cpp_ab9e9f832e19219970c3bfad3d773e2e9}{work\_\-arr\_\-t} = WORK\_\-ARRIVAL
+\item 
+int \hyperlink{workers_8cpp_a3f603aa290f9f218ef12bac3477e24c1}{resources} = RESOURCES
+\item 
+int \hyperlink{workers_8cpp_ad82e9de122344249568fea92b5640404}{req\_\-workres} = WORK\_\-RESOURCES
+\item 
+pthread\_\-mutex\_\-t \hyperlink{workers_8cpp_a032311e99c7de33395a713a083f93152}{output\_\-lock}
+\item 
+pthread\_\-mutex\_\-t $\ast$ \hyperlink{workers_8cpp_a040cac7d7e28c8278bd194fa9d30ef58}{resource\_\-locks}
+\item 
+int \hyperlink{workers_8cpp_a36406d6e2012fe592d2fa0ee21ad9297}{cur\_\-ind} = 0
+\item 
+queue$<$ \hyperlink{struct_work}{Work} $>$ \hyperlink{workers_8cpp_a4d74680f9ce59025c2c18c620c483234}{work}
+\end{DoxyCompactItemize}
+
+
+\subsection{Define Documentation}
+\hypertarget{workers_8cpp_a142810068f1b99cd93d3fc9f0e160e02}{
+\index{workers.cpp@{workers.cpp}!QUEUE\_\-SIZE@{QUEUE\_\-SIZE}}
+\index{QUEUE\_\-SIZE@{QUEUE\_\-SIZE}!workers.cpp@{workers.cpp}}
+\subsubsection[{QUEUE\_\-SIZE}]{\setlength{\rightskip}{0pt plus 5cm}\#define QUEUE\_\-SIZE~1000}}
+\label{workers_8cpp_a142810068f1b99cd93d3fc9f0e160e02}
+\hypertarget{workers_8cpp_a5ca61a2d015fe404a446435a3d1efee0}{
+\index{workers.cpp@{workers.cpp}!RESOURCES@{RESOURCES}}
+\index{RESOURCES@{RESOURCES}!workers.cpp@{workers.cpp}}
+\subsubsection[{RESOURCES}]{\setlength{\rightskip}{0pt plus 5cm}\#define RESOURCES~20}}
+\label{workers_8cpp_a5ca61a2d015fe404a446435a3d1efee0}
+\hypertarget{workers_8cpp_a0694133c9941d8173576df5318cde179}{
+\index{workers.cpp@{workers.cpp}!STARTING\_\-WORK@{STARTING\_\-WORK}}
+\index{STARTING\_\-WORK@{STARTING\_\-WORK}!workers.cpp@{workers.cpp}}
+\subsubsection[{STARTING\_\-WORK}]{\setlength{\rightskip}{0pt plus 5cm}\#define STARTING\_\-WORK~50}}
+\label{workers_8cpp_a0694133c9941d8173576df5318cde179}
+\hypertarget{workers_8cpp_a4a5447957b9c7eae05f8a32034f7aa83}{
+\index{workers.cpp@{workers.cpp}!WORK\_\-ARRIVAL@{WORK\_\-ARRIVAL}}
+\index{WORK\_\-ARRIVAL@{WORK\_\-ARRIVAL}!workers.cpp@{workers.cpp}}
+\subsubsection[{WORK\_\-ARRIVAL}]{\setlength{\rightskip}{0pt plus 5cm}\#define WORK\_\-ARRIVAL~5}}
+\label{workers_8cpp_a4a5447957b9c7eae05f8a32034f7aa83}
+\hypertarget{workers_8cpp_a376befea4795868713868a2ad193ee6c}{
+\index{workers.cpp@{workers.cpp}!WORK\_\-RESOURCES@{WORK\_\-RESOURCES}}
+\index{WORK\_\-RESOURCES@{WORK\_\-RESOURCES}!workers.cpp@{workers.cpp}}
+\subsubsection[{WORK\_\-RESOURCES}]{\setlength{\rightskip}{0pt plus 5cm}\#define WORK\_\-RESOURCES~6}}
+\label{workers_8cpp_a376befea4795868713868a2ad193ee6c}
+\hypertarget{workers_8cpp_ae4667a4416e75e57b8545cb6c9f883f2}{
+\index{workers.cpp@{workers.cpp}!WORK\_\-TIME@{WORK\_\-TIME}}
+\index{WORK\_\-TIME@{WORK\_\-TIME}!workers.cpp@{workers.cpp}}
+\subsubsection[{WORK\_\-TIME}]{\setlength{\rightskip}{0pt plus 5cm}\#define WORK\_\-TIME~10}}
+\label{workers_8cpp_ae4667a4416e75e57b8545cb6c9f883f2}
+\hypertarget{workers_8cpp_a61fc173cd03db618eb2f64b60f42b55b}{
+\index{workers.cpp@{workers.cpp}!WORKER@{WORKER}}
+\index{WORKER@{WORKER}!workers.cpp@{workers.cpp}}
+\subsubsection[{WORKER}]{\setlength{\rightskip}{0pt plus 5cm}\#define WORKER~10}}
+\label{workers_8cpp_a61fc173cd03db618eb2f64b60f42b55b}
+
+
+\subsection{Function Documentation}
+\hypertarget{workers_8cpp_ae9adbf2615d2c47550a8652d0f0650ec}{
+\index{workers.cpp@{workers.cpp}!createSortVec@{createSortVec}}
+\index{createSortVec@{createSortVec}!workers.cpp@{workers.cpp}}
+\subsubsection[{createSortVec}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$ int $>$ createSortVec ({\bf Work} {\em cur\_\-job})}}
+\label{workers_8cpp_ae9adbf2615d2c47550a8652d0f0650ec}
+Takes a (\hyperlink{struct_work}{Work})job and puts it's requested resources into a vector which is then sorted using the default library call. This sorted vector is then returned to the caller. 
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a6f4556c2f8c3128be26f126dd60a6e67}{
+\index{workers.cpp@{workers.cpp}!createWork@{createWork}}
+\index{createWork@{createWork}!workers.cpp@{workers.cpp}}
+\subsubsection[{createWork}]{\setlength{\rightskip}{0pt plus 5cm}void $\ast$ createWork (void $\ast$ {\em i})}}
+\label{workers_8cpp_a6f4556c2f8c3128be26f126dd60a6e67}
+Deals with creating (and adding) more work for the queue. Deals with some initial build peculiarities, and ensures resource \# need generation is randomized (and not duplicated). 
+
+Here is the call graph for this function:
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a9272184ade8e8f09ae3d7634f00e360a}{
+\index{workers.cpp@{workers.cpp}!executeWork@{executeWork}}
+\index{executeWork@{executeWork}!workers.cpp@{workers.cpp}}
+\subsubsection[{executeWork}]{\setlength{\rightskip}{0pt plus 5cm}void $\ast$ executeWork (void $\ast$ {\em id})}}
+\label{workers_8cpp_a9272184ade8e8f09ae3d7634f00e360a}
+Deals with 'job' execution. Attempts to pull a piece of work off of the queue, locks the necessary resources and complete the job. Then unlocks the resources and tries to find more work. If none is available, the thread will pause before checking again. 
+
+Here is the call graph for this function:
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a799cb789c61c2b659aab35a33e74dd09}{
+\index{workers.cpp@{workers.cpp}!hasDupeResource@{hasDupeResource}}
+\index{hasDupeResource@{hasDupeResource}!workers.cpp@{workers.cpp}}
+\subsubsection[{hasDupeResource}]{\setlength{\rightskip}{0pt plus 5cm}bool hasDupeResource (int {\em index}, \/  int {\em x}, \/  int {\em rec}\mbox{[}$\,$\mbox{]})}}
+\label{workers_8cpp_a799cb789c61c2b659aab35a33e74dd09}
+Takes two values and an array, loops through the array, and ensures value x is not at more than 1 location in the array. 
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a91874cf49bdb9f4fa048099c3f4c4274}{
+\index{workers.cpp@{workers.cpp}!initThreads@{initThreads}}
+\index{initThreads@{initThreads}!workers.cpp@{workers.cpp}}
+\subsubsection[{initThreads}]{\setlength{\rightskip}{0pt plus 5cm}void initThreads ()}}
+\label{workers_8cpp_a91874cf49bdb9f4fa048099c3f4c4274}
+Starts up all threads and their respective mutexes. Uses pthread\_\-t, pthread\_\-mutex, and pthread\_\-create to do so. Kicks the threads into the appropriate functions. 
+
+Here is the call graph for this function:
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a692e70cf3aa802e87212bd425ebedaec}{
+\index{workers.cpp@{workers.cpp}!lockResources@{lockResources}}
+\index{lockResources@{lockResources}!workers.cpp@{workers.cpp}}
+\subsubsection[{lockResources}]{\setlength{\rightskip}{0pt plus 5cm}void lockResources ({\bf Work} {\em cur\_\-job}, \/  int {\em num})}}
+\label{workers_8cpp_a692e70cf3aa802e87212bd425ebedaec}
+Deals with actually locking the resources a thread needs. Takes a job struct and a number (representing total resources needed) and attempts to lock them. If successful, it sleeps for the requested time and then moves to the next resource. 
+
+Here is the call graph for this function:
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{
+\index{workers.cpp@{workers.cpp}!main@{main}}
+\index{main@{main}!workers.cpp@{workers.cpp}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (int {\em argc}, \/  char $\ast$ {\em argv}\mbox{[}$\,$\mbox{]})}}
+\label{workers_8cpp_a0ddf1224851353fc92bfbff6f499fa97}
+Deadl with CL arguments. If one is not provided, it is defaulted. Then prints a summary of settings and starts the threads for further processing. 
+
+Here is the call graph for this function:\hypertarget{workers_8cpp_ac3a7fa3f4f7d6b34c74191db615ca77b}{
+\index{workers.cpp@{workers.cpp}!reportHandler@{reportHandler}}
+\index{reportHandler@{reportHandler}!workers.cpp@{workers.cpp}}
+\subsubsection[{reportHandler}]{\setlength{\rightskip}{0pt plus 5cm}void reportHandler ({\bf Work} {\em cur\_\-job}, \/  int {\em exec\_\-time})}}
+\label{workers_8cpp_ac3a7fa3f4f7d6b34c74191db615ca77b}
+Deals with printlocking and reporting to output (STDOUT in most cases) newly added and completed jobs. 
+
+Here is the caller graph for this function:\hypertarget{workers_8cpp_a9bab6267b23d0c94669684554a0a9282}{
+\index{workers.cpp@{workers.cpp}!unlockResources@{unlockResources}}
+\index{unlockResources@{unlockResources}!workers.cpp@{workers.cpp}}
+\subsubsection[{unlockResources}]{\setlength{\rightskip}{0pt plus 5cm}void unlockResources ({\bf Work} {\em cur\_\-job}, \/  int {\em num})}}
+\label{workers_8cpp_a9bab6267b23d0c94669684554a0a9282}
+Deadls with unlocking the resources a thread has used. Takes a job struct and a number (representing total resources for job) and unlocks them so they can be used by other threads/jobs. 
+
+Here is the caller graph for this function:
+
+\subsection{Variable Documentation}
+\hypertarget{workers_8cpp_a36406d6e2012fe592d2fa0ee21ad9297}{
+\index{workers.cpp@{workers.cpp}!cur\_\-ind@{cur\_\-ind}}
+\index{cur\_\-ind@{cur\_\-ind}!workers.cpp@{workers.cpp}}
+\subsubsection[{cur\_\-ind}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf cur\_\-ind} = 0}}
+\label{workers_8cpp_a36406d6e2012fe592d2fa0ee21ad9297}
+\hypertarget{workers_8cpp_a032311e99c7de33395a713a083f93152}{
+\index{workers.cpp@{workers.cpp}!output\_\-lock@{output\_\-lock}}
+\index{output\_\-lock@{output\_\-lock}!workers.cpp@{workers.cpp}}
+\subsubsection[{output\_\-lock}]{\setlength{\rightskip}{0pt plus 5cm}pthread\_\-mutex\_\-t {\bf output\_\-lock}}}
+\label{workers_8cpp_a032311e99c7de33395a713a083f93152}
+\hypertarget{workers_8cpp_ae41d494683ef4c38d0f92b35500f3eb2}{
+\index{workers.cpp@{workers.cpp}!q\_\-size@{q\_\-size}}
+\index{q\_\-size@{q\_\-size}!workers.cpp@{workers.cpp}}
+\subsubsection[{q\_\-size}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf q\_\-size} = QUEUE\_\-SIZE}}
+\label{workers_8cpp_ae41d494683ef4c38d0f92b35500f3eb2}
+\hypertarget{workers_8cpp_ad82e9de122344249568fea92b5640404}{
+\index{workers.cpp@{workers.cpp}!req\_\-workres@{req\_\-workres}}
+\index{req\_\-workres@{req\_\-workres}!workers.cpp@{workers.cpp}}
+\subsubsection[{req\_\-workres}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf req\_\-workres} = WORK\_\-RESOURCES}}
+\label{workers_8cpp_ad82e9de122344249568fea92b5640404}
+\hypertarget{workers_8cpp_a040cac7d7e28c8278bd194fa9d30ef58}{
+\index{workers.cpp@{workers.cpp}!resource\_\-locks@{resource\_\-locks}}
+\index{resource\_\-locks@{resource\_\-locks}!workers.cpp@{workers.cpp}}
+\subsubsection[{resource\_\-locks}]{\setlength{\rightskip}{0pt plus 5cm}pthread\_\-mutex\_\-t$\ast$ {\bf resource\_\-locks}}}
+\label{workers_8cpp_a040cac7d7e28c8278bd194fa9d30ef58}
+\hypertarget{workers_8cpp_a3f603aa290f9f218ef12bac3477e24c1}{
+\index{workers.cpp@{workers.cpp}!resources@{resources}}
+\index{resources@{resources}!workers.cpp@{workers.cpp}}
+\subsubsection[{resources}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf resources} = RESOURCES}}
+\label{workers_8cpp_a3f603aa290f9f218ef12bac3477e24c1}
+\hypertarget{workers_8cpp_a3297084f5d2564dea4bf5853f271e517}{
+\index{workers.cpp@{workers.cpp}!start\_\-work@{start\_\-work}}
+\index{start\_\-work@{start\_\-work}!workers.cpp@{workers.cpp}}
+\subsubsection[{start\_\-work}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf start\_\-work} = STARTING\_\-WORK}}
+\label{workers_8cpp_a3297084f5d2564dea4bf5853f271e517}
+\hypertarget{workers_8cpp_a4d74680f9ce59025c2c18c620c483234}{
+\index{workers.cpp@{workers.cpp}!work@{work}}
+\index{work@{work}!workers.cpp@{workers.cpp}}
+\subsubsection[{work}]{\setlength{\rightskip}{0pt plus 5cm}queue$<${\bf Work}$>$ {\bf work}}}
+\label{workers_8cpp_a4d74680f9ce59025c2c18c620c483234}
+\hypertarget{workers_8cpp_ab9e9f832e19219970c3bfad3d773e2e9}{
+\index{workers.cpp@{workers.cpp}!work\_\-arr\_\-t@{work\_\-arr\_\-t}}
+\index{work\_\-arr\_\-t@{work\_\-arr\_\-t}!workers.cpp@{workers.cpp}}
+\subsubsection[{work\_\-arr\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf work\_\-arr\_\-t} = WORK\_\-ARRIVAL}}
+\label{workers_8cpp_ab9e9f832e19219970c3bfad3d773e2e9}
+\hypertarget{workers_8cpp_af6bb178306a28617fc04ac823426c8f9}{
+\index{workers.cpp@{workers.cpp}!work\_\-t\_\-max@{work\_\-t\_\-max}}
+\index{work\_\-t\_\-max@{work\_\-t\_\-max}!workers.cpp@{workers.cpp}}
+\subsubsection[{work\_\-t\_\-max}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf work\_\-t\_\-max} = WORK\_\-TIME}}
+\label{workers_8cpp_af6bb178306a28617fc04ac823426c8f9}
+\hypertarget{workers_8cpp_aba8c110b2d8ea2d6093e5698c66aa289}{
+\index{workers.cpp@{workers.cpp}!worker@{worker}}
+\index{worker@{worker}!workers.cpp@{workers.cpp}}
+\subsubsection[{worker}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf worker} = WORKER}}
+\label{workers_8cpp_aba8c110b2d8ea2d6093e5698c66aa289}
