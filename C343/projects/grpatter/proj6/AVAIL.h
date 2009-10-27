@@ -26,7 +26,7 @@ typedef struct{
   Pointer nextterm;
 } Stackdata;
 typedef struct {
-  bool tag;
+  bool tag;//0 tri, 1 stackdata
   union{
 	  Stackdata stackdata;
 	  Term term;
