@@ -14,29 +14,25 @@
 typedef int Pointer;
 
 //-------- The user should change the "Data" type as needed --------
-// Term Struct
 typedef struct {
+  int coeff;
   int X;
   int Y;
   int Z;
-  int coeff;
-  Pointer nextTerm;
+  Pointer nxTerm;
 } Term;
 
 typedef int StackData;
  
-// Our QueueData
 typedef union {
   Term term[100];
   StackData stackData;
-} QueueData;
+} joinData;
  
-
-// Data Struct for all Elements
 typedef struct {
   bool tag;
   int length;
-  QueueData queueData;
+  joinData jData;
   Pointer next;
 } Data;
 //-------- Do not change code below here --------

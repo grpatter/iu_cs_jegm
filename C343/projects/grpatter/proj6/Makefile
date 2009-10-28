@@ -16,14 +16,14 @@ LDFLAGS+=-W -Wall -pedantic # Turn on all link-time warnings
 PROGRAMS=tricalc
 OBJECTS=AVAIL.o linkedStack.o tricalc.o
 SOURCES=AVAIL.c linkedStack.c tricalc.c AVAIL.h stack.h Makefile
-TAR_FILE=project3.tar
+TAR_FILE=project6.tar
 
 # Standard targets
 .PHONY: all clean
 all: $(PROGRAMS)
 tar: $(SOURCES)
 	-rm -f $(TAR_FILE)
-	tar -cvf $(TAR_FILE) $(SOURCES)
+	tar -cvf $(TAR_FILE) $(SOURCES) ReadMe.txt
 clean:
 	-rm -f $(PROGRAMS)
 	-rm -f $(OBJECTS)
