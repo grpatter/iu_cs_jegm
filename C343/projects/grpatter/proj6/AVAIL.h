@@ -14,23 +14,29 @@
 typedef int Pointer;
 
 //-------- The user should change the "Data" type as needed --------
-typedef struct{	
-  int coeff;
-  int x;
-  int y;
-  int z;
-  Pointer nextterm;
-} Term;
-typedef struct{	
-  int coeff;
-  Pointer nextterm;
-} Stackdata;
+// Term Struct
 typedef struct {
-  bool tag;//0 tri, 1 stackdata
-  union{
-	  Stackdata stackdata;
-	  Term term;
-  } vals[3];
+  int X;
+  int Y;
+  int Z;
+  int coeff;
+  Pointer nextTerm;
+} Term;
+
+typedef int StackData;
+ 
+// Our QueueData
+typedef union {
+  Term term[100];
+  StackData stackData;
+} QueueData;
+ 
+
+// Data Struct for all Elements
+typedef struct {
+  bool tag;
+  int length;
+  QueueData queueData;
   Pointer next;
 } Data;
 //-------- Do not change code below here --------

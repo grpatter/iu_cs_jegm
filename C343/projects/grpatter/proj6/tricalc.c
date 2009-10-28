@@ -1,10 +1,12 @@
-// Project 3, C343: Data Structures, Indiana University
-// File: linkedCalculator.c
-// Name: Greg Patterson
-// Username: grpatter
-// Credit: Michael Adams
-// Date: 2009 Sept.
-
+// Project 6, C343: Data Structures, Indiana University
+// File: tricalc.c
+// Name: Greg Patterson, grpatter
+// Date: 10/26/2009
+ 
+//--------------------------------------------
+// PROJECT 2 SOURCE: Michael Adams
+//--------------------------------------------
+ 
 #include "stack.h"
 #include <ctype.h>
 #include <stdbool.h>
@@ -12,20 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-int termcount = 0;
-
-bool isnumber(char *str);
-bool isvariable(char *str);
-void adjust_exp(int n, int vcount, char last_var);
-void printStack();
-void print_trig_vals(Data tmp, int a);
-void smallStackError(char *input);
-bool check_idents(Data p1, Data p2, char op);
-void add_new_term(int c, int vcount);
-void adjust_exp(int n, int vcount, char last_var);
-void adjust_sign(int vcount);
-
+ 
 bool isnumber(char *str) {
   bool result = true;
   for (int i = 0; str[i] != '\0'; i++) {
@@ -33,276 +22,269 @@ bool isnumber(char *str) {
   }
   return result;
 }
-
-bool isvariable(char *str){
-	bool result = false;
-	if(strcmp(str, "X") == 0 || strcmp(str, "Y") == 0 || strcmp(str, "Z") == 0){
-		result = true;
-		//printf("found variable\n");
-	}
-	return result;
-}
-
+ 
 void printStack() {
   if (!isEmpty()) {
-	Data temp = pop();
-    printStack();
-	if(temp.tag == 0){
-		print_trig_vals(temp, 0);	
-		if(temp.vals[0].term.nextterm != 0){
-			print_trig_vals(temp, 1);
-		}
-		if(temp.vals[1].term.nextterm != 0){
-			print_trig_vals(temp, 2);
-		}
-	}else{
-		printf("%d ", temp.vals[0].stackdata.coeff);
-	}
+    Data temp = pop();
+    if(temp.tag == false){
+      printStack();
+      int l = temp.length;
+      for(int i = 0; i < l; i++){
+    printf("%d",temp.queueData.term[i].coeff);
+    if(temp.queueData.term[i].X > 0){
+      printf("x^%d",temp.queueData.term[i].X);
+    }
+    if(temp.queueData.term[i].Y > 0){
+      printf("y^%d",temp.queueData.term[i].Y);
+    }
+    if(temp.queueData.term[i].Z > 0){
+      printf("z^%d",temp.queueData.term[i].Z);
+    }
+    printf(" + ");
+      }
+      printf("\n");
+    }else{}
     push(temp);
   }
 }
-
-void print_trig_vals(Data tmp, int a){
-	printf("%d",tmp.vals[a].term.coeff);
-	if(tmp.vals[a].term.x != 0){
-		printf("X^%d",tmp.vals[a].term.x);	
-	}
-	if(tmp.vals[a].term.y != 0){
-		printf("Y^%d",tmp.vals[a].term.y);		
-	}
-	if(tmp.vals[a].term.z != 0){
-		printf("Z^%d",tmp.vals[a].term.z);		
-	}
-	printf(" ");
-}
-
+  
+ 
 void smallStackError(char *input) {
   printf("Ignoring '%s': Stack too small\n", input);
 }
+ 
+void trinomialOperationError(char *input) {
+  printf("Ignoring '%s': Can not be applied to Trinomials\n", input);
+}
 
+Data createEmptyData(){
+	Data temp;
+	temp.tag = false;
+	temp.queueData.term[0].X = 0;
+	temp.queueData.term[0].Y = 0;
+	temp.queueData.term[0].Z = 0;
+	temp.queueData.term[0].coeff = 0;
+	temp.queueData.term[0].nextTerm = NIL;
+	temp.length = 0;
+	return temp;
+}
 
-/*
-bool check_idents(Data p1, Data p2, char op){
-	//printf("checking idents for:%c\n", op);
-	bool reduc = false;
-	bool annih = false;
-	int oper = 0; //+ 1, -2, * 3, / 4
-	if(op == '+'){
-		//printf("opn matches + \n");
-		oper = 1;
-	}else if(op == '-'){
-		oper = 2;
-	}else if(op == '*'){
-		oper = 3;
-	}else if(op == '/'){
-		oper = 4;
-	}else if(op == '^'){
-		oper = 5;
-	}else{
-		return reduc;
+void addHandler(){
+	Data a = pop();
+	Data b = pop();
+	if (a.tag == false || b.tag == false) {
+		b.queueData.term[b.length - 1].nextTerm = b.length;
+		b.queueData.term[b.length] = a.queueData.term[a.length - 1];
+		printf("setting coeff from a.length-1:%d in b at b.length:%d\n",a.queueData.term[a.length-1].coeff, b.length);
+		printf("val coeff set to:%d\n",b.queueData.term[b.length].coeff);
+		b.length++;
+		push(b);
+		Data bah = peek();
+		for(int i = 0; i < bah.length; i++){
+			printf("bahs coeff:%d\n",bah.queueData.term[i].coeff);
+		}
+	} else {
+		Data temp;
+		temp.tag = true;
+		temp.queueData.stackData = b.queueData.stackData + a.queueData.stackData;
+		push(temp);
 	}
-	//printf("oper is:%d\n",oper);
-	switch(oper){
-		case 1://+reduc
-			//printf("case + checking rules\n");
-			if(p1.tag == 0 && p1.myunion.num == 0){
-				//can reduce p2 to its value
-				push(p2);//add it back to stack, all done
-				reduc = true;
-			}else if(p2.tag == 0 && p2.myunion.num == 0){
-				push(p1);
-				reduc = true;
-			}else{
-				push(p2);
-				push(p1);
-				reduc = false;
-			}
-			break;
-		case 2://-reduc
-			//printf("case - checking rules\n");
-			if(p2.tag == 0 && p2.myunion.num == 0){
-			//printf("case - matched a rule\n");
-				push(p1);
-				reduc = true;
-			}else{
-				push(p2);
-				push(p1);
-				reduc = false;
-			}
-			break;
-		case 3://*reduc
-			//printf("case * checking rules\n");
-			if(p1.tag == 0 && p1.myunion.num == 1){
-				//can reduce p2 to its value				
-				push(p2);//add it back to stack, all done
-				reduc = true;
-			}else if(p2.tag == 0 && p2.myunion.num == 1){
-				push(p1);
-				reduc = true;
-			}else if(p1.tag == 0 && p1.myunion.num == 0){//annih
-				Data temp = qd_create_int(0);
-				push(temp);
-				annih = true;
-			}else if(p2.tag == 0 && p2.myunion.num == 0){//annih
-				Data temp = qd_create_int(0);
-				push(temp);
-				annih = true;
-			}else{
-				push(p2);
-				push(p1);
-				reduc = false;
-				annih = false;
-			}
-			break;
-		case 4:// / reduc
-			//printf("case / checking rules\n");
-			if(p2.tag == 0 && p2.myunion.num == 1){
-				push(p1);
-				reduc = true;
-			}else if(p1.tag == 0 && p1.myunion.num == 0){//annih
-				//printf("matching / annih rule \n");
-				Data temp = qd_create_int(0);
-				//printf("temp val: %d\n", temp.myunion.num);
-				push(temp);
-				annih = true;
-			}else{
-				push(p2);
-				push(p1);
-				reduc = false;
-				annih = false;
-			}
-			break;
-		case 5://^annih
-			//printf("case ^ checking rules\n");
-			if(p1.tag == 0 && p1.myunion.num == 0){
-				//printf("matching ^ annih rule \n");
-				Data temp = qd_create_int(1);
-				//printf("temp val: %d\n", temp.myunion.num);
-				push(temp);
-				annih = true;
-			}else{
-				push(p2);
-				push(p1);
-				annih = false;
-			}
-			break;
-		default: break;
-	}
-	bool rule_applied = false;
-	if(reduc){
-		rule_applied = true;
-		printf("Reduction Rule Applied.\n");
-	}
-	if(annih){
-		rule_applied = true;
-		printf("Annihilation Rule Applied.\n");
-	}
-	return rule_applied;
 }
-*/
-
-void add_new_term(int c, int vcount){
-	Data d;
-	d.tag = 0;//term
-	d.vals[vcount].term.coeff = c;	
-	d.vals[vcount].term.x = 0;	
-	d.vals[vcount].term.y = 0;	
-	d.vals[vcount].term.z = 0;
-	push(d);
-	termcount++;
+ 
+void subHandler(){
+        // subtract is non-commutative so we can't inline the pops
+        Data a = pop();//a
+        Data b = pop();//b
+    if(a.tag == false || b.tag == false) {
+      
+      b.queueData.term[b.length-1].nextTerm = b.length++;
+      b.queueData.term[b.length-1] = a.queueData.term[a.length-1];
+      b.queueData.term[b.length-1].coeff *= -1;
+      push(b);
+    } else {
+      Data temp;
+      temp.tag = true;
+      temp.queueData.stackData = b.queueData.stackData - a.queueData.stackData;
+      push(temp);
+    }
 }
-
-void adjust_sign(int vcount){
-Data d = pop();
-d.vals[vcount].term.coeff = d.vals[vcount].term.coeff * -1;
-push(d);
+ 
+void multHandler(){
+    Data a = pop();
+    Data b = pop();
+    if ( a.tag == false || b.tag == false ) {
+      b.queueData.term[b.length - 1].coeff *= a.queueData.term[a.length - 1].coeff;
+      b.queueData.term[b.length - 1].X += a.queueData.term[a.length - 1].X;
+      b.queueData.term[b.length - 1].Y += a.queueData.term[a.length - 1].Y;
+      b.queueData.term[b.length - 1].Z += a.queueData.term[a.length - 1].Z;      
+      push(b);      
+    } else {
+      Data temp;
+      temp.tag = true;
+      temp.queueData.stackData = a.queueData.stackData * b.queueData.stackData;
+      push(temp);
+    }
 }
-
-void adjust_exp(int n, int vcount, char last_var){
-Data d = pop();
-if(last_var = 'X'){
-	d.vals[vcount].term.x = n;
-	printf("adjusted exp x to %d...\n", d.vals[vcount].term.x = n);
-}else if(last_var = 'Y'){
-	d.vals[vcount].term.y = n;
-	printf("adjusted exp y to %d...\n", d.vals[vcount].term.y = n);
-}else if(last_var = 'Z'){
-	d.vals[vcount].term.z = n;
-	printf("adjusted exp z to %d...\n", d.vals[vcount].term.z = n);
-}else{
+ 
+void divHandler(){
+        // divide is non-commutative so we can't inline the pops
+        Data a = pop();
+        Data b = pop();
+    if (a.tag == false || b.tag == false) {
+      trinomialOperationError(input);
+    } else if (a.queueData.stackData == 0) {
+          printf("Ignoring illegal division by zero\n");
+          push(b);
+          push(a);
+        } else {
+      Data temp;
+      temp.tag = true;
+      temp.queueData.stackData = b.queueData.stackData / a.queueData.stackData;
+          push(temp);
+        }
 }
-push(d);
-}
-
-void clearFields(){
-}
-
-int main() {
+ 
+int main() { 
   char input[101]; // max input is 100 plus 1 for '\0' char
   bool done = false;
-  bool in_tri = false;
-  int vcount = 0;
-  char last_var = ".";
-
-  initStack(); 
-  clearFields();
+  bool negate = false;
+ 
+  initStack();
   
   while (!done) {
-	if(vcount >= 3){
-		printf("Resetting flags...\n");
-		vcount = 0;
-		last_var = ".";
-		in_tri = false;
-	}
     if (scanf("%100s", input) == EOF) {
       done = true;
-    } else if (isnumber(input)) {
-		if(!in_term){
-		  printf("Not in_tri, adding new term...\n");
-		  add_new_term(atoi(input), vcount);
-		}else{//must be exponent val
-			printf("In_tri, adjusting exp...\n");
-		  adjust_exp(atoi(input), vcount, last_var);
+    } else if (isnumber(input)) {//create new data
+		Data temp = createEmptyData();
+		int n = atoi(input);
+		if (negate) {
+			n = n * -1;
+		} else { }
+		temp.queueData.term[0].coeff = n;
+		temp.length = 1;
+		push(temp);
+    } else if (strcmp(input, "+") == 0) {//add
+		if (length() < 2) {
+			smallStackError(input);
+		} else {
+			addHandler();
 		}
-    } else if (isvariable(input)){
-		in_tri = true;
-		last_var = input[0];
-		printf("Is a variable, saving last_var as: %c...\n", last_var);
-	}else if (strcmp(input, "+") == 0) {
-		vcount++;
-    } else if (strcmp(input, "-") == 0) {
-		adjust_sign(vcount);
-		vcount++;
-    } else if (strcmp(input, "*") == 0) {
-		//
-    }else if (strcmp(input, "^") == 0){
-		//hm
-	}else if (strcmp(input, "p") == 0) {
+    } else if (strcmp(input, "-") == 0) {//sub
+		if (length() < 2) {
+			smallStackError(input);
+		} else {
+			subHandler();
+		}
+    } else if (strcmp(input, "*") == 0) {//mult
+		if (length() < 2) {
+			smallStackError(input);
+		} else {
+			multHandler();
+		}
+    } else if (strcmp(input, "/") == 0) {
+      // integer divide
+      if (length() < 2) {
+        smallStackError(input);
+      } else {
+		divHandler();
+      }
+    } else if (strcmp(input, "|") == 0) {
+      // bitwise or
+      if (length() < 2) {
+        smallStackError(input);
+      } else {
+    Data a = pop();
+    Data b = pop();
+    if (a.tag == false || b.tag == false) {
+      trinomialOperationError(input);
+    }else {
+      Data temp;
+      temp.tag = true;
+      temp.queueData.stackData = a.queueData.stackData | b.queueData.stackData;
+      push(temp);
+    }
+      }
+    }else if (strcmp(input, "^") == 0) {
+      // bitwise or
+      if (length() < 2) {
+        smallStackError(input);
+      }else {
+    Data a = pop();
+    Data b = pop();
+    if (a.tag == false || b.tag == false) {
+      //TODO
+      if (b.queueData.term[b.length - 1].X > 0) {
+        b.queueData.term[b.length - 1].X = a.queueData.term[a.length - 1].coeff;
+      } else if (b.queueData.term[b.length - 1].Y > 0) {
+        b.queueData.term[b.length - 1].Y = a.queueData.term[a.length - 1].coeff;
+      } else if (b.queueData.term[b.length - 1].Z > 0) {
+        b.queueData.term[b.length - 1].Z = a.queueData.term[a.length - 1].coeff;
+      }
+      push(b);
+    } else {
+      Data temp;
+      temp.tag = true;
+      temp.queueData.stackData = pow((int)b.queueData.stackData, (int)a.queueData.stackData);
+      push(temp);
+    }
+      }
+    } else if (strcmp(input, "X") == 0) {
+      Data temp;
+      temp.queueData.term[0].X = 1;
+      temp.queueData.term[0].Y = 0;
+      temp.queueData.term[0].Z = 0;
+      temp.queueData.term[0].coeff = 1;
+      temp.queueData.term[0].nextTerm = NIL;
+      temp.tag = false;
+      temp.length = 1;
+      push(temp);
+    } else if (strcmp(input, "Y") == 0) {
+      Data temp;
+      temp.queueData.term[0].X = 0;
+      temp.queueData.term[0].Y = 1;
+      temp.queueData.term[0].Z = 0;
+      temp.queueData.term[0].coeff = 1;
+      temp.queueData.term[0].nextTerm = NIL;
+      temp.tag = false;
+      temp.length = 1;
+      push(temp);
+    } else if (strcmp(input, "Z") == 0) {
+      Data temp;
+      temp.queueData.term[0].X = 0;
+      temp.queueData.term[0].Y = 0;
+      temp.queueData.term[0].Z = 1;
+      temp.queueData.term[0].coeff = 1;
+      temp.queueData.term[0].nextTerm = NIL;
+      temp.tag = false;
+      temp.length = 1;
+      push(temp);
+    } else if (strcmp(input, "p") == 0) {
+      // print whole stack
       printStack();
       printf("\n");
     } else if (strcmp(input, "t") == 0) {
-		Data temp = pop();
-		if(temp.tag){
-			print_trig_vals(temp, 0);	
-			if(temp.vals[0].term.nextterm != 0){
-				print_trig_vals(temp, 1);
-			}
-			if(temp.vals[1].term.nextterm != 0){
-				print_trig_vals(temp, 2);
-			}
-		}else{
-			printf("%d ", temp.vals[0].stackdata.coeff);
-		}
-		push(temp);
+      // print top of stack
+      if (length() < 1) {
+        smallStackError(input);
+      } else {
+    Data datum = peek();
+    if (datum.tag == true) {
+      printf("%d\n", datum.queueData.stackData);
+    } else {
+      //TODO
+    }
+      }
     } else if (strcmp(input, "w") == 0) {
+      // wipe stack
       while (!isEmpty()) {
         pop();
       }
     } else if (strcmp(input, "q") == 0) {
+      // quit
       done = true;
     } else {
       printf("Ignoring unknown command: %s\n", input);
     }
-  }
-  return 0;
+  }  
+  return 1;
 }
