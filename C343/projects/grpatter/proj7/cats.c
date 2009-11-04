@@ -1,436 +1,280 @@
-
+/* Project 7, C343: Data Structures, Indiana University
+ * File: cats.c
+ * Name: Greg Patterson, grpatter
+ * Date: 11/03/2009
+ * Credits:
+ * main() concepts: Michael Adams
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
 #include <math.h>
+#include "utils.h"
+#include "cats.h"
 
-#define NIL -1
-//#define DEBUG 1
-#define DEBUG 0
-
-
-typedef struct {
-  int info;
-  int gen_count;
-  int sire_par;
-  int dam_par;
-  int sire_next_halfSib;
-  int dam_next_halfSib;
-  int eldest_child;
-  int youngest_child;
-} Feline;
-
-typedef struct {
-  int i;
-  int j;
-} dist;
-
-Feline tree[500];
-dist dist_list[50];
-
-void flush_io() {
-  fflush(stdin);
-  fflush(stdout);
+Cat createBaseCat(int i){
+	Cat base_cat;
+	base_cat.tag = i;
+    base_cat.generation = NIL;
+    base_cat.sire = NIL;
+    base_cat.dam = NIL;
+    base_cat.sire_half_sib = NIL;
+    base_cat.dam_half_sib = NIL;
+    base_cat.eldest_c = NIL;
+    base_cat.youngest_c = NIL;
+	return base_cat;
 }
-
-enum Cats {SIRE, DAM};
-enum Input {NUM, GREAT, LESS, ANS, DESC, PER, PRINT};
 
 void init() {
-  if(DEBUG) printf("Initializing Felines\n");
-  for(int i = 0; i < 500; i++) {
-    tree[i].info = NIL;
-    tree[i].gen_count = NIL;
-    tree[i].sire_par = NIL;
-    tree[i].dam_par = NIL;
-    tree[i].sire_next_halfSib = NIL;
-    tree[i].dam_next_halfSib = NIL;
-    tree[i].eldest_child = NIL;
-    tree[i].youngest_child = NIL;
+  for(int i = 0; i < MAXCATS; i++) {
+    tree[i] = createBaseCat(NIL);
   }
-  for(int x = 0; x < 50; x++) {
-    dist_list[x].i = NIL;
-    dist_list[x].j = NIL;
+  for(int x = 0; x < DISTSIZE; x++) {
+    d_store[x].i = NIL;
+    d_store[x].j = NIL;
   }
 }
 
-
-
-//_______________________________Parsing___________________________________
-//source David Wise                                                                                      
-bool isnumber(char *str) {
-  bool result = true;
-  for (int i = 0; str[i] != '\0'; i++) {
-    result = result && isdigit(str[i]);
-  }
-  return result;
-}
-//_______________________________Parsing___________________________________
-
-
-int input_cmp(char *input) {
-  if (isnumber(input)) {
-    if(DEBUG) printf("input_cmp: %d\n", atoi(input));
-    return NUM;
-  } else if(strcmp(input, "<") == 0) {
-    if(DEBUG) printf("input_cmp: %s\n", input);
-    return GREAT;
-  } else if(strcmp(input, ">") == 0) {
-    if(DEBUG) printf("input_cmp: %s\n", input);
-    return LESS;
-  } else if(strcmp(input, "?") == 0) {
-    if(DEBUG) printf("input_cmp: %s\n", input);
-    return ANS;
-  } else if(strcmp(input, "D") == 0) {
-    if(DEBUG) printf("input_cmp: %s\n", input);
-    return DESC;
-  } else if(strcmp(input, ".") == 0) {
-    if(DEBUG) printf("input_cmp: %s\n", input);
-    return PER; 
-  } else if(strcmp(input, "P") == 0) {
-    if(DEBUG) printf("input_cmp: %s\n", input);
-    return PRINT; 
-  } else {
-    if(DEBUG) printf("incorrect input: %s\n", input);
-    return NIL;
-  }
+void printCat(Cat cat) {
+  printf("Cat: %d\n", cat.tag);
+  printf("Cat Generation: %d\n", cat.generation);
+  printf("Parents:\tSire: %d\t Dam: %d\n", cat.sire, cat.dam);
+  printf("Children:\tEldest: %d\t Youngest: %d \n", cat.eldest_c, cat.youngest_c);
+  printf("Siblings:\tSire: %d\t Dam: %d\n", cat.sire_half_sib, cat.dam_half_sib);
 }
 
-//_____________________________Printing Section____________________________________
-void printFel(Feline cat) {
-  printf("Feline: %d ", cat.info);
-  printf("Feline level: %d", cat.gen_count);
-  printf("Sire Parent: %d, Dam Parent: %d ", cat.sire_par, cat.dam_par);
-  printf("Eldest Child: %d, Youngest Child: %d \n\n", cat.eldest_child, cat.youngest_child);
-  printf("Next Sire Sibling: %d, Next Dam Sibling: %d ", cat.sire_next_halfSib, cat.dam_next_halfSib);
-}
-
-void printArr(int num_arr[]) {
-  printf("Input[0]: %d, Input[1]: %d\n", num_arr[0], num_arr[1]);
-}
-
-void printFel_array() {
-  for(int i = 0; i < 500; i++) {
-    if(tree[i].info >= 0) {
-      printf("___________________________Feline: %d _________________\n", tree[i].info);
-      printf("Sire Parent: %d, Dam Parent: %d \n", tree[i].sire_par, tree[i].dam_par);
-      printf("Level count: %d\n", tree[i].gen_count);
-      printf("Next Sire Sibling: %d, Next Dam Sibling: %d \n", tree[i].sire_next_halfSib, tree[i].dam_next_halfSib);
-      printf("Eldest Child: %d, Youngest Child: %d \n", tree[i].eldest_child, tree[i].youngest_child);
+void printAllCats() {
+  for(int i = 0; i < MAXCATS; i++) {
+    if(tree[i].tag >= 0) {
+		printf("********************\n");
+		printCat(tree[i]);
+		printf("********************\n");
     } else {
-      //Feline not created at this location
+      //no op
     }
   }
 }
 
-void print_distList() {
-  for(int i = 0; i < 50; i++) {
-    if(dist_list[i].i != NIL && dist_list[i].j != NIL) {
-      printf("distance is %d with i: %d and j: %d\n", dist_list[i].i + dist_list[i].j, dist_list[i].i, dist_list[i].j); 
+void printDescs(int cat, int current_gen, bool is_female, int par, int generations) {  
+  if(current_gen > 0 && tree[cat].eldest_c != NIL) {
+    printf("From cat %d to cat %d is %d generation.\n", cat, par, (generations-current_gen)+1);
+    current_gen--;
+    is_female = isEven(tree[tree[cat].eldest_c].tag);
+    printDescs(tree[cat].eldest_c, current_gen, is_female, par, generations);
+    current_gen++;
+    if(is_female) {
+      if(tree[cat].dam_half_sib != NIL) {
+		printDescs(tree[cat].dam_half_sib, current_gen, is_female, par, generations);
+      } else {
+		//no op
+      }
+    } else {
+      if(tree[cat].sire_half_sib != NIL) {
+		printDescs(tree[cat].sire_half_sib, current_gen, is_female, par, generations);
+      } else {
+		//no op
+      }
+    }
+  } else if (current_gen > 0) {
+    printf("From cat %d to cat %d is %d generation.\n", cat, par, (generations-current_gen)+1);
+    if(is_female) {
+      if(tree[cat].dam_half_sib != NIL) {
+		printDescs(tree[cat].dam_half_sib, current_gen, is_female, par, generations);
+      } else {
+		//no op
+      }
+    } else {
+      if(tree[cat].sire_half_sib != NIL) {
+		printDescs(tree[cat].sire_half_sib, current_gen, is_female, par, generations);
+      } else {
+		//no op
+      }
     }
   }
-}
+} 
 
-//_____________________________Printing Section____________________________________
-
-bool isEven(int num) {
-  bool even = false;
-  if(num % 2 == 0) {
-    even = true;
+void showDescs(int cat, int generations) {
+  bool is_female = isEven(cat);
+  if(tree[cat].eldest_c != NIL) {
+    printDescs(tree[cat].eldest_c, generations, is_female, cat, generations);
   } else {
-    even = false;
-  }
-  return even;
-}
-
-int minum(int num1, int num2) {
-  if(num1 < num2) {
-    return num1;
-  } else {
-    return num2;
+    //no op
   }
 }
 
-//_______________________________________________descendants______________________
-//3 < 1 . 1 < 11 . 1 < 6 . 2 < 5 . 5 < 11 . 5 < 10 . 2 < 4 . 4 < 9 .
-//1 ? 2 .
-// 11 D 2 .
-
-
-void list_desc(int cat, int gen, bool gender, int par, int start_gen) {
-  
-  if(gen > 0 && tree[cat].eldest_child != NIL) {
-    //print that cat and move to its eldest child
-    printf("Feline %d is %d generation(s) from feline %d\n", cat, (start_gen-gen)+1, par);
-    gen--;
-    gender = isEven(tree[tree[cat].eldest_child].info);
-    list_desc(tree[cat].eldest_child, gen, gender, par, start_gen);
-    gen++;
-    if(gender) {
-      if(tree[cat].dam_next_halfSib == NIL) {
-	//nothing there return
-	if(DEBUG) printf("Feline: %d does not have dam next half sibling\n", cat);
-      } else {
-	list_desc(tree[cat].dam_next_halfSib, gen, gender, par, start_gen);
-      }
+void genTraverse(int c_ind, int cnt, bool reset) { 
+  if(reset){
+	cnt = NIL;
+  }
+  if(c_ind != NIL) {
+    if(tree[c_ind].generation != NIL) {
+      tree[c_ind].generation = minimum(cnt, tree[c_ind].generation);
     } else {
-      if(tree[cat].sire_next_halfSib == NIL) {
-	//nothing there return
-	if(DEBUG) printf("Feline: %d does not have sire next half sibling\n", cat);
-      } else {
-	list_desc(tree[cat].sire_next_halfSib, gen, gender, par, start_gen);
-      }
-    } 
-  } else if (gen > 0) {
-    //print the siblings
-    printf("Feline %d is %d generation(s) from feline %d\n", cat, (start_gen-gen)+1, par);
-    if(gender) {
-      if(tree[cat].dam_next_halfSib == NIL) {
-	//nothing there return
-	if(DEBUG) printf("Feline: %d does not have dam next half sibling\n", cat);
-      } else {
-	list_desc(tree[cat].dam_next_halfSib, gen, gender, par, start_gen);
-      }
-    } else {
-      if(tree[cat].sire_next_halfSib == NIL) {
-	//nothing there return
-	if(DEBUG) printf("Feline: %d does not have sire next half sibling\n", cat);
-      } else {
-	list_desc(tree[cat].sire_next_halfSib, gen, gender, par, start_gen);
-      }
-    } 
-  }
-}     
-
-void start_desc(int cat, int gen) {
-  bool gender = isEven(cat);
-  if(DEBUG) printf("____________________start listing descendants______________\n");
-  if(tree[cat].eldest_child != NIL) {
-    list_desc(tree[cat].eldest_child, gen, gender, cat, gen);
+      tree[c_ind].generation = cnt;
+    }
+    cnt++;
+    genTraverse(tree[c_ind].sire, cnt, false);
+    genTraverse(tree[c_ind].dam, cnt, false);
   } else {
-    //is leaf doesn't have any descendants
-  }
-}
-
-void set_level(int cat, int counter, bool init_count) {
-  if(DEBUG) printf("Setting level: %d for cat: %d\n", counter, cat);  
-  if(init_count){
-	counter = NIL;
-  }
-  if(cat == NIL) {
     return;
-  } else {
-    if(tree[cat].gen_count != NIL) {
-      tree[cat].gen_count = minum(counter, tree[cat].gen_count);
+  }
+}
+
+void printAncestors(int c1, int c2, int d) {
+  printf("Cat %d and Cat %d are:\n", c1, c2);
+  for(int i = 0; i < DISTSIZE; i++) {
+    if(d_store[i].i + d_store[i].j == d) {
+      printf("%dth cousins %d times removed.\n", d_store[i].i, d_store[i].j);
+    }
+  }
+}
+
+int getBestDist() {
+  int min = NIL;
+  for(int i = 0; i < DISTSIZE; i++) {
+    if(d_store[i].i + d_store[i].j < min || min == NIL) {
+      min = d_store[i].i + d_store[i].j;
     } else {
-      //it doesn't have a count already just set it
-      tree[cat].gen_count = counter;
+      //no op
     }
-    counter++;
-    set_level(tree[cat].sire_par, counter, false);
-    set_level(tree[cat].dam_par, counter, false);
+    break;
   }
+  return min;
 }
 
-//_____________________________________________ancestry____________________
-//_______________________________________________descendants______________________
-
-void printAnc(int dist) {
-  for(int i = 0; i < 50; i++) {
-    if(dist_list[i].i + dist_list[i].j == dist) {
-      printf("%dth cousin, %d times removed\n", dist_list[i].i, dist_list[i].j);
-    }
-  }
-}
-
-int distanceArray() {
-  int min_dist = NIL;
-  for(int i = 0; i < 50; i++) {    
-    if(DEBUG) printf("dist_list[%d]: %d \n", i, min_dist);
-    if(dist_list[i].i + dist_list[i].j < min_dist || min_dist == NIL) {
-      if(DEBUG) printf("inside dist_list[%d]: %d \n", i, min_dist);
-      min_dist = dist_list[i].i + dist_list[i].j;
-      if(DEBUG) printf("after calc dist_list[%d]: %d \n", i, min_dist);
-    } else {
-      //ignore not smaller
-    }
-    return min_dist;
-  }
-  return min_dist;
-}
-
-void store_distance(int i, int j) {
-  if(DEBUG) printf("i: %d, j: %d\n", i, j);
-  
-  for(int y = 0; y < 50; y++) {
-    if(dist_list[y].i == NIL && dist_list[y].j == NIL) {      
-      dist_list[y].i = i;
-      dist_list[y].j = j;
+void saveDist(int i, int j) {
+  for(int a = 0; a < DISTSIZE; a++) {
+    if(d_store[a].i == NIL && d_store[a].j == NIL) {      
+      d_store[a].i = i;
+      d_store[a].j = j;
       break;
     } else {
-      //don't put anything in there you are at an index that has something
+      //no op
     }
   }
 }
 
-void find_distance(int cat, int counter) {
-  if(DEBUG) printf("cat %d generation count: %d\n", cat, tree[cat].gen_count);
-  if(tree[cat].gen_count != NIL) {
-    if(DEBUG) printf("Feline: %d level count: %d\n", cat, tree[cat].gen_count);
-    store_distance(tree[cat].gen_count, counter);
+void calcDist(int cat, int cnt) {
+  if(tree[cat].generation != NIL) {
+    saveDist(tree[cat].generation, cnt);
   } else {
-    //not a common ancestor
+    //no op
   }
-  if(cat == NIL) {
-    //return nothing here
+  if(cat != NIL) {
+    cnt++;
+    calcDist(tree[cat].sire, cnt);
+    calcDist(tree[cat].dam, cnt);
   } else {
-    counter++;
-    find_distance(tree[cat].sire_par, counter);
-    find_distance(tree[cat].dam_par, counter);
+	//no op
   }
 }
 
-void det_ancs(int cat1, int cat2) {
-  if(DEBUG) printf("Determing Relationship between %d, %d\n", cat1, cat2);
-  tree[cat1].gen_count = 0;
-  set_level(cat1, 0, false);
-  find_distance(cat2, 0);
-  int dist = distanceArray();
-  if (DEBUG) printf("dist: %d\n", dist);
+void findRelation(int c_ind1, int c_ind2) {
+  tree[c_ind1].generation = 0;
+  genTraverse(c_ind1, 0, false);
+  calcDist(c_ind2, 0);
+  int dist = getBestDist();
   if(dist != NIL) {
-    printf("Feline %d and Feline %d are:\n", cat1, cat2);
-    printAnc(dist);
+    printAncestors(c_ind1, c_ind2, dist);
   } else {
-    printf("Feline %d and Feline %d are not related\n", cat1, cat2);
+    printf("There is no relation between Cat %d and Cat %d.\n", c_ind1, c_ind2);
   }
-  if(DEBUG) print_distList();
-  if(DEBUG) printf("Shortest distance between cat: %d and cat: %d is %d\n", cat1, cat2, dist);
-  set_level(cat1, 0, true);//reset values to nil
+  genTraverse(c_ind1, 0, true);
 }
-//_____________________________________________descendants____________________
 
-///_____________________________________________input____________________
-
-void input_cats(int child, int par) {
-  if(DEBUG) printf("parent: %d, child: %d\n", par, child);
-  Feline child_cat;
-  Feline par_cat;
-  
-  if(tree[child].info == NIL) {//Child doesn't exist
-    child_cat.info = child;
-    child_cat.gen_count = NIL;
-    child_cat.sire_par = NIL;
-    child_cat.dam_par = NIL;
-    child_cat.sire_next_halfSib = NIL;
-    child_cat.dam_next_halfSib = NIL;
-    child_cat.eldest_child = NIL;
-    child_cat.youngest_child = NIL;
-  } else {//Child exist
-    child_cat = tree[child];
-  }
-
-  if(tree[par].info == NIL) {//Parent doesn't exist
-    par_cat.info = par;
-    par_cat.gen_count = NIL;
-    par_cat.sire_par = NIL;
-    par_cat.dam_par = NIL;
-    par_cat.sire_next_halfSib = NIL;
-    par_cat.dam_next_halfSib = NIL;
-    par_cat.eldest_child = child;
-    par_cat.youngest_child = child;
-  } else {//Parent exist
-    par_cat = tree[par];
-    if(par_cat.eldest_child == NIL) {
-      par_cat.eldest_child = child;
-      par_cat.youngest_child = child;
+void addCat(int c_index, int p_index) {
+  Cat p_cat;
+  Cat c_cat;
+    
+  if(tree[p_index].tag == NIL) {//parent
+    p_cat = createBaseCat(p_index);
+    p_cat.eldest_c = c_index;
+    p_cat.youngest_c = c_index;
+  } else {
+    p_cat = tree[p_index];
+    if(p_cat.eldest_c == NIL) {
+      p_cat.eldest_c = c_index;
+      p_cat.youngest_c = c_index;
     } else {
-      if(isEven(par)) {
-	tree[par_cat.youngest_child].dam_next_halfSib = child;
+      if(isEven(p_index)) {
+		tree[p_cat.youngest_c].dam_half_sib = c_index;
       } else {
-	tree[par_cat.youngest_child].sire_next_halfSib = child;
+		tree[p_cat.youngest_c].sire_half_sib = c_index;
       }
-      par_cat.youngest_child = child;
+      p_cat.youngest_c = c_index;
     }
   }
   
-  if(isEven(par)) {
-    if(child_cat.dam_par == NIL) {
-      child_cat.dam_par = par;
+  if(tree[c_index].tag == NIL) {//child
+    c_cat = createBaseCat(c_index);
+  } else {
+    c_cat = tree[c_index];
+  }
+  
+  if(isEven(p_index)) {
+    if(c_cat.dam == NIL) {
+      c_cat.dam = p_index;
     } else {
-      if(DEBUG) printf("child: %d already has dam parent: %d\n", child, child_cat.dam_par);
     }
   } else {
-    if(child_cat.sire_par == NIL) {
-      child_cat.sire_par = par;
+    if(c_cat.sire == NIL) {
+      c_cat.sire = p_index;
     } else {
-      if(DEBUG) printf("child: %d already has sire parent: %d\n", child, child_cat.sire_par);
+	  //no op
     }
   }
-  tree[child] = child_cat;
-  tree[par] = par_cat;
+  tree[p_index] = p_cat;//add to tree
+  tree[c_index] = c_cat;
 }
 
-void run_instruct(int child, int par, int oper) {
-  switch (oper) {
-  case GREAT : input_cats(child, par); if(DEBUG) printf("running greater than\n"); break;
-  case LESS : input_cats(par, child);  if(DEBUG) printf("running less than\n"); break;
-  case ANS : det_ancs(child, par); break;
-  case DESC : start_desc(child, par); break;
-  default : if(DEBUG) printf("Incorrect Operator\n"); break;
-  }
-  
+void cmdHandler(int c_index, int p_index, char *op) {
+	if(strcmp(op, "<") == 0) {
+		addCat(c_index, p_index);
+	} else if(strcmp(op, ">") == 0) {
+		addCat(p_index, c_index);
+	} else if(strcmp(op, "?") == 0) {
+		findRelation(c_index, p_index);
+	} else if(strcmp(op, "D") == 0) {
+		showDescs(c_index, p_index);
+	} else {
+		printf("Unrecognized Input: %s\n", op);	
+	}
 }
 
 int main() {
-  char input[101]; //max input is 100 plus 1 for '\0' char
+  char input[101];
   bool done = false;
   int index = 0;
-  int input_arr[2];
-  char *oper;
+  int vals[2];
+  char *op;
 
-  //----------------Testing printFel-------------------
-  if(DEBUG) printf("______________Feline Test_________________\n");
-  Feline testCat;
-  testCat.info = 1;
-  testCat.sire_par = 5;
-  testCat.dam_par = 7;
-  testCat.sire_next_halfSib = 2;
-  testCat.dam_next_halfSib = 4;
-  testCat.eldest_child = 8;
-  testCat.youngest_child = 9;
-  if (DEBUG) printFel(testCat);
-  if(DEBUG) printf("______________Feline Test_________________\n");
-  //----------------Testing printFel-------------------
-  if(DEBUG) printf("______________isEven Test_________________\n");  
-  int even_num = 6;
-  int odd_num = 7;
-  if(DEBUG) if(isEven(6)) printf("even_num: %d\n", even_num);
-  if(DEBUG) if(!isEven(7)) printf("odd_num: %d\n", odd_num);
-  if(DEBUG) printf("______________Feline Test_________________\n");
-  //________________Testing isEven_____________________
+  init();//init vals
 
-  init();//initialize Feline values
-
-  while(!done) {
-    // the "%100s" tells scanf we want no more than 100 chars                                           
-    if (scanf("%100s", input) == EOF) {
-      // End of input, assume the user wants to exit                                                     
+  while(!done) {                                         
+    if (scanf("%100s", input) == EOF) {                                                   
       done = true;
     } else {
-      int case_num = input_cmp(input);
-      if(DEBUG) printf("input comparison: %d\n", case_num);
-      switch (case_num) {
-      case NUM : input_arr[index++] = atoi(input); if(DEBUG) printArr(input_arr); break;
-      case GREAT : oper = "<"; break;
-      case LESS : oper = ">"; break;
-      case ANS : oper = "?"; break; 
-      case DESC : oper = "D"; break;
-      case PER : run_instruct(input_arr[0], input_arr[1], input_cmp(oper)); index = 0; flush_io(); break;
-      case PRINT : printFel_array(); break; 
-      default : printf("input incorrect: %s\n", input);
-      }
+		if (isnumber(input)) {
+			vals[index++] = atoi(input);
+		} else if(strcmp(input, "<") == 0) {
+			op = "<";
+		} else if(strcmp(input, ">") == 0) {
+			op = ">";
+		} else if(strcmp(input, "?") == 0) {
+			op = "?";
+		} else if(strcmp(input, "D") == 0) {
+			op = "D";
+		} else if(strcmp(input, ".") == 0) {
+			cmdHandler(vals[0], vals[1], op);
+			index = 0;
+			flush_io(); 
+		} else if(strcmp(input, "P") == 0) {
+			printAllCats(); 
+		} else {
+			printf("Unrecognized Input: %s\n", input);	
+		}
     }
   }
   return 0;
