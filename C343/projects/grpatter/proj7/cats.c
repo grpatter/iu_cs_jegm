@@ -154,47 +154,51 @@ int minum(int num1, int num2) {
 }
 
 //_______________________________________________descendants______________________
+//3 < 1 . 1 < 11 . 1 < 6 . 2 < 5 . 5 < 11 . 5 < 10 . 2 < 4 . 4 < 9 .
+//1 ? 2 .
+// 11 D 2 .
 
-void list_desc(int cat, int gen, bool gender, int par) {
+
+void list_desc(int cat, int gen, bool gender, int par, int start_gen) {
   
   if(gen > 0 && tree[cat].eldest_child != NIL) {
     //print that cat and move to its eldest child
-    printf("Feline %d is %d generation(s) from feline %d\n", cat, gen, par);
+    printf("Feline %d is %d generation(s) from feline %d\n", cat, (start_gen-gen)+1, par);
     gen--;
     gender = isEven(tree[tree[cat].eldest_child].info);
-    list_desc(tree[cat].eldest_child, gen, gender, par);
+    list_desc(tree[cat].eldest_child, gen, gender, par, start_gen);
     gen++;
     if(gender) {
       if(tree[cat].dam_next_halfSib == NIL) {
 	//nothing there return
 	if(DEBUG) printf("Feline: %d does not have dam next half sibling\n", cat);
       } else {
-	list_desc(tree[cat].dam_next_halfSib, gen, gender, par);
+	list_desc(tree[cat].dam_next_halfSib, gen, gender, par, start_gen);
       }
     } else {
       if(tree[cat].sire_next_halfSib == NIL) {
 	//nothing there return
 	if(DEBUG) printf("Feline: %d does not have sire next half sibling\n", cat);
       } else {
-	list_desc(tree[cat].sire_next_halfSib, gen, gender, par);
+	list_desc(tree[cat].sire_next_halfSib, gen, gender, par, start_gen);
       }
     } 
   } else if (gen > 0) {
     //print the siblings
-    printf("Feline: %d is generation: %d from feline %d\n", cat, gen, par);
+    printf("Feline %d is %d generation(s) from feline %d\n", cat, (start_gen-gen)+1, par);
     if(gender) {
       if(tree[cat].dam_next_halfSib == NIL) {
 	//nothing there return
 	if(DEBUG) printf("Feline: %d does not have dam next half sibling\n", cat);
       } else {
-	list_desc(tree[cat].dam_next_halfSib, gen, gender, par);
+	list_desc(tree[cat].dam_next_halfSib, gen, gender, par, start_gen);
       }
     } else {
       if(tree[cat].sire_next_halfSib == NIL) {
 	//nothing there return
 	if(DEBUG) printf("Feline: %d does not have sire next half sibling\n", cat);
       } else {
-	list_desc(tree[cat].sire_next_halfSib, gen, gender, par);
+	list_desc(tree[cat].sire_next_halfSib, gen, gender, par, start_gen);
       }
     } 
   }
@@ -204,7 +208,7 @@ void start_desc(int cat, int gen) {
   bool gender = isEven(cat);
   if(DEBUG) printf("____________________start listing descendants______________\n");
   if(tree[cat].eldest_child != NIL) {
-    list_desc(tree[cat].eldest_child, gen, gender, cat);
+    list_desc(tree[cat].eldest_child, gen, gender, cat, gen);
   } else {
     //is leaf doesn't have any descendants
   }
@@ -254,6 +258,7 @@ int distanceArray() {
     }
     return min_dist;
   }
+  return min_dist;
 }
 
 void store_distance(int i, int j) {
