@@ -1,10 +1,3 @@
-//Greg Patterson grpatter
-//October 30, 2009
-//Project 7, C343
-
-/*TODO
--finish ancestry
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +9,7 @@
 #define NIL -1
 //#define DEBUG 1
 #define DEBUG 0
-#define list_count
+
 
 typedef struct {
   int info;
@@ -62,7 +55,11 @@ void init() {
     dist_list[x].j = NIL;
   }
 }
-                                  
+
+
+
+//_______________________________Parsing___________________________________
+//source David Wise                                                                                      
 bool isnumber(char *str) {
   bool result = true;
   for (int i = 0; str[i] != '\0'; i++) {
@@ -70,6 +67,8 @@ bool isnumber(char *str) {
   }
   return result;
 }
+//_______________________________Parsing___________________________________
+
 
 int input_cmp(char *input) {
   if (isnumber(input)) {
@@ -129,8 +128,8 @@ void printFel_array() {
 void print_distList() {
   for(int i = 0; i < 50; i++) {
     if(dist_list[i].i != NIL && dist_list[i].j != NIL) {
-      printf("distance is %d with i: %d and j: %d\n", dist_list[i].i + dist_list[i].j, dist_list[i].i, dist_list[i].j); //
-	}
+      printf("distance is %d with i: %d and j: %d\n", dist_list[i].i + dist_list[i].j, dist_list[i].i, dist_list[i].j); 
+    }
   }
 }
 
@@ -154,11 +153,13 @@ int minum(int num1, int num2) {
   }
 }
 
-void list_desc(int cat, int gen, bool gender, int par) {
+//_______________________________________________descendants______________________
 
+void list_desc(int cat, int gen, bool gender, int par) {
+  
   if(gen > 0 && tree[cat].eldest_child != NIL) {
     //print that cat and move to its eldest child
-    printf("Feline: %d is generation: %d from feline %d\n", cat, gen, par);
+    printf("Feline %d is %d generation(s) from feline %d\n", cat, gen, par);
     gen--;
     gender = isEven(tree[tree[cat].eldest_child].info);
     list_desc(tree[cat].eldest_child, gen, gender, par);
@@ -211,6 +212,9 @@ void start_desc(int cat, int gen) {
 
 void set_level(int cat, int counter, bool init_count) {
   if(DEBUG) printf("Setting level: %d for cat: %d\n", counter, cat);  
+  if(init_count){
+	counter = NIL;
+  }
   if(cat == NIL) {
     return;
   } else {
@@ -225,18 +229,52 @@ void set_level(int cat, int counter, bool init_count) {
     set_level(tree[cat].dam_par, counter, false);
   }
 }
- 
- void store_distance(int i, int j) {
-   dist tmp;
-   tmp.i = i;
-   tmp.j = j;     
+
+//_____________________________________________ancestry____________________
+//_______________________________________________descendants______________________
+
+void printAnc(int dist) {
+  for(int i = 0; i < 50; i++) {
+    if(dist_list[i].i + dist_list[i].j == dist) {
+      printf("%dth cousin, %d times removed\n", dist_list[i].i, dist_list[i].j);
+    }
+  }
 }
 
- void find_distance(int cat, int counter) {
-  //if(DEBUG) printf("distance entered is: %d\n", distance);
+int distanceArray() {
+  int min_dist = NIL;
+  for(int i = 0; i < 50; i++) {    
+    if(DEBUG) printf("dist_list[%d]: %d \n", i, min_dist);
+    if(dist_list[i].i + dist_list[i].j < min_dist || min_dist == NIL) {
+      if(DEBUG) printf("inside dist_list[%d]: %d \n", i, min_dist);
+      min_dist = dist_list[i].i + dist_list[i].j;
+      if(DEBUG) printf("after calc dist_list[%d]: %d \n", i, min_dist);
+    } else {
+      //ignore not smaller
+    }
+    return min_dist;
+  }
+}
+
+void store_distance(int i, int j) {
+  if(DEBUG) printf("i: %d, j: %d\n", i, j);
+  
+  for(int y = 0; y < 50; y++) {
+    if(dist_list[y].i == NIL && dist_list[y].j == NIL) {      
+      dist_list[y].i = i;
+      dist_list[y].j = j;
+      break;
+    } else {
+      //don't put anything in there you are at an index that has something
+    }
+  }
+}
+
+void find_distance(int cat, int counter) {
+  if(DEBUG) printf("cat %d generation count: %d\n", cat, tree[cat].gen_count);
   if(tree[cat].gen_count != NIL) {
     if(DEBUG) printf("Feline: %d level count: %d\n", cat, tree[cat].gen_count);
-    //store_distance(tree[cat].gen_count);
+    store_distance(tree[cat].gen_count, counter);
   } else {
     //not a common ancestor
   }
@@ -253,11 +291,22 @@ void det_ancs(int cat1, int cat2) {
   if(DEBUG) printf("Determing Relationship between %d, %d\n", cat1, cat2);
   tree[cat1].gen_count = 0;
   set_level(cat1, 0, false);
-  //list_count = 0;
   find_distance(cat2, 0);
-  //if(DEBUG) printf("Shortest distance between cat: %d and cat: %d is %d\n", cat1, cat2, x);
+  int dist = distanceArray();
+  if (DEBUG) printf("dist: %d\n", dist);
+  if(dist != NIL) {
+    printf("Feline %d and Feline %d are:\n", cat1, cat2);
+    printAnc(dist);
+  } else {
+    printf("Feline %d and Feline %d are not related\n", cat1, cat2);
+  }
   if(DEBUG) print_distList();
+  if(DEBUG) printf("Shortest distance between cat: %d and cat: %d is %d\n", cat1, cat2, dist);
+  set_level(cat1, 0, true);//reset values to nil
 }
+//_____________________________________________descendants____________________
+
+///_____________________________________________input____________________
 
 void input_cats(int child, int par) {
   if(DEBUG) printf("parent: %d, child: %d\n", par, child);
@@ -317,17 +366,12 @@ void input_cats(int child, int par) {
   tree[child] = child_cat;
   tree[par] = par_cat;
 }
-// ------------------------------
-
-
-// --------------------------------
 
 void run_instruct(int child, int par, int oper) {
   switch (oper) {
   case GREAT : input_cats(child, par); if(DEBUG) printf("running greater than\n"); break;
   case LESS : input_cats(par, child);  if(DEBUG) printf("running less than\n"); break;
   case ANS : det_ancs(child, par); break;
-  //case ANS : run_query(child, par); break;
   case DESC : start_desc(child, par); break;
   default : if(DEBUG) printf("Incorrect Operator\n"); break;
   }
@@ -357,8 +401,8 @@ int main() {
   if(DEBUG) printf("______________isEven Test_________________\n");  
   int even_num = 6;
   int odd_num = 7;
-  if(isEven(6)) printf("even_num: %d\n", even_num);
-  if(!isEven(7)) printf("odd_num: %d\n", odd_num);
+  if(DEBUG) if(isEven(6)) printf("even_num: %d\n", even_num);
+  if(DEBUG) if(!isEven(7)) printf("odd_num: %d\n", odd_num);
   if(DEBUG) printf("______________Feline Test_________________\n");
   //________________Testing isEven_____________________
 
@@ -373,16 +417,17 @@ int main() {
       int case_num = input_cmp(input);
       if(DEBUG) printf("input comparison: %d\n", case_num);
       switch (case_num) {
-      case NUM : input_arr[index++] = atoi(input); printArr(input_arr); break;
+      case NUM : input_arr[index++] = atoi(input); if(DEBUG) printArr(input_arr); break;
       case GREAT : oper = "<"; break;
       case LESS : oper = ">"; break;
       case ANS : oper = "?"; break; 
       case DESC : oper = "D"; break;
       case PER : run_instruct(input_arr[0], input_arr[1], input_cmp(oper)); index = 0; flush_io(); break;
-      case PRINT : printFel_array(); break; //printFel(tree[input_arr[0]]); printFel(tree[input_arr[1]]); break;
+      case PRINT : printFel_array(); break; 
       default : printf("input incorrect: %s\n", input);
       }
     }
   }
   return 0;
 }
+ 
