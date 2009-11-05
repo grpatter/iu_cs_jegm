@@ -142,19 +142,19 @@ void lruAccessUpdate(frame_t ff){
 //find given frame
 //pop off then push on back
 int size = lru_queue.size();
-printf("lru size:%d...\n",size);
+//printf("lru size:%d looking for frame:%d...\n",size, ff);
 frame_t match;
 bool matchFound = false;
 for(int i = 0; i < size; i++){
-	printf("lru loop iter:%d...\n",i);
+	//printf("lru loop iter:%d...\n",i);
 	frame_t temp = lru_queue.front();//get it
 	lru_queue.pop();//advance
 	if(temp == ff){
-		printf("lru access found match, holding to end...Frame:%d\n", temp);
+		//printf("lru access found match, holding to end...Frame:%d\n", temp);
 		match = temp;
 		matchFound = true;
 	}else{
-		printf("lru access no match, pushing back on...Frame:%d\n",temp);
+		//printf("lru access no match, pushing back on...Frame:%d\n",temp);
 		lru_queue.push(temp);
 	}
 }
