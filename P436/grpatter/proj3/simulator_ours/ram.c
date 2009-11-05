@@ -5,9 +5,10 @@
  *
  */
 #include "simulator.h"
+#include "pagealgorithms.c"
 
 static int num_frames = 0;
-static char *algorithm = "random";
+static char *algorithm_str = "random";
 
 /*
  * Free Frame tracking (stack based)
@@ -46,7 +47,8 @@ int allocate_ram(ram_info_t ram_info) {
 
     //num_frames = n;
     num_frames = ram_info.n_frames;
-	algorithm = ram_info.algorithm;//
+	algorithm_str = ram_info.algorithm;//
+	initAlgorithm(algorithm_str);//
 
     /* Physical Memory (RAM) */
     physical_mem = (frame_ref_t*)malloc(sizeof(frame_ref_t) * num_frames);
@@ -148,6 +150,10 @@ int page_fault(page_table_leaf_t *page_entry) {
     return 0;
 }
 
+void page_access_ram(frame_t frame){//
+	accessActionAlgo(frame);//
+}//
+
 
 /*******************************************************/
 static int random_page_replacement_alg(frame_t *victim) {
@@ -157,23 +163,20 @@ static int random_page_replacement_alg(frame_t *victim) {
      */
     *victim = rand()%num_frames;
 
-    printf("%s: Page Rep. Alg. Victim = %5d\n", current_ref,
-           *victim);
+    printf("%s: Page Rep. Alg. Victim = %5d\n", current_ref, *victim);
 
     return 0;
 }
 
 static int page_replacement_alg(frame_t *victim) {
-	printf("\nRequested to use Page Eviction Algorithm: %s\n", algorithm);//
-	bool alg_defined = false;
-	//check algorithm enums
-	if(!alg_defined){
-		printf("!!!Algorithm:%s is not defined, defaulting to 'RANDOM'!!!\n", algorithm);
-		return random_page_replacement_alg(victim);
+	printf("\nRequested to use Page Eviction Algorithm: %s\n", algorithm_str);//
+	int v_res = getVictim(victim);
+	if(v_res != -1){
+		printf("%s: Page Rep. Alg. Victim = %5d\n", current_ref, *victim);
+		return v_res;
 	}else{
-		//do lookup
 		return random_page_replacement_alg(victim);
-	}
+	}	
 }
 
 static int swap_out(frame_t victim) {
@@ -246,6 +249,11 @@ static int swap_in(page_table_leaf_t *page_entry) {
      */
     page_entry->frame = fframe;
     page_entry->valid = true;
-
+	
+	/*
+	 * Tell algorithm to update
+	 */
+	swapInActionAlgo(fframe);//
+	
     return 0;
 }

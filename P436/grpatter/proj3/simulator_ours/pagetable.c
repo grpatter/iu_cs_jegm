@@ -128,7 +128,7 @@ int check_page_table(pid_t pid, char mode, addr_t address, frame_t *frame) {
     } else {
         stats.pt_hit++;
     }
-
+	
     /*
      * Update Cache
      * - Write through cache will update RAM for us
@@ -141,6 +141,15 @@ int check_page_table(pid_t pid, char mode, addr_t address, frame_t *frame) {
     add_to_tlb(pt_entry->page, pt_entry->frame, pt_entry->pid);
 
     *frame = pt_entry->frame;
+	
+	
+	/*
+	 * Update RAM Access
+	 * -Force RAM to acknowledge and perform any access updates
+	 *  after we determine the frame it is in for ease of update.
+	 */
+	page_access_ram(*frame);//
+	
 
     return 1;
 }

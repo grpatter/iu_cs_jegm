@@ -381,4 +381,9 @@ void display_ram(void);
  */
 int assert_page_in_ram(page_t page);
 
+/*
+ * RAM Access Simulation
+ */
+void page_access_ram(frame_t frame);
+
 #endif
