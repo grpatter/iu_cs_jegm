@@ -19,6 +19,11 @@
 #include "support.h"
 
 /*
+ * Output params
+ */
+#define VERBOSE 0
+ 
+/*
  * PIDs range from 0 to 99
  */
 #define MAX_PID_LEN   2
