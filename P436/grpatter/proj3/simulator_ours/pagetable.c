@@ -161,15 +161,17 @@ int check_page_table(pid_t pid, char mode, addr_t address, frame_t *frame) {
 static void display_page_table(int index) {
     int i;
 
-    printf("PID,  Page, V \n");
-    printf("-------------------\n");
-    for( i = 0; i < num_pages; ++i ) {
-        printf("%3d, %5d, %c\n",
-               sys_proc_table[index].page_table->pages[i].pid,
-               sys_proc_table[index].page_table->pages[i].page,
-               (sys_proc_table[index].page_table->pages[i].valid ? 'T' : 'F')
-               );
-    }
+	if (VERBOSE) {
+		printf("PID,  Page, V \n");
+		printf("-------------------\n");
+		for( i = 0; i < num_pages; ++i ) {
+			printf("%3d, %5d, %c\n",
+				sys_proc_table[index].page_table->pages[i].pid,
+				sys_proc_table[index].page_table->pages[i].page,
+				(sys_proc_table[index].page_table->pages[i].valid ? 'T' : 'F')
+				);
+		}
+	}
 }
 
 static void flush_page_table(int index) {
