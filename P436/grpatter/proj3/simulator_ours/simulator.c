@@ -105,22 +105,22 @@ int main(int argc,char *argv[]) {
         /*
          * Memory management operations to access the page
          */
-        if(VERBOSE){
-		printf("-----------------------------------------------------------\n");
-        printf("%s: Process %*d \t Access [Page %4d, Offset %#05x] (%#010x)\n",
-               current_ref,
-               MAX_PID_LEN, pid,
-               GET_PAGE(virtual_addr), GET_OFFSET(virtual_addr), virtual_addr);
-		}
-        access_page(pid, mode, virtual_addr, &physical_addr);
 		if(VERBOSE){
-        printf("%s: Process %*d \t Access [Page %4d, Offset %#05x] (%#010x) --> (%#010x) [Frame %4d, Offset %#05x]\n",
-               current_ref,
-               MAX_PID_LEN, pid,
-               GET_PAGE(virtual_addr), GET_OFFSET(virtual_addr), virtual_addr,
-               physical_addr, GET_FRAME(physical_addr), GET_OFFSET(physical_addr));
+			printf("-----------------------------------------------------------\n");
+			printf("%s: Process %*d \t Access [Page %4d, Offset %#05x] (%#010x)\n",
+				current_ref,
+				MAX_PID_LEN, pid,
+				GET_PAGE(virtual_addr), GET_OFFSET(virtual_addr), virtual_addr);
 		}
-    }
+		access_page(pid, mode, virtual_addr, &physical_addr);
+		if(VERBOSE){
+			printf("%s: Process %*d \t Access [Page %4d, Offset %#05x] (%#010x) --> (%#010x) [Frame %4d, Offset %#05x]\n",
+				current_ref,
+				MAX_PID_LEN, pid,
+				GET_PAGE(virtual_addr), GET_OFFSET(virtual_addr), virtual_addr,
+				physical_addr, GET_FRAME(physical_addr), GET_OFFSET(physical_addr));
+		}
+	}
 
     gettimeofday(&stats.end, NULL);
     display_stats();

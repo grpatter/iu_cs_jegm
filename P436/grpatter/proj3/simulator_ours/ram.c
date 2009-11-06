@@ -87,25 +87,27 @@ int free_ram(void) {
 void display_ram(void) {
     int i;
 
-    printf("    Frame, D, R ... Page, PID, V\n");
-    printf("------------------------------------\n");
-    for(i = 0; i < num_frames; ++i ) {
-        if( physical_mem[i].page_ref == NULL ) {
-            printf("RAM %5d, %c, %c ... --- FREE ---\n",
-                   physical_mem[i].frame,
-                   (physical_mem[i].dirty ? 'T' : 'F'),
-                   (physical_mem[i].ref   ? 'T' : 'F'));
-        } else {
-            printf("RAM %5d, %c, %c ... %5d, %5d, %c\n",
-                   physical_mem[i].frame,
-                   (physical_mem[i].dirty ? 'T' : 'F'),
-                   (physical_mem[i].ref   ? 'T' : 'F'),
-                   physical_mem[i].page_ref->page,
-                   physical_mem[i].page_ref->pid,
-                   (physical_mem[i].page_ref->valid ? 'T' : 'F')
-                   );
-        }
-    }
+	if (VERBOSE) {
+		printf("    Frame, D, R ... Page, PID, V\n");
+		printf("------------------------------------\n");
+		for(i = 0; i < num_frames; ++i ) {
+			if( physical_mem[i].page_ref == NULL ) {
+				printf("RAM %5d, %c, %c ... --- FREE ---\n",
+					physical_mem[i].frame,
+					(physical_mem[i].dirty ? 'T' : 'F'),
+					(physical_mem[i].ref   ? 'T' : 'F'));
+			} else {
+				printf("RAM %5d, %c, %c ... %5d, %5d, %c\n",
+					physical_mem[i].frame,
+					(physical_mem[i].dirty ? 'T' : 'F'),
+					(physical_mem[i].ref   ? 'T' : 'F'),
+					physical_mem[i].page_ref->page,
+					physical_mem[i].page_ref->pid,
+					(physical_mem[i].page_ref->valid ? 'T' : 'F')
+					);
+			}
+		}
+	}
 }
 
 int assert_page_in_ram(page_t page) {

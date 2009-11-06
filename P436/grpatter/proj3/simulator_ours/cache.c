@@ -160,29 +160,33 @@ int check_cache(pid_t pid, char mode, addr_t address, frame_t *frame) {
 static void display_cache(void) {
     int i;
 
-    printf("Cache Entry: Page , Frame, D, R, V, PID\n");
-    printf("---------------------------------------\n");
-    for( i = 0; i < num_cache_entries; ++i ) {
-        if( cache[i].valid ) {
-            display_cache_entry(i, false);
-        }
-    }
+	if (VERBOSE) {
+		printf("Cache Entry: Page , Frame, D, R, V, PID\n");
+		printf("---------------------------------------\n");
+		for( i = 0; i < num_cache_entries; ++i ) {
+			if( cache[i].valid ) {
+				display_cache_entry(i, false);
+			}
+		}
+	}
 }
 
 static void display_cache_entry(int idx, bool header) {
 
-    if( header ) {
-        printf("Cache Entry: Page , Frame, D, R, V, PID\n");
-        printf("---------------------------------------\n");
-    }
-    printf("CACHE %4d : %5d, %5d, %c, %c, %c, %5d\n",
-           idx,
-           cache[idx].page,
-           cache[idx].frame,
-           (cache[idx].dirty ? 'T' : 'F'),
-           (cache[idx].ref ? 'T' : 'F'),
-           (cache[idx].valid ? 'T' : 'F'),
-           cache[idx].owner);
+	if (VERBOSE) {
+		if( header ) {
+			printf("Cache Entry: Page , Frame, D, R, V, PID\n");
+			printf("---------------------------------------\n");
+		}
+		printf("CACHE %4d : %5d, %5d, %c, %c, %c, %5d\n",
+			idx,
+			cache[idx].page,
+			cache[idx].frame,
+			(cache[idx].dirty ? 'T' : 'F'),
+			(cache[idx].ref ? 'T' : 'F'),
+			(cache[idx].valid ? 'T' : 'F'),
+			cache[idx].owner);
+	}
 }
 
 static void check_cache_valid(int idx) {
