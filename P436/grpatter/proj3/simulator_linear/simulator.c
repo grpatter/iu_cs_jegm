@@ -69,11 +69,9 @@ int main(int argc,char *argv[]) {
     stats.num_pages  = n_pages;
     stats.num_frames = ram_info.n_frames;//
 
-	printf("Allocating resources...\n");
     allocate_cache(n_cache);
     allocate_tlb(n_tlb);
     allocate_page_table(n_pages);
-    allocate_page_directory(n_pages);
     //allocate_ram(n_frames);
     allocate_ram(ram_info);
 
@@ -139,7 +137,6 @@ int main(int argc,char *argv[]) {
 
     free_ram();
     free_page_table();
-	free_page_dir();
     free_tlb();
     free_cache();
 
@@ -340,8 +337,7 @@ static int access_page(pid_t pid, char mode, addr_t address, addr_t *physical_ad
      *   - Update Page Table
      *   - Update TLB, Cache
      */
-    //ret = check_page_table(pid, mode, address, &frame);
-    ret = check_page_dir(pid, mode, address, &frame);
+    ret = check_page_table(pid, mode, address, &frame);
     if( ret < 0 ) {
         fprintf(stderr, "Error: Page Table lookup failed!\n");
         stats.num_errors++;

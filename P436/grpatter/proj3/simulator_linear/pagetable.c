@@ -7,10 +7,8 @@
 #include "simulator.h"
 
 proc_page_table_ref_t *sys_proc_table = NULL;
-page_directory page_dir;
 
 static int num_pages  = 0;
-static int num_tables  = 0;//
 static int num_pids   = 0;
 
 /*
@@ -41,24 +39,6 @@ int allocate_page_table(int n) {
     return 0;
 }
 
-int allocate_page_directory(int n){//
-	num_tables = n;
-	//null shit out please
-	page_dir.dir_e = (dir_entry*)malloc(sizeof(dir_entry)*1024);
-	printf("Nulling page_dir values...\n");
-	for(int i = 0; i < 1024; ++i){
-		//printf("Null iteration:%d...\n",i);
-		page_dir.dir_e[i].exists = false;
-		page_dir.dir_e[i].table_ref = NULL;
-	}
-	return 0;
-}
-
-int free_page_dir(void){
-	free(page_dir.dir_e);
-	//free(page_dir);
-}
-
 int free_page_table(void) {
     int p;
 
@@ -81,11 +61,8 @@ int free_page_table(void) {
 
 int check_address(int addr) {
     /* If beyond the number of pages */
-    //if( num_pages <= GET_PAGE(addr) ) {
-    if( num_pages <= GET_PAGE_E(GET_PAGE(addr))) {
-	if(VERBOSE){printf("HEX address is:(%#010x)...",(unsigned)addr);}
+    if( num_pages <= GET_PAGE(addr) ) {
         printf("%s: Fault! Invalid Page Reference (%d)!\n", current_ref, GET_PAGE(addr));
-	if(VERBOSE){printf("GET_PAGE:(%#010x)...PAGE_IND:(%#010x)...PAGE_E:(%#010x)...\n",GET_PAGE(addr), GET_PAGE_IND(addr), GET_PAGE_E(GET_PAGE(addr)));}
         return -1;
     }
 
@@ -96,36 +73,6 @@ int check_address(int addr) {
     }
 
     return 0;
-}
-
-
-int check_page_dir(pid_t pid, char mode, addr_t address, frame_t *frame){
-//get address offset
-//look for existing table entry
-//if(exist), give it to check_page_table
-//else, create (make sure to create sys_proc_table), send fault, try again
-addr_t dir_offset = GET_PAGE_IND(address);
-bool found = false;
-nanosleep(&ACCESS_TIME_RAM, NULL);
-	//check directory for table entry
-	if(page_dir.dir_e[dir_offset].exists){//we have an entry, proceed with lookup
-		sys_proc_table = page_dir.dir_e[dir_offset].table_ref;
-		int check = check_page_table(pid, mode, address, frame);
-		printf("check_page_dir entry exists and resulted in check=%d...\n",check);
-	}else{//we need to create it
-		dir_entry de = create_dir_entry(pid);
-		page_dir.dir_e[dir_offset] = de;
-		printf("check_page_dir entry did not exist and was created at offset=%#010x...\n",dir_offset);
-	}
-	sys_proc_table = NULL;
-}
-
-dir_entry create_dir_entry(pid_t pid){
-	dir_entry de;
-	de.exists = true;
-	create_new_page_table(pid);
-	de.table_ref = sys_proc_table;
-	return de;
 }
 
 int check_page_table(pid_t pid, char mode, addr_t address, frame_t *frame) {
@@ -281,10 +228,7 @@ int find_page_table_entry(addr_t address, int index, page_table_leaf_t **page_en
     /*
      * Single level page table
      */
-	if(VERBOSE){printf("HEX address is:(%#010x)...",(unsigned)address);}
-    //*page_entry = &(sys_proc_table[index].page_table->pages[GET_PAGE(address)]);
-    *page_entry = &(sys_proc_table[index].page_table->pages[GET_PAGE_E(GET_PAGE(address))]);
-	if(VERBOSE){printf("GET_PAGE:(%#010x)...PAGE_IND:(%#010x)...PAGE_E:(%#010x)...\n",GET_PAGE(address), GET_PAGE_IND(address), GET_PAGE_E(GET_PAGE(address)));}
+    *page_entry = &(sys_proc_table[index].page_table->pages[GET_PAGE(address)]);
 
     return 0;
 }

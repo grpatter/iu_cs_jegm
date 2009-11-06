@@ -21,7 +21,7 @@
 /*
  * Output params
  */
-#define VERBOSE 1
+#define VERBOSE 0
  
 /*
  * PIDs range from 0 to 99
@@ -50,9 +50,6 @@
  * Page: Upper 20 bits of the virtual address
  */
 #define GET_PAGE(hex)   (hex>>PAGE_SIZE_BITS)
-
-#define GET_PAGE_IND(hex) (hex>>22)
-#define GET_PAGE_E(hex) (hex&0x3ff)
 
 /*
  * Offset: Lower 12 bits of the virtual address
@@ -164,33 +161,15 @@ typedef struct {
     page_table_leaf_t *pages;
 } page_table_t;
 
- 
 /*
  * System wide process page table container
  */
 typedef struct {
-    /* Process that owns this directory entry */
+    /* Process that owns this page table */
     pid_t    pid;
     /* Pointer to the page table in memory */
     page_table_t *page_table;
-	//page_dir_t *page_dir_t;//
 } proc_page_table_ref_t;
-
-
-/*
- * Page Directory
- */
-typedef struct{
-	bool exists;
-	proc_page_table_ref_t *table_ref;
-} dir_entry;
-
-typedef struct {
-    /* Pointer to the page table in memory */
-    //page_table_t *page_table;
-	dir_entry *dir_e;//
-} page_directory;
-
 
 /*
  * Structure representing a frame in Physical Memory
@@ -255,8 +234,6 @@ extern tlb_item_t *tlb;
  * System wide process page table array
  */
 extern proc_page_table_ref_t *sys_proc_table;
-
-extern page_directory page_dir;
 
 /*
  * Physical memory array
@@ -361,11 +338,6 @@ int  check_tlb(pid_t pid, char mode, addr_t address, frame_t *frame);
  */
 int allocate_page_table(int cache_entries);
 
-
-int allocate_page_directory(int n);
-int check_page_dir(pid_t pid, char mode, addr_t address, frame_t *frame);
-dir_entry create_dir_entry(pid_t pid);
-int free_page_dir(void);
 /*
  * Free the page table
  */
