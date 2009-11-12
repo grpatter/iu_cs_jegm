@@ -83,9 +83,9 @@ int check_address(int addr) {
     /* If beyond the number of pages */
     //if( num_pages <= GET_PAGE(addr) ) {
     if( num_pages <= GET_PAGE_E(GET_PAGE(addr))) {
-	if(VERBOSE){printf("HEX address is:(%#010x)...",(unsigned)addr);}
+	//if(VERBOSE){printf("HEX address is:(%#010x)...",(unsigned)addr);}
         printf("%s: Fault! Invalid Page Reference (%d)!\n", current_ref, GET_PAGE(addr));
-	if(VERBOSE){printf("GET_PAGE:(%#010x)...PAGE_IND:(%#010x)...PAGE_E:(%#010x)...\n",GET_PAGE(addr), GET_PAGE_IND(addr), GET_PAGE_E(GET_PAGE(addr)));}
+	//if(VERBOSE){printf("GET_PAGE:(%#010x)...PAGE_IND:(%#010x)...PAGE_E:(%#010x)...\n",GET_PAGE(addr), GET_PAGE_IND(addr), GET_PAGE_E(GET_PAGE(addr)));}
         return -1;
     }
 
@@ -281,10 +281,10 @@ int find_page_table_entry(addr_t address, int index, page_table_leaf_t **page_en
     /*
      * Single level page table
      */
-	if(VERBOSE){printf("HEX address is:(%#010x)...",(unsigned)address);}
+	//if(VERBOSE){printf("HEX address is:(%#010x)...",(unsigned)address);}
     //*page_entry = &(sys_proc_table[index].page_table->pages[GET_PAGE(address)]);
     *page_entry = &(sys_proc_table[index].page_table->pages[GET_PAGE_E(GET_PAGE(address))]);
-	if(VERBOSE){printf("GET_PAGE:(%#010x)...PAGE_IND:(%#010x)...PAGE_E:(%#010x)...\n",GET_PAGE(address), GET_PAGE_IND(address), GET_PAGE_E(GET_PAGE(address)));}
+	//if(VERBOSE){printf("GET_PAGE:(%#010x)...PAGE_IND:(%#010x)...PAGE_E:(%#010x)...\n",GET_PAGE(address), GET_PAGE_IND(address), GET_PAGE_E(GET_PAGE(address)));}
 
     return 0;
 }
