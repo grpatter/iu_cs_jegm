@@ -21,7 +21,7 @@
 /*
  * Output params
  */
-#define VERBOSE 0
+#define VERBOSE 1
  
 /*
  * PIDs range from 0 to 99
