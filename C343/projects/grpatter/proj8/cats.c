@@ -32,6 +32,7 @@ typedef struct {
 
 Cat cats[NUM_CATS];
 int sym_t[NUM_CATS];//hold values to real Cat array index
+int sym_ind;
 
 ////////////////
 // Helper functions
@@ -172,6 +173,9 @@ void add_parent(CatID child, CatID parent) {
     }
     cats[parent].youngest_child = child;
   }
+  //set sym_entry_t
+  sym_t[parent] = sym_ind;
+  cats[sym_ind++].sym_t_entry = parent;
 }
 
 ////////////////
@@ -302,10 +306,12 @@ void clear_descendants(CatID cat, int max_depth, int curr_depth) {
 }
 
 // Prints the descendants of 'cat' down to 'max_depth'.
-void query_descendants(CatID cat, int max_depth) {
+void query_descendants(CatID cat, int max_depth, bool garbage) {
   mark_descendants(cat, max_depth, 0);
   print_descendants(cat, cat, max_depth, 0);
-  clear_descendants(cat, max_depth, 0);
+  if(!garbage){
+	clear_descendants(cat, max_depth, 0);
+  }
 }
 
 ////////////////
@@ -341,20 +347,48 @@ void cmdHandler(int c_index, int p_index, char *op) {
 	} else if(strcmp(op, "?") == 0) {
 		query_relationship(c_index, p_index);
 	} else if(strcmp(op, "D") == 0) {
-		query_descendants(c_index, p_index);
+		query_descendants(c_index, p_index, false);
 	} else {
 		printf("Unrecognized Input: %s\n", op);	
 	}
 }
 
 void saveHandler(char *arr[]){
-	printf("Save action happens here...\n");
+	printf("Save requested with roots:");
 	for(int i = 0; i < 3; i++){
-		printf("Save requested with argument:%s...\n",arr[i]);
+		printf("%s\t",arr[i]);
 	}
-	int s1 = atoi(&arr[0][0]);
-	int s2 = atoi(&arr[0][2]);
-	printf("First to save is %d at %d...\n",s1,s2);
+	int s1a = atoi(&arr[0][0]);
+	int s1b = atoi(&arr[0][2]);
+	int s2a = atoi(&arr[1][0]);
+	int s2b = atoi(&arr[1][2]);
+	int s3a = atoi(&arr[2][0]);
+	int s3b = atoi(&arr[2][2]);
+	printf("\n");
+}
+
+void query_descendants_mark(int root, int gen){
+    query_descendants(root, gen, true);
+}
+
+void collectorStart(int a1, int a2, int b1, int b2, int c1, int c2){
+//call descs and mark each node at given roots (a1, b1, c1)
+//query_descendants_mark(a1,a2);
+//query_descendants_mark(b1,b2);
+//query_descendants_mark(c1,c2);
+//run Cheney scan loop over tree and copy to to_space
+	//copy_to_toSpace();
+//adjust pointers/forwarding as necessary
+//free from_space
+	//clear_descendants(a1, a2, 0);
+	//clear_descendants(b1, b2, 0);
+	//clear_descendants(c1, c2, 0);
+	/*
+	for(int i = 0; i < MAXCATS;i++){
+		free(cats[i]);
+	}
+	*/
+//reset globals
 }
 
 int main() {
@@ -368,7 +402,7 @@ int main() {
     cats[i].next_younger_by_dam = NIL;
     cats[i].counter = COUNTER_SENTINEL;
   }
-
+  sym_ind = 0;
   char input[101];
   bool done = false;
   int index = 0;
@@ -400,13 +434,13 @@ int main() {
 			save_action = true;
 			
 			scanf("%4s", save_1);
-			printf("we should store: %s\n", save_1);
+			//printf("we should store: %s\n", save_1);
 			
 			scanf("%4s", save_2);
-			printf("we should store: %s\n", save_2);
+			//printf("we should store: %s\n", save_2);
 			
 			scanf("%4s", save_3);
-			printf("we should store: %s\n", save_3);
+			//printf("we should store: %s\n", save_3);
 			
 		} else if(strcmp(input, ".") == 0) {
 			if(save_action){
