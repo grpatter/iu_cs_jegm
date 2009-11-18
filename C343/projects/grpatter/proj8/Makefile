@@ -14,7 +14,7 @@ LDFLAGS+=-W -Wall -pedantic # Turn on all link-time warnings
 all: cats
 clean:
 	-rm -rf cats cats.o proj8.tar.gz
-tar: proj8.tar.gz
+tar: proj8.tar.gz ReadMe.txt 
 
 # Executables
 cats: cats.o utils.o
@@ -27,5 +27,5 @@ utils.o: utils.c utils.h
 	gcc $(CFLAGS) -c $< -o $@
 
 # Tar file
-proj7.tar.gz: Makefile cats.c
+proj8.tar.gz: Makefile cats.c
 	tar -zcvf $@ $^
