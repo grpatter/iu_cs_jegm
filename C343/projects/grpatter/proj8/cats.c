@@ -1,6 +1,6 @@
 /*
-** NAME: Jonathan M. Stout
-** FILE: cats.c
+** Greg Patterson (grpatter)
+** cats.c
 ** SRC : (c) 2009, Michael D. Adams <adamsmd>
 */
 
@@ -28,21 +28,18 @@ typedef struct {
   CatID youngest_child;
   CatID next_younger_by_sire;
   CatID next_younger_by_dam;
-  int tableEntry;
+  int sym_t_entry;
   int counter;
 } Cat;
 
 Cat cats[NUM_CATS * 2];
-int symTable[NUM_CATS];
+int sym_t[NUM_CATS];
 
-int num_arr[2];
-char oper;
-int index;
 bool done;
 char input[101];
-int catMemory = 0;
-int memSize = NUM_CATS * 2;
-int memoryEnd = NUM_CATS;
+int catMemSIZE = 0;
+int MEMSIZE = NUM_CATS * 2;
+int MEMEND = NUM_CATS;
 
 ////////////////
 // Helper functions
@@ -111,7 +108,7 @@ void print_relationship(CatID cat1, int count1, CatID cat2, int count2) {
   assert(count1 != COUNTER_SENTINEL);
   assert(count2 != COUNTER_SENTINEL);
 
-  printf("%d is the ", cats[cat1].tableEntry);
+  printf("%d is the ", cats[cat1].sym_t_entry);
 
   if (count1 == 0 && count2 == 0) {
     printf("same as");
@@ -139,54 +136,53 @@ void print_relationship(CatID cat1, int count1, CatID cat2, int count2) {
     printf(" of");
   }
 
-  printf(" %d.\n", cats[cat2].tableEntry);
+  printf(" %d.\n", cats[cat2].sym_t_entry);
 }
 
 ////////////////
 // Functions for '<' and '>'
 ////////////////
 
-// Gets the next free cell in the cats array
-int nextFreeCat() {
+int getFreeCat() {
   int end;
-  if (catMemory == 0)
-    end = memoryEnd;
+  if (catMemSIZE == 0)
+    end = MEMEND;
   else
-    end = memSize;
+    end = MEMSIZE;
 
-  for (int i = catMemory; i < end; i++) {
-    if ( cats[i].tableEntry == -1 ) {
+  for (int i = catMemSIZE; i < end; i++) {
+    if ( cats[i].sym_t_entry == -1 ) {
       return i;
     }
   }
   return -1;
 }
 
-int getCat(int index) {
-  return symTable[index];
+int resolveCat(int index) {
+  return sym_t[index];
 }
 
 // Adds 'parent' as a sire or dam of 'child'
 // after checking for re-parentage and cycles.
 void add_parent(CatID child, CatID parent) {
-  int childPointer = getCat(child);
-  // printf("%d ", childPointer);
-  if (childPointer == NIL) {
-    childPointer = nextFreeCat();
-    cats[childPointer].tableEntry = child;
-    symTable[child] = childPointer;
+  int c_ptr = resolveCat(child);
+  // printf("%d ", c_ptr);
+  if (c_ptr == NIL) {
+    c_ptr = getFreeCat();
+    cats[c_ptr].sym_t_entry = child;
+    sym_t[child] = c_ptr;
   }
 
-  int parentPointer = getCat(parent);
-  // printf("%d\n", parentPointer);
-  if (parentPointer == NIL) {
-    parentPointer = nextFreeCat();
-    cats[parentPointer].tableEntry = parent;
-    symTable[parent] = parentPointer;
+  int p_ptr = resolveCat(parent);
+  // printf("%d\n", p_ptr);
+  if (p_ptr == NIL) {
+    p_ptr = getFreeCat();
+    cats[p_ptr].sym_t_entry = parent;
+    sym_t[parent] = p_ptr;
   }
 
   // check for re-parentage
-  if (is_male(parent) ? cats[childPointer].sire != NIL : cats[childPointer].dam != NIL) {
+  if (is_male(parent) ? cats[c_ptr].sire != NIL : cats[c_ptr].dam != NIL) {
     printf("Input ignored: %d already has a %s.\n",
            child, is_male(parent) ? "sire" : "dam");
     return;
@@ -199,27 +195,27 @@ void add_parent(CatID child, CatID parent) {
   }
 
   // set parent pointer
-  if (is_male(parent)) cats[childPointer].sire = parentPointer;
-  else cats[childPointer].dam = parentPointer;
+  if (is_male(parent)) cats[c_ptr].sire = p_ptr;
+  else cats[c_ptr].dam = p_ptr;
 
   // set child pointer
-  if (cats[parentPointer].eldest_child == NIL) {
+  if (cats[p_ptr].eldest_child == NIL) {
     // this is first child to be added
-    assert(cats[parentPointer].youngest_child == NIL);
-    cats[parentPointer].eldest_child = childPointer;
-    cats[parentPointer].youngest_child = childPointer;
+    assert(cats[p_ptr].youngest_child == NIL);
+    cats[p_ptr].eldest_child = c_ptr;
+    cats[p_ptr].youngest_child = c_ptr;
   } else {
     // this is not the first child to be added
-    CatID youngest_child = cats[parentPointer].youngest_child;
+    CatID youngest_child = cats[p_ptr].youngest_child;
     assert(youngest_child != NIL);
     if (is_male(parent)) {
       assert(cats[youngest_child].next_younger_by_sire == NIL);
-      cats[youngest_child].next_younger_by_sire = childPointer;
+      cats[youngest_child].next_younger_by_sire = c_ptr;
     } else {
       assert(cats[youngest_child].next_younger_by_dam == NIL);
-      cats[youngest_child].next_younger_by_dam = childPointer;
+      cats[youngest_child].next_younger_by_dam = c_ptr;
     }
-    cats[parentPointer].youngest_child = childPointer;
+    cats[p_ptr].youngest_child = c_ptr;
   }
 }
 
@@ -282,13 +278,13 @@ void clear_ancestors(CatID cat) {
 
 // Prints all closest relationships between 'cat1' and 'cat2'.
 void query_relationship(CatID cat1, CatID cat2) {
-  cat1 = getCat(cat1);
-  cat2 = getCat(cat2);
+  cat1 = resolveCat(cat1);
+  cat2 = resolveCat(cat2);
 
   mark_ancestors(cat1, 0);
   int relationship = find_minimum_relationship(cat2, 0);
   if (relationship == COUNTER_SENTINEL) {
-    printf("%d is not related to %d.\n", cats[cat1].tableEntry, cats[cat2].tableEntry);
+    printf("%d is not related to %d.\n", cats[cat1].sym_t_entry, cats[cat2].sym_t_entry);
   } else {
     print_relationship_at_distance(cat1, cat2, cat2, relationship, 0);
   }
@@ -355,7 +351,7 @@ void clear_descendants(CatID cat, int max_depth, int curr_depth) {
 
 // Prints the descendants of 'cat' down to 'max_depth'.
 void query_descendants(CatID cat, int max_depth) {
-  cat = getCat(cat);
+  cat = resolveCat(cat);
 
   mark_descendants(cat, max_depth, 0);
   print_descendants(cat, cat, max_depth, 0);
@@ -418,46 +414,6 @@ Operator parse_operator(char str[]) {
   return OPERATOR_ERROR;
 }
 
-// Begin ----------------------------------------------------
-void handleInput(char input[101]) {
-  if (isnumber(input)) {
-    num_arr[index++] = atoi(input);
-  }
-  else if (strcmp(input, "?") == 0 || strcmp(input, "<") == 0 || strcmp(input, ">") == 0 || strcmp(input, "D") == 0 || strcmp(input, "Save") == 0) {
-    oper = input[0];
-  }
-  else if (strcmp(input, ".") == 0) {
-    if (oper == '?') {
-      query_relationship(num_arr[0], num_arr[1]);
-    } 
-    else if (oper == 'D') {
-      query_descendants(num_arr[0], num_arr[1]);
-      printf("\n");
-    }
-    else if (oper == '<') {
-      add_parent(num_arr[0], num_arr[1]);
-    } 
-    else if (oper == '>') {
-      add_parent(num_arr[1], num_arr[0]);
-    }
-    else if (oper == 'S') {
-      save_descendants();
-    }
-    else {
-      printf("Invalid Operator. Ignoring.\n");
-    }
-    index = 0;
-  }
-  else { 
-    if (oper == 'S') {
-      parse_saved_cats(input);
-    }
-    else {
-      printf("Invalid input, flushing stdin.\n");
-    }
-  }
-}
-// End ------------------------------------------------------
 
 void collectorStart(int a1, int a2, int b1, int b2, int c1, int c2){
 //call descs and mark each node at given roots (a1, b1, c1)
@@ -516,14 +472,14 @@ int main() {
     cats[i].youngest_child = NIL;
     cats[i].next_younger_by_sire = NIL;
     cats[i].next_younger_by_dam = NIL;
-    cats[i].tableEntry = -1;
+    cats[i].sym_t_entry = -1;
     cats[i].counter = COUNTER_SENTINEL;
   }
   cats[-1].sire = NIL;
   cats[-1].dam = NIL;
 
   for (int i = 0; i < NUM_CATS; i++) {
-    symTable[i] = -1;
+    sym_t[i] = -1;
   }
   
   int sym_ind = 0;
