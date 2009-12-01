@@ -48,7 +48,19 @@ int memoryEnd = NUM_CATS;
 // Helper functions
 ////////////////
 
-
+/*----------------------------------------------------------------
+** FUNC: isnumber(char *str)
+** OPER: Checks if a char* is a number
+** SRC : David Wise
+*/
+bool isnumber(char *str) {
+  bool result = true;
+  for (int i = 0; str[i] != '\0'; i++) {
+    result = result && isdigit(str[i]);
+  }
+  return result;
+}
+//----------------------------------------------------------------
 
 // Returns true iff 'cat' is male.
 bool is_male(CatID cat) { return cat % 2 != 0; }
@@ -459,54 +471,6 @@ void handleInput(char input[101]) {
 }
 // End ------------------------------------------------------
 
-void collectorStart(int a1, int a2, int b1, int b2, int c1, int c2){
-//call descs and mark each node at given roots (a1, b1, c1)
-//query_descendants_mark(a1,a2);
-//query_descendants_mark(b1,b2);
-//query_descendants_mark(c1,c2);
-//run Cheney scan loop over tree and copy to to_space
-	//copy_to_toSpace();
-//adjust pointers/forwarding as necessary
-//free from_space
-	//clear_descendants(a1, a2, 0);
-	//clear_descendants(b1, b2, 0);
-	//clear_descendants(c1, c2, 0);
-	/*
-	for(int i = 0; i < MAXCATS;i++){
-		free(cats[i]);
-	}
-	*/
-//reset globals
-}
-
-void cmdHandler(int c_index, int p_index, char *op) {
-	if(strcmp(op, "<") == 0) {
-		add_parent(c_index, p_index);
-	} else if(strcmp(op, ">") == 0) {
-		add_parent(p_index, c_index);
-	} else if(strcmp(op, "?") == 0) {
-		query_relationship(c_index, p_index);
-	} else if(strcmp(op, "D") == 0) {
-		query_descendants(c_index, p_index);
-	} else {
-		printf("Unrecognized Input: %s\n", op);	
-	}
-}
-
-void saveHandler(char *arr[]){
-	printf("Save requested with roots:");
-	for(int i = 0; i < 3; i++){
-		printf("%s\t",arr[i]);
-	}
-	int s1a = atoi(&arr[0][0]);
-	int s1b = atoi(&arr[0][2]);
-	int s2a = atoi(&arr[1][0]);
-	int s2b = atoi(&arr[1][2]);
-	int s3a = atoi(&arr[2][0]);
-	int s3b = atoi(&arr[2][2]);
-	printf("\n");
-}
-
 int main() {
   // initialize the cats  
   for (unsigned int i = 0; i < sizeof(cats) / sizeof(cats[0]); i++) {
@@ -525,60 +489,15 @@ int main() {
   for (int i = 0; i < NUM_CATS; i++) {
     symTable[i] = -1;
   }
-  
-  int sym_ind = 0;
-  char input[101];
-  bool done = false;
-  int index = 0;
-  int vals[2];
-  char save_1[4];
-  char save_2[4];
-  char save_3[4];
-  int saveindex = 0;
-  char *op;
-  bool save_action = false;
 
-  while(!done) {                                         
-    if (scanf("%100s", input) == EOF) {                                                   
+  while(!done) {
+    if (scanf("%100s", input) == EOF) {
+      // End of input, assume the user wants to exit
       done = true;
-    } else {
-		if (isnumber(input)) {
-			vals[index++] = atoi(input);
-		} else if(strcmp(input, "<") == 0) {
-			op = "<";
-		} else if(strcmp(input, ">") == 0) {
-			op = ">";
-		} else if(strcmp(input, "?") == 0) {
-			op = "?";
-		} else if(strcmp(input, "D") == 0) {
-			op = "D";
-		} else if(strcmp(input, "Save") == 0){
-			save_action = true;
-			
-			scanf("%4s", save_1);
-			//printf("we should store: %s\n", save_1);
-			
-			scanf("%4s", save_2);
-			//printf("we should store: %s\n", save_2);
-			
-			scanf("%4s", save_3);
-			//printf("we should store: %s\n", save_3);
-			
-		} else if(strcmp(input, ".") == 0) {
-			if(save_action){
-				char *save_arr[] = {save_1, save_2, save_3};
-				saveHandler(save_arr);
-			}else{
-				cmdHandler(vals[0], vals[1], op);
-			}
-			index = 0;
-			saveindex = 0;
-			save_action = false;
-		} else if(strcmp(input, "P") == 0) {
-			//printAllCats(); 
-		} else {
-			printf("Unrecognized Input: %s\n", input);	
-		}
+    }
+    else {
+      // Sends string to handleInput to working functions
+      handleInput(input);
     }
   }
 

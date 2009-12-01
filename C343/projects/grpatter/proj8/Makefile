@@ -27,5 +27,5 @@ utils.o: utils.c utils.h
 	gcc $(CFLAGS) -c $< -o $@
 
 # Tar file
-proj8.tar.gz: Makefile cats.c
+proj8.tar.gz: Makefile cats.c utils.c ReadMe.txt
 	tar -zcvf $@ $^
