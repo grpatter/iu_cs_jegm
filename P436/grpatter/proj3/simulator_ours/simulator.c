@@ -130,18 +130,26 @@ int main(int argc,char *argv[]) {
     /*
      * Cleanup
      */
+	 
     fclose(access_fd);
 
+	printf("lalalalalals\n"); 
+	
     if( NULL != current_ref ) {
         free(current_ref);
         current_ref = NULL;
     }
+	
+	printf("lalalalalals\n"); 
 
     free_ram();
-    free_page_table();
+	printf("lalalalalals\n"); 
 	free_page_dir();
+	printf("lalalalalals\n"); 
     free_tlb();
+	printf("lalalalalals\n"); 
     free_cache();
+	printf("lalalalalals\n"); 
 
     return 0;
 }
@@ -241,7 +249,12 @@ static int parse_args(int argc, char **argv,
 	/*
 	 *Algorithm Request
 	 */
-    *algo = strdup(argv[6]);
+	if(argc > 6){
+		*algo = strdup(argv[6]);
+	}else{
+		printf("default case...\n");
+		*algo = DEFAULT_PAGE_ALGO;
+	}
     printf("Evict Algo  : %10s\n", *algo);
     printf("\n");
 	
@@ -302,7 +315,7 @@ static int access_page(pid_t pid, char mode, addr_t address, addr_t *physical_ad
         return 0;
     }
     stats.cache_miss++;
-    /*printf("%s: Cache Miss...\n", current_ref);*/
+    printf("%s: Cache Miss...\n", current_ref);
 
     /*
      * Check the TLB

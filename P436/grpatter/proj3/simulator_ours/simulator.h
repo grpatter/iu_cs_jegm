@@ -234,6 +234,7 @@ typedef struct {
     int tlb_size;
     int num_pages;
     int num_frames;
+	char *algorithm;
 } stat_entry_t;
 
 /*

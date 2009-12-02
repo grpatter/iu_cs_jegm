@@ -55,27 +55,44 @@ int allocate_page_directory(int n){//
 }
 
 int free_page_dir(void){
+	/*
+	for(int i = 0; i < 1024; ++i){
+		if(page_dir.dir_e[i].exists){
+			sys_proc_table = page_dir.dir_e[i].table_ref;
+			free_page_table();
+		}
+	}
+	sys_proc_table = NULL;
+	*/
 	free(page_dir.dir_e);
 	//free(page_dir);
 }
 
 int free_page_table(void) {
+	printf("inside fpt, pids=%d\n",num_pids);
     int p;
 
     for( p = 0; p < num_pids; ++p ) {
         /* Free the core page table */
+		printf("loop iter start:%d..\n",p);
         free(sys_proc_table[p].page_table->pages);
+		printf("free1 done\n");
         sys_proc_table[p].page_table->pages = NULL;
+		printf("null1 done\n");
 
         /* Free the table structure */
         free(sys_proc_table[p].page_table);
+		printf("free2 done\n");
         sys_proc_table[p].page_table = NULL;
+		printf("loop iter coplete:%d..\n",p);
     }
 
     /* Free the system table */
+	printf("outside loop in fpt\n");
     free(sys_proc_table);
     sys_proc_table = NULL;
 
+	printf("returnign from fpt\n");
     return 0;
 }
 
