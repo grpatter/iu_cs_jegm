@@ -18,15 +18,16 @@ static double eat_ram(void);
 
 void display_stats(void) {
 
-    stats.cache_hit_ratio = 0.0;
+    stats.cache_hit_ratio = (float)stats.cache_hit/(float)stats.cache_miss;
 
-    stats.tlb_hit_ratio   = 0.0;
+    stats.tlb_hit_ratio   = (float)stats.tlb_hit/(float)stats.tlb_miss;
 
-    stats.page_fault_rate = 0.0;
+    stats.page_fault_rate = (float)stats.pt_hit/(float)stats.page_faults;
 
-    stats.swap_out_ratio  = 0.0;
+    stats.swap_out_ratio  = (float)stats.swap_out/(float)stats.swap_in;
 
     printf("------------------------------------\n");
+	printf("Simulation Ran with Algorithm: %s\n",stats.algorithm);
     printf("General:\n");
     printf("   Num. Procs      : %10d\n", stats.num_procs);
     printf("   Context Switch  : %10d\n", stats.num_context_switch);
