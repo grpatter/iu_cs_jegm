@@ -196,8 +196,12 @@ void std_m(){
 		printf("\n%s%s", getcwd(directory, sizeof(directory)),PATH);//prompt
 		flush_io();
 		if(fgets(buffer, sizeof(buffer), stdin)!=NULL){
-			input = buffer;
-			valid_cmd = 1;
+			if(buffer[0] == '\n'){
+				valid_cmd = 0;
+			}else{
+				input = buffer;
+				valid_cmd = 1;
+			}
 		}else{
 			printf("buf is null\n");
 			input = "";
@@ -362,10 +366,19 @@ int countchar(const char list[], char what ){
 	}
   return count;
 }
+void handle_signal(int signo){
+	char directory[1024];
+	printf("\n%s%s", getcwd(directory, sizeof(directory)),PATH);//prompt
+	fflush(stdout);
+}
 
 int main(int argc, char *argv[]){
 	system("clear");//clear anything currently oustanding
 	flush_io();
+	
+	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, handle_signal);
+	
 	if(argc>1){
 		char *fname = argv[1];
 		batch_m(argc, fname);
