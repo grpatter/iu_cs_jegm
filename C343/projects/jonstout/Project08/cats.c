@@ -43,6 +43,8 @@ char input[101];
 int catMemory = 0;
 int memSize = NUM_CATS * 2;
 int memoryEnd = NUM_CATS;
+int toSpacePointer = NUM_CATS;
+
 
 ////////////////
 // Helper functions
@@ -124,23 +126,24 @@ void print_relationship(CatID cat1, int count1, CatID cat2, int count2) {
   assert(count2 != COUNTER_SENTINEL);
 
   printf("%d is the ", cats[cat1].tableEntry);
+  //printf("%d is the ", cats[cat1].tableEntry);
 
   if (count1 == 0 && count2 == 0) {
     printf("same as");
   } else if (count1 == 0) {
     print_great_grand(count2 - 1);
-    printf(is_male(cat1) ? "father of" : "mother of");
+    printf(is_male(cats[cat1].tableEntry) ? "father of" : "mother of");
   } else if (count2 == 0) {
     print_great_grand(count1 - 1);
-    printf(is_male(cat1) ? "son of" : "daughter of");
+    printf(is_male(cats[cat1].tableEntry) ? "son of" : "daughter of");
   } else if (count1 == 1 && count2 == 1) {
-    printf(is_male(cat1) ? "brother of" : "sister of");
+    printf(is_male(cats[cat1].tableEntry) ? "brother of" : "sister of");
   } else if (count1 == 1) {
     print_great_grand(count2 - 2);
-    printf(is_male(cat1) ? "uncle of" : "aunt of");
+    printf(is_male(cats[cat1].tableEntry) ? "uncle of" : "aunt of");
   } else if (count2 == 1) {
     print_great_grand(count1 - 2);
-    printf(is_male(cat1) ? "nephew of" : "niece of");
+    printf(is_male(cats[cat1].tableEntry) ? "nephew of" : "niece of");
   } else {
     int i = min_counter(count1, count2) - 1;
     int j = abs(count1 - count2);
@@ -152,6 +155,7 @@ void print_relationship(CatID cat1, int count1, CatID cat2, int count2) {
   }
 
   printf(" %d.\n", cats[cat2].tableEntry);
+  //printf(" eldest_child: %d.\n", cats[cat1].eldest_child);
 }
 
 ////////////////
@@ -181,20 +185,13 @@ int getCat(int index) {
 // Adds 'parent' as a sire or dam of 'child'
 // after checking for re-parentage and cycles.
 void add_parent(CatID child, CatID parent) {
+
+  // Update Child Pointers
   int childPointer = getCat(child);
-  // printf("%d ", childPointer);
   if (childPointer == NIL) {
     childPointer = nextFreeCat();
     cats[childPointer].tableEntry = child;
     symTable[child] = childPointer;
-  }
-
-  int parentPointer = getCat(parent);
-  // printf("%d\n", parentPointer);
-  if (parentPointer == NIL) {
-    parentPointer = nextFreeCat();
-    cats[parentPointer].tableEntry = parent;
-    symTable[parent] = parentPointer;
   }
 
   // check for re-parentage
@@ -202,6 +199,15 @@ void add_parent(CatID child, CatID parent) {
     printf("Input ignored: %d already has a %s.\n",
            child, is_male(parent) ? "sire" : "dam");
     return;
+  }
+
+  // Update Parent Pointers
+  int parentPointer = getCat(parent);
+  // printf("%d\n", parentPointer);
+  if (parentPointer == NIL) {
+    parentPointer = nextFreeCat();
+    cats[parentPointer].tableEntry = parent;
+    symTable[parent] = parentPointer;
   }
 
   // check for cycles
@@ -294,13 +300,20 @@ void clear_ancestors(CatID cat) {
 
 // Prints all closest relationships between 'cat1' and 'cat2'.
 void query_relationship(CatID cat1, CatID cat2) {
+  //printf("%d %d\n", cat1, cat2);
   cat1 = getCat(cat1);
   cat2 = getCat(cat2);
+
+  //printf("cat1: %d %d    cat2: %d %d \n", cats[cat1].tableEntry, cat1, cats[cat2].tableEntry, cat2);
 
   mark_ancestors(cat1, 0);
   int relationship = find_minimum_relationship(cat2, 0);
   if (relationship == COUNTER_SENTINEL) {
+    //printf("%d-%d is not related to %d-%d.\n", cats[cat1].tableEntry, cat1, cats[cat2].tableEntry, cat2);
     printf("%d is not related to %d.\n", cats[cat1].tableEntry, cats[cat2].tableEntry);
+    printf(" eldest_child: %d.\n", cats[cat1].eldest_child);
+    printf(" par: %d.\n", cats[cats[cat1].sire].tableEntry);
+    printf(" par: %d.\n", cats[cats[cat1].dam].tableEntry);
   } else {
     print_relationship_at_distance(cat1, cat2, cat2, relationship, 0);
   }
@@ -378,16 +391,171 @@ void query_descendants(CatID cat, int max_depth) {
 // Save function
 ////////////////
 
-void save_descendants() {
+// Return REAL placement of topCat
+int getTopCat(int cat, int lvl) {
   
+  if (lvl == 0) {
+    return cat;
+  }
+  else {
+    if (cats[cat].dam == NIL) {
+      return cat;
+    }
+    else {
+      return getTopCat(cats[cat].dam, lvl - 1);
+    }
+  }
 }
 
-void mark_saved_cats(int cat, int lvl) {
-  printf("%d cat, %d lvl(s)\n", cat, lvl);
 
-  
+void clearNewToSpace(int front, int ending) {
+  for (int i = front; i < ending; i++) {
+    cats[i].sire = NIL;
+    cats[i].dam = NIL;
+    cats[i].eldest_child = NIL;
+    cats[i].youngest_child = NIL;
+    cats[i].next_younger_by_sire = NIL;
+    cats[i].next_younger_by_dam = NIL;
+    cats[i].tableEntry = -1;
+    cats[i].counter = COUNTER_SENTINEL;    
+  }
+}
+// --------------------------------------------------------------------------------
+// Copy cat to to_space @ toSpacePointer
+void copyCat(int i, int j) {
+  cats[i].eldest_child = cats[j].eldest_child;
+  cats[i].next_younger_by_sire = cats[j].next_younger_by_sire;
+  cats[i].next_younger_by_dam = cats[j].next_younger_by_dam;
+ 
+  cats[i].tableEntry = cats[j].tableEntry;
+  symTable[cats[j].tableEntry] = i;
+
+  //printf("symTable at %d points to %d. eldest: %d yS: %d yD: %d\n", 
+	 //cats[i].tableEntry, i, cats[i].eldest_child, cats[i].next_younger_by_dam, 
+	 //cats[i].next_younger_by_dam);
 }
 
+// --------------------------------------------------------------------------------
+// Set Soft Links
+void setSoftLinks(int damCat) {
+
+  for(int i = catMemory; i < memoryEnd; i++) {
+    if(is_male(i)) {
+      //i is male
+      CatID curr = cats[i].eldest_child;
+
+      while(curr != NIL) {
+	cats[curr].sire = i;
+	//printf("%d sire is %d \n", curr, cats[curr].sire);
+	cats[i].youngest_child = curr;	
+	curr = cats[curr].next_younger_by_sire;
+      }
+    }
+    else {
+      //i is a female                                                                                             
+      CatID curr = cats[i].eldest_child;
+
+      while(curr != NIL) {
+	cats[curr].dam = i;
+	//printf("%d dam is %d\n", curr, cats[curr].dam);
+	cats[i].youngest_child = curr;
+	curr = cats[i].next_younger_by_dam;
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+// Move cats to to_space
+int move_saved_cats(int cat) {
+
+  if (cats[cat].eldest_child != NIL) {
+    
+    cats[cat].eldest_child = move_saved_cats(cats[cat].eldest_child);
+    //printf("%d eldest: %d\n", cat, cats[cat].eldest_child);
+  }
+
+  if (cats[cat].next_younger_by_sire != NIL) {
+
+    cats[cat].next_younger_by_sire = move_saved_cats(cats[cat].next_younger_by_sire);
+    //printf("%d yS updated: %d\n", cat, cats[cat].next_younger_by_sire);
+  }
+
+  if (cats[cat].next_younger_by_dam != NIL) {
+
+    cats[cat].next_younger_by_dam = move_saved_cats(cats[cat].next_younger_by_dam);
+    //printf("%d yD updated: %d\n", cat, cats[cat].next_younger_by_dam);
+  }
+
+  copyCat(toSpacePointer, cat);
+
+  return toSpacePointer++;
+}
+
+// -----------------------------------------------------------------------------
+// Move GradDammmm
+int move_saved_dam(int i, int j) {
+  cats[i].eldest_child = cats[j].eldest_child;
+  cats[i].next_younger_by_sire = -1;
+  cats[i].next_younger_by_dam = -1;
+ 
+  cats[i].tableEntry = cats[j].tableEntry;
+  symTable[cats[j].tableEntry] = i;
+
+  //printf("symTable at %d points to %d. eldest: %d yS: %d yD: %d\n", 
+	 //cats[i].tableEntry, i, cats[i].eldest_child, cats[i].next_younger_by_dam, 
+	 //cats[i].next_younger_by_dam);
+  return toSpacePointer++;
+}
+
+// Function called for each part (ex. 3@1) of the save command
+void save_descendants(int cat, int lvl) {
+
+  cat = getCat(cat);
+  int damCat = getTopCat(cat, lvl);
+
+  //printf("%d cat, %d damCat, %d lvl(s)\n", cats[cat].tableEntry, cats[damCat].tableEntry, lvl);
+
+  // EXTRA
+  //cats[cat].counter = COUNTER_SENTINEL;
+  //cats[toSpacePointer] = cats[cat];
+  //symTable[ cats[cat].tableEntry ] = toSpacePointer;
+  // EXTRA
+
+/*
+  damCat = move_saved_dam(toSpacePointer, damCat);
+  int eldestCat = move_saved_cats(damCat);
+  cats[damCat].eldest_child = eldestCat;
+  */
+int eldestCat = -1;
+if (cats[damCat].eldest_child != NIL) {
+  eldestCat = move_saved_cats(cats[damCat].eldest_child);
+}
+damCat = move_saved_dam(toSpacePointer, damCat);
+cats[damCat].eldest_child = eldestCat;
+if (is_male(damCat))
+cats[eldestCat].sire = damCat;
+else
+cats[eldestCat].dam = damCat;
+
+  if (catMemory == 0) {
+    toSpacePointer = 0;
+    catMemory = NUM_CATS;
+    memoryEnd = NUM_CATS * 2;
+  }
+  else {
+    toSpacePointer = NUM_CATS;
+    catMemory = 0;
+    memoryEnd = NUM_CATS;
+  }
+
+  //printf("getCat %d | getTopCat %d\n", cat, damCat);
+  setSoftLinks(damCat);
+
+}
+
+
+// Parse each part (ex: 3@1) of the save command
 void parse_saved_cats(char input[101]) {
   int cat;
   int lvl;
@@ -405,7 +573,7 @@ void parse_saved_cats(char input[101]) {
     }
     temp = strtok(NULL, "@");
   }
-  mark_saved_cats(cat, lvl);
+  save_descendants(cat, lvl);
 }
 
 ////////////////
@@ -453,7 +621,14 @@ void handleInput(char input[101]) {
       add_parent(num_arr[1], num_arr[0]);
     }
     else if (oper == 'S') {
-      save_descendants();
+      //save_descendants();
+
+      if (catMemory == 0) {
+	clearNewToSpace(NUM_CATS, NUM_CATS*2); 
+      }
+      else {
+	clearNewToSpace(0, NUM_CATS); 
+      }
     }
     else {
       printf("Invalid Operator. Ignoring.\n");
