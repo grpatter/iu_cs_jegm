@@ -11,6 +11,7 @@ struct jobStore{
 	char *cmd_name;
 	//string cmd_location;
 	bool is_bg;
+	bool has_listed;
 	struct jobStruct *realJob;
 }; 
 
@@ -20,4 +21,16 @@ typedef struct jobStruct{
 	char *argv[ARGS];
 	char *cmd_full;
 }jobStruct; 
+
+struct filename{
+	char name[512];
+	off_t fsize;
+	int links;
+	uid_t uid;
+	gid_t gid;
+	mode_t mode;
+	time_t mod_time;
+	long file_blocks;
+	dev_t dev_att;
+};
 

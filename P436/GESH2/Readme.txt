@@ -11,7 +11,7 @@ Run in standard mode: ./shell
 Run in batch mode: ./shell <filename>
 
 Mode is announced upon loading.
-Shell prompt appears as: "[GE_SH@]$ "
+Shell prompt appears as: "[GE_SH2@]$ "
 
 Known problems:
 1) We do not print out the correct job cmd string, as memory is being overwritten (we think) somewhere.
