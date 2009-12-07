@@ -23,6 +23,7 @@ typedef struct filename FILENAME;
 
 #define MAX_LEN 512
 #define MAX_FILES 16324
+#define SEC_PER_YEAR	60 * 60 * 24 * 365
 int countchar(const char[], char);
 int runJob(jobStruct * curJob);
 void flush_io();
@@ -34,6 +35,8 @@ void std_m();
 int handle_job(char *input, bool bg);
 void change_status(char *status);
 void child(int argc, char *argv[10]);
+void handle_cd(char *in, jobStruct * curJob);
+int listDir(char *dir, bool show_long, bool show_all);
 
 int cmd_n = 1;//keep track of # cmds
 //struct jobStore jobStore[50];
@@ -76,6 +79,117 @@ void handle_cd(char *in, jobStruct * curJob){
 }
 
 
+int cmp_name(const void * a, const void * b){
+	FILENAME	*one, *two;
+
+	//one = *a; 
+	//two = *b;
+
+	//return(strcmp(one->name, two->name));	
+}
+
+int print_long(FILENAME *f){
+	char		ftype;		/*  File type -, d, p, c, b, l */
+	char		perm[16];	/*  Permission string (-rwxrwxrwx) */
+
+	char		link[256];	/*  Target of symbolic link */
+
+	char		owner[32];	/*  Name of file's owner */
+	char		group[32];	/*  Name of file's group owner */
+	struct passwd 	*pw;		/*  Temporary passwd structure */
+	struct group	*gr;		/*  Temporary group structure */
+
+	char		mtime[32];	/*  Formatted modification time */
+	time_t		now;		/*  Current timestamp */
+	struct tm	*tm, *tnow;	/*  Temporary time structures */
+
+	/*  Determine the file's type */
+	/*
+	if (S_ISREG(f->mode))
+		ftype = '-';
+	else if (S_ISDIR(f->mode))
+		ftype = 'd';
+	else if (S_ISLNK(f->mode))
+		ftype = 'l';
+	else if (S_ISFIFO(f->mode))
+		ftype = 'p';
+	else if (S_ISBLK(f->mode))
+		ftype = 'b';
+	else if (S_ISCHR(f->mode))
+		ftype = 'c';
+	else if (S_ISSOCK(f->mode))
+		ftype = 's';
+	*/
+	switch(f->mode){
+		case(S_ISREG):ftype = '-';break;
+		case(S_ISDIR):ftype = 'd';break;
+		case(S_ISLNK):ftype = 'l';break;
+		case(S_ISFIFO):ftype = 'p';break;
+		case(S_ISBLK):ftype = 'b';break;
+		case(S_ISCHR):ftype = 'c';break;
+		case(S_ISSOCK):ftype = 's';break;
+		default:ftype = '-';break;
+	}
+
+	/*  If we have a symlink, then lookup the target filename */
+	if (S_ISLNK(f->mode)){
+		if (readlink(f->name, link, 256) >= 0){
+			sprintf(f->name, "%s -> %s", f->name, link);
+		}	
+	}
+	
+	/*  Decode the permission string */
+	sprintf(perm, "%c%c%c%c%c%c%c%c%c%c",
+		ftype,
+		(f->mode & S_IRUSR) ? 'r' : '-',
+		(f->mode & S_IWUSR) ? 'w' : '-',
+		(f->mode & S_IXUSR) ? 'x' : '-',
+		(f->mode & S_IRGRP) ? 'r' : '-',
+		(f->mode & S_IWGRP) ? 'w' : '-',
+		(f->mode & S_IXGRP) ? 'x' : '-',
+		(f->mode & S_IROTH) ? 'r' : '-',
+		(f->mode & S_IWOTH) ? 'w' : '-',
+		(f->mode & S_IXOTH) ? 'x' : '-');
+
+	/*  Make corrections for SUID, SGID, and sticky bit */
+	if (f->mode & S_ISUID)
+		perm[3] = (f->mode & S_IXUSR) ? 's' : 'S';
+	if (f->mode & S_ISGID)
+		perm[6] = (f->mode & S_IXGRP) ? 's' : 'S';
+	if (f->mode & S_ISVTX)
+		perm[9] = (f->mode & S_IXOTH) ? 't' : 'T';
+
+	/*  Use the uid to get the owner's name */
+	if ((pw = getpwuid(f->uid)) == NULL)
+		sprintf(owner, "%d", f->uid);
+	else
+		strcpy(owner, pw->pw_name);	
+
+	/*  Use the gid to get the group owner's name */
+	if ((gr = getgrgid(f->gid)) == NULL)
+		sprintf(group, "%d", f->gid);
+	else
+		strcpy(group, gr->gr_name);	
+
+	/*  Format the modification time */
+	now = time(0);
+	tnow = localtime(&now);
+	tm = localtime(&(f->mod_time));
+	if (f->mod_time < now - SEC_PER_YEAR)
+		strftime(mtime, 32, "%b %d  %Y", tm);
+	else
+		strftime(mtime, 32, "%b %d %H:%M", tm);
+	
+	/*  Print the output */
+	if (S_ISCHR(f->mode) || S_ISBLK(f->mode)){
+		printf("%s %4d %-8s %-9s %3d,%3d %s %s\n", 
+			perm, f->links, owner, group, major(f->dev_att), minor(f->dev_att), mtime, f->name);
+	}else{
+		printf("%s %4d %-8s %-9s %7d %s %s\n", 
+			perm, f->links, owner, group, f->fsize, mtime, f->name);	
+	}
+}
+
 int listDir(char *dir, bool show_long, bool show_all){
 	char **dirs;
 	DIR *dir_ptr;
@@ -95,7 +209,7 @@ int listDir(char *dir, bool show_long, bool show_all){
 		cout<<"Unable to allocate filename array, aborting..."<<endl;
 		return 1;
 	}
-	cout<<"Listing for dir:"<<dir<<endl;
+	//cout<<"Listing for dir:"<<dir<<endl;
 	if(strcmp(dir, " ") == 0){
 		dir = ".";
 	}
@@ -120,25 +234,22 @@ int listDir(char *dir, bool show_long, bool show_all){
 		strcpy(temp_file->name, cur_dir->d_name);
 		temp_file->fsize = stat.st_size;
 		temp_file->mode = stat.st_mode;
+		temp_file->mod_time = stat.st_mtime;
+		temp_file->uid = stat.st_uid;
+		temp_file->gid = stat.st_gid;
+		temp_file->links = stat.st_nlink;
+		temp_file->file_blocks = stat.st_blocks;
+		temp_file->dev_att = stat.st_rdev;
 		
 		files[file_count++] = temp_file;
 	}
-	cout<<endl<<dir<<" contains:"<<endl;
+	cout<<endl<<dir<<" contains:"<< file_count <<" files..."<<endl;
+	
+	//qsort(files, file_count, sizeof(FILENAME *), cmp_name);
 	if(show_long){//print -l
 	for(int i = 0; i < file_count; i++){
-		sprintf(perms, "%c%c%c%c%c%c%c%c%c",
-			(files[i]->mode & S_IRUSR) ? 'r' : '-',
-			(files[i]->mode & S_IWUSR) ? 'w' : '-',
-			(files[i]->mode & S_IXUSR) ? 'x' : '-',
-			(files[i]->mode & S_IRGRP) ? 'r' : '-',
-			(files[i]->mode & S_IWGRP) ? 'w' : '-',
-			(files[i]->mode & S_IXGRP) ? 'x' : '-',
-			(files[i]->mode & S_IROTH) ? 'r' : '-',
-			(files[i]->mode & S_IWOTH) ? 'w' : '-',
-			(files[i]->mode & S_IXOTH) ? 'x' : '-');
-		printf("%s\t", perms);
-		printf("%s\t%d\n", files[i]->name, files[i]->fsize);	
-	}	
+		print_long(files[i]);
+	}
 	}else{//std print
 		for(int a = 0; a < file_count; a++){
 			cout<<files[a]->name<<"\t";
@@ -210,7 +321,7 @@ void p_summary(){
 void p_jobs(){//TODO: rewrite
 	change_status("Running");
 	for(int n = 0; n < jobStore.size(); n++){//loop over jobs
-		if(jobStore[n].is_bg && !jobStore[n].has_listed){//bg * shown		
+		if(jobStore[n].is_bg){//bg * shown		
 			printf("Job[%d]*:\t%s ",jobStore[n].job_n,jobStore[n].cmd_name);
 		//}else{
 			//printf("Job[%d]:\t%s ",jobStore[n].job_n,jobStore[n].cmd_name);
@@ -219,9 +330,6 @@ void p_jobs(){//TODO: rewrite
 			printf("%s ", jobStore[n].realJob->argv[c]);
 		}
 		printf(" \t[%d] is currently: \t%s\n", jobStore[n].realJob->argc,jobStore[n].cmd_status);
-		if(strcmp(jobStore[n].cmd_status, "Completed") == 0){
-			jobStore[n].has_listed = true;//so we dont show again
-		}
 		}
 	}	
 	change_status("Completed");
@@ -442,7 +550,6 @@ int handle_job(char *input, bool bg){
 	tempStore.job_n = cmd_n;
 	tempStore.cmd_status = "Scheduled";
 	tempStore.cmd_name = command;
-	tempSTore.has_listed = false;
 	if(bg){
 		tempStore.is_bg = true;
 	}else{
@@ -453,13 +560,11 @@ int handle_job(char *input, bool bg){
 	int loc = get_job_position(cmd_n, jobStore);
 	if(strcmp(command, "cd") == 0){
 		handle_cd(in_saved,job);
-		change_status("Completed");
 		cmd_n++;
 		return flag;
 	}
 	if(strcmp(command, "myls") == 0){
 		handle_myls(in_saved, job);
-		change_status("Completed");
 		cmd_n++;
 		return flag;
 	}

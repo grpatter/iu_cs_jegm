@@ -11,7 +11,6 @@ struct jobStore{
 	char *cmd_name;
 	//string cmd_location;
 	bool is_bg;
-	bool has_listed;
 	struct jobStruct *realJob;
 }; 
 

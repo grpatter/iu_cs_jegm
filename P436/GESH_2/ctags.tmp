@@ -1,0 +1,175 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ARGS	jobs.h	4;"	macro
+FILENAME	main.cpp	22;"	typedef
+MAX_FILES	main.cpp	25;"	macro
+MAX_LEN	main.cpp	24;"	macro
+PATH	main.cpp	44;"	variable
+SEC_PER_YEAR	main.cpp	26;"	macro
+arg_c	main.cpp	324;"	local
+arg_c	main.cpp	405;"	local
+arg_v	main.cpp	326;"	local
+arg_v	main.cpp	407;"	local
+argc	jobs.h	19;"	member	struct:jobStruct
+argv	jobs.h	20;"	member	struct:jobStruct
+background_j	main.cpp	358;"	local
+background_j	main.cpp	442;"	local
+batch_m	main.cpp	322;"	function
+batch_m	main.cpp	33;"	prototype
+bjcmds	main.cpp	365;"	local
+bjcmds	main.cpp	449;"	local
+bjcount	main.cpp	373;"	local
+bjcount	main.cpp	457;"	local
+bjn	main.cpp	359;"	local
+bjn	main.cpp	443;"	local
+bjtok	main.cpp	364;"	local
+bjtok	main.cpp	448;"	local
+bn	main.cpp	366;"	local
+bn	main.cpp	450;"	local
+buffer	main.cpp	335;"	local
+buffer	main.cpp	415;"	local
+c	main.cpp	256;"	local
+change_status	main.cpp	36;"	prototype
+change_status	main.cpp	579;"	function
+child	main.cpp	37;"	prototype
+child	main.cpp	490;"	local
+child	main.cpp	584;"	function
+childpid	main.cpp	491;"	local
+childstatus	main.cpp	66;"	local
+cmd	main.cpp	494;"	local
+cmd_full	jobs.h	21;"	member	struct:jobStruct
+cmd_n	main.cpp	41;"	variable
+cmd_name	jobs.h	11;"	member	struct:jobStore
+cmd_path	jobs.h	18;"	member	struct:jobStruct
+cmd_status	jobs.h	10;"	member	struct:jobStore
+cmdlen	main.cpp	336;"	local
+cmdlen	main.cpp	416;"	local
+cmdlen	main.cpp	497;"	local
+cmp_name	main.cpp	82;"	function
+cn	main.cpp	383;"	local
+cn	main.cpp	467;"	local
+command	main.cpp	496;"	local
+count	main.cpp	591;"	local
+countchar	main.cpp	27;"	prototype
+countchar	main.cpp	589;"	function
+cp	main.cpp	327;"	local
+cp	main.cpp	408;"	local
+cur_dir	main.cpp	183;"	local
+delim	main.cpp	329;"	local
+delim	main.cpp	410;"	local
+dev_att	jobs.h	33;"	member	struct:filename
+dir_count	main.cpp	188;"	local
+dir_ptr	main.cpp	182;"	local
+directory	main.cpp	418;"	local
+directory	main.cpp	598;"	local
+dirs	main.cpp	181;"	local
+endl	main.cpp	196;"	local
+endl	main.cpp	232;"	local
+endl	main.cpp	243;"	local
+endl	main.cpp	251;"	local
+file_blocks	jobs.h	32;"	member	struct:filename
+file_count	main.cpp	187;"	local
+filename	jobs.h	24;"	struct
+files	main.cpp	186;"	local
+fin	main.cpp	331;"	local
+flag	main.cpp	330;"	local
+flag	main.cpp	411;"	local
+flag	main.cpp	489;"	local
+flush_io	main.cpp	29;"	prototype
+flush_io	main.cpp	48;"	function
+fname	main.cpp	611;"	local
+found_opts	main.cpp	258;"	local
+fsize	jobs.h	26;"	member	struct:filename
+ftype	main.cpp	92;"	local
+get	main.cpp	558;"	local
+get_job_position	main.cpp	291;"	function
+get_job_position	main.cpp	30;"	prototype
+gid	jobs.h	29;"	member	struct:filename
+gr	main.cpp	100;"	local
+group	main.cpp	98;"	local
+handle_cd	main.cpp	38;"	prototype
+handle_cd	main.cpp	65;"	function
+handle_job	main.cpp	35;"	prototype
+handle_job	main.cpp	486;"	function
+handle_myls	main.cpp	250;"	function
+handle_signal	main.cpp	597;"	function
+has_listed	main.cpp	260;"	local
+i	main.cpp	511;"	local
+i	main.cpp	590;"	local
+in	main.cpp	325;"	local
+in	main.cpp	406;"	local
+in_saved	main.cpp	504;"	local
+index	main.cpp	257;"	local
+input	main.cpp	335;"	local
+input	main.cpp	415;"	local
+is_bg	jobs.h	13;"	member	struct:jobStore
+job	main.cpp	499;"	local
+jobStore	jobs.h	6;"	struct
+jobStore	main.cpp	43;"	variable
+jobStruct	jobs.h	17;"	struct
+jobStruct	jobs.h	22;"	typedef
+job_n	jobs.h	7;"	member	struct:jobStore
+link	main.cpp	95;"	local
+links	jobs.h	27;"	member	struct:filename
+listDir	main.cpp	180;"	function
+listDir	main.cpp	39;"	prototype
+loc	main.cpp	544;"	local
+loc	main.cpp	56;"	local
+loc	main.cpp	580;"	local
+loc	main.cpp	71;"	local
+main	main.cpp	603;"	function
+mj	main.cpp	328;"	local
+mj	main.cpp	409;"	local
+mjcmds	main.cpp	382;"	local
+mjcmds	main.cpp	466;"	local
+mjcount	main.cpp	390;"	local
+mjcount	main.cpp	474;"	local
+mjn	main.cpp	360;"	local
+mjn	main.cpp	444;"	local
+mjtok	main.cpp	381;"	local
+mjtok	main.cpp	465;"	local
+mod_time	jobs.h	31;"	member	struct:filename
+mode	jobs.h	30;"	member	struct:filename
+mtime	main.cpp	102;"	local
+name	jobs.h	25;"	member	struct:filename
+now	main.cpp	103;"	local
+one	main.cpp	83;"	local
+owner	main.cpp	97;"	local
+p_jobs	main.cpp	305;"	function
+p_jobs	main.cpp	32;"	prototype
+p_summary	main.cpp	301;"	function
+p_summary	main.cpp	31;"	prototype
+path	main.cpp	45;"	variable
+perm	main.cpp	93;"	local
+perms	main.cpp	189;"	local
+prev_dir	main.cpp	192;"	local
+prev_dir	main.cpp	67;"	local
+print_long	main.cpp	91;"	function
+push_back	main.cpp	542;"	prototype
+pw	main.cpp	99;"	local
+realJob	jobs.h	14;"	member	struct:jobStore
+runJob	main.cpp	28;"	prototype
+runJob	main.cpp	53;"	function
+shell_pgid	main.cpp	488;"	local
+shell_terminal	main.cpp	487;"	local
+show_all	main.cpp	254;"	local
+show_long	main.cpp	253;"	local
+stat	main.cpp	184;"	local
+status	main.cpp	491;"	local
+status	main.cpp	66;"	local
+std_m	main.cpp	34;"	prototype
+std_m	main.cpp	403;"	function
+store_size	main.cpp	292;"	local
+tempStore	main.cpp	532;"	local
+temp_file	main.cpp	185;"	local
+this_args	main.cpp	259;"	local
+tm	main.cpp	104;"	local
+tnow	main.cpp	104;"	local
+two	main.cpp	83;"	local
+uid	jobs.h	28;"	member	struct:filename
+valid_cmd	main.cpp	412;"	local
+x	main.cpp	493;"	local
