@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/rep/p536_grpatter/!svn/ver/38/p436/trunk/p436/project3/simulator_ours
+END
+stats.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/rep/p536_grpatter/!svn/ver/71/p436/trunk/p436/project3/simulator_ours/stats.c
+END
+cache.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/rep/p536_grpatter/!svn/ver/38/p436/trunk/p436/project3/simulator_ours/cache.c
+END
+pagealgorithms.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/rep/p536_grpatter/!svn/ver/38/p436/trunk/p436/project3/simulator_ours/pagealgorithms.c
+END
+pagealgorithms.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/rep/p536_grpatter/!svn/ver/37/p436/trunk/p436/project3/simulator_ours/pagealgorithms.h
+END
+support.c
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/rep/p536_grpatter/!svn/ver/35/p436/trunk/p436/project3/simulator_ours/support.c
+END
+simulator.c
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/rep/p536_grpatter/!svn/ver/70/p436/trunk/p436/project3/simulator_ours/simulator.c
+END
+ram.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/rep/p536_grpatter/!svn/ver/38/p436/trunk/p436/project3/simulator_ours/ram.c
+END
+ctags.tmp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/rep/p536_grpatter/!svn/ver/71/p436/trunk/p436/project3/simulator_ours/ctags.tmp
+END
+tlb.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/rep/p536_grpatter/!svn/ver/35/p436/trunk/p436/project3/simulator_ours/tlb.c
+END
+support.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/rep/p536_grpatter/!svn/ver/35/p436/trunk/p436/project3/simulator_ours/support.h
+END
+simulator.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/rep/p536_grpatter/!svn/ver/70/p436/trunk/p436/project3/simulator_ours/simulator.h
+END
+pagetable.c
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/rep/p536_grpatter/!svn/ver/70/p436/trunk/p436/project3/simulator_ours/pagetable.c
+END
+gen_short.txt
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/rep/p536_grpatter/!svn/ver/71/p436/trunk/p436/project3/simulator_ours/gen_short.txt
+END
+gen_script.pl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/rep/p536_grpatter/!svn/ver/35/p436/trunk/p436/project3/simulator_ours/gen_script.pl
+END
+gen2.txt
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/rep/p536_grpatter/!svn/ver/70/p436/trunk/p436/project3/simulator_ours/gen2.txt
+END
+gen_212.txt
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/rep/p536_grpatter/!svn/ver/70/p436/trunk/p436/project3/simulator_ours/gen_212.txt
+END
+gen4.txt
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/rep/p536_grpatter/!svn/ver/71/p436/trunk/p436/project3/simulator_ours/gen4.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/rep/p536_grpatter/!svn/ver/35/p436/trunk/p436/project3/simulator_ours/Makefile
+END
+gen2hit.txt
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/rep/p536_grpatter/!svn/ver/71/p436/trunk/p436/project3/simulator_ours/gen2hit.txt
+END
+test1.txt
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/rep/p536_grpatter/!svn/ver/71/p436/trunk/p436/project3/simulator_ours/test1.txt
+END
