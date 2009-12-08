@@ -132,24 +132,16 @@ int main(int argc,char *argv[]) {
      */
 	 
     fclose(access_fd);
-
-	printf("lalalalalals\n"); 
 	
     if( NULL != current_ref ) {
         free(current_ref);
         current_ref = NULL;
     }
 	
-	printf("lalalalalals\n"); 
-
     free_ram();
-	printf("lalalalalals\n"); 
 	free_page_dir();
-	printf("lalalalalals\n"); 
     free_tlb();
-	printf("lalalalalals\n"); 
     free_cache();
-	printf("lalalalalals\n"); 
 
     return 0;
 }
@@ -275,13 +267,15 @@ static int extract_args(char *ref, pid_t *pid, char *mode, addr_t *address) {
 static int access_page(pid_t pid, char mode, addr_t address, addr_t *physical_addr) {
     frame_t frame;
     int ret;
-
+	
     /*
      * Check for a context switch
      */
     if(last_pid != pid ) {
         last_pid = pid;
         stats.num_context_switch++;
+		//stats.num_procs++;
+		stats.pid_list[stats.num_procs++] = pid;
     }
 
     /*

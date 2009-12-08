@@ -55,44 +55,34 @@ int allocate_page_directory(int n){//
 }
 
 int free_page_dir(void){
-	/*
 	for(int i = 0; i < 1024; ++i){
 		if(page_dir.dir_e[i].exists){
 			sys_proc_table = page_dir.dir_e[i].table_ref;
 			free_page_table();
 		}
 	}
-	sys_proc_table = NULL;
-	*/
 	free(page_dir.dir_e);
-	//free(page_dir);
+	page_dir.dir_e = NULL;
 }
 
 int free_page_table(void) {
-	printf("inside fpt, pids=%d\n",num_pids);
     int p;
 
-    for( p = 0; p < num_pids; ++p ) {
+    //for( p = 0; p < num_pids; ++p ) {
+    for( p = 0; p < 1; ++p ) {
         /* Free the core page table */
-		printf("loop iter start:%d..\n",p);
         free(sys_proc_table[p].page_table->pages);
-		printf("free1 done\n");
         sys_proc_table[p].page_table->pages = NULL;
-		printf("null1 done\n");
 
         /* Free the table structure */
         free(sys_proc_table[p].page_table);
-		printf("free2 done\n");
         sys_proc_table[p].page_table = NULL;
-		printf("loop iter coplete:%d..\n",p);
     }
 
     /* Free the system table */
-	printf("outside loop in fpt\n");
     free(sys_proc_table);
     sys_proc_table = NULL;
 
-	printf("returnign from fpt\n");
     return 0;
 }
 
@@ -256,11 +246,13 @@ static void flush_page_table(int index) {
 }
 
 static int create_new_page_table(pid_t pid) {
+	if(VERBOSE){printf("start create new page table with pid %d\n",(int)pid);}
     int index = num_pids;
     num_pids++;
 
     stats.num_procs = num_pids;
 
+	if(VERBOSE){printf("realloc create new page table with pid %d\n",(int)pid);}
     /* Grow the system page table reference */
     sys_proc_table = (proc_page_table_ref_t *)realloc(sys_proc_table, (sizeof(proc_page_table_ref_t) * (num_pids)) );
     if( NULL == sys_proc_table ) {
@@ -268,14 +260,18 @@ static int create_new_page_table(pid_t pid) {
         return -1;
     }
 
+	if(VERBOSE){printf("pid entry create new page table with pid %d\n",(int)pid);}
     /* Create the entry for this PID */
     sys_proc_table[index].pid = pid;
+	if(VERBOSE){printf("pid set to %d\n",(int)sys_proc_table[index].pid);}
     sys_proc_table[index].page_table = (page_table_t*)malloc(sizeof(page_table_t));
+	if(VERBOSE){printf("page_table + malloc'd\n");}
     if( NULL == sys_proc_table[index].page_table ) {
         fprintf(stderr, "Error: Unable to create a page table for process %d\n", pid);
         return -1;
     }
 
+	if(VERBOSE){printf("core table in create new page table with pid %d\n",(int)pid);}
     /* Create the core page table */
     sys_proc_table[index].page_table->pages = (page_table_leaf_t*)malloc(sizeof(page_table_leaf_t) * num_pages);
     if( NULL == sys_proc_table[index].page_table->pages ) {
@@ -283,9 +279,11 @@ static int create_new_page_table(pid_t pid) {
         return -1;
     }
 
+	if(VERBOSE){printf("preflush create new page table with pid %d\n",(int)pid);}
     /* Initialize the page table for this process to empty */
     flush_page_table(index);
 
+	if(VERBOSE){printf("end create new page table with pid %d\n",(int)pid);}
     return 0;
 }
 

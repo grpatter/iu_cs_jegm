@@ -18,16 +18,22 @@ static double eat_ram(void);
 
 void display_stats(void) {
 
-    stats.cache_hit_ratio = (float)stats.cache_hit/(float)stats.cache_miss;
+    stats.cache_hit_ratio = 0.0;
 
-    stats.tlb_hit_ratio   = (float)stats.tlb_hit/(float)stats.tlb_miss;
+    stats.tlb_hit_ratio   = 0.0;
 
-    stats.page_fault_rate = (float)stats.pt_hit/(float)stats.page_faults;
+    stats.page_fault_rate = 0.0;
 
-    stats.swap_out_ratio  = (float)stats.swap_out/(float)stats.swap_in;
+    stats.swap_out_ratio  = 0.0;
 
+    printf("------------------------------------\n");	
+	for(int i = 0; i < DEFAULT_NUM_PAGES; i++){
+		if(stats.pid_list[i] != -1){
+			printf("pid_list[%d]:%d\n", i, stats.pid_list[i]);
+		}
+		//TOOD check for uniqueness
+	}
     printf("------------------------------------\n");
-	printf("Simulation Ran with Algorithm: %s\n",stats.algorithm);
     printf("General:\n");
     printf("   Num. Procs      : %10d\n", stats.num_procs);
     printf("   Context Switch  : %10d\n", stats.num_context_switch);
@@ -94,6 +100,11 @@ void clear_stats(void) {
 
     /* Correctness */
     stats.num_errors  = 0;
+	
+	/* pid list */
+	for(int i = 0; i < DEFAULT_NUM_PAGES; i++){
+	stats.pid_list[i] = -1;
+	}
 }
 
 void pretty_print(int32_t value, int32_t mult) {

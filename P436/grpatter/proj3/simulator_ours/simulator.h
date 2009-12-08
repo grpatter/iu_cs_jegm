@@ -17,6 +17,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include "support.h"
+#include <list>
 
 /*
  * Output params
@@ -235,6 +236,7 @@ typedef struct {
     int num_pages;
     int num_frames;
 	char *algorithm;
+	pid_t pid_list[DEFAULT_NUM_PAGES];
 } stat_entry_t;
 
 /*
