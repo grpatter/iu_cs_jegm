@@ -34,25 +34,18 @@ int clock_hand_loc;
 
 void initAlgorithm(char *algo){
 	alg_string = algo;
-	
 	if(strcmp(algo, "fifo") == 0){
-		stats.algorithm = "fifo";
 		CUR_ALGO = FIFO;
 	}else if(strcmp(algo, "lru") == 0){
-		stats.algorithm = "lru";
 		CUR_ALGO = LRU;
 	}else if(strcmp(algo, "clock") == 0){
-		stats.algorithm = "clock";
 		CUR_ALGO = CLOCK;
 	}else if(strcmp(algo, "eclock") == 0){
-		stats.algorithm = "eclock";
 		CUR_ALGO = ECLOCK;
 	}else{
 		CUR_ALGO = RANDOM;
-		stats.algorithm = "Defaulted to random";
 	}
 	initCurAlgo();
-	printf("CUR_ALGO num is: %d-----------------------!!!!!!!!-----------------\n",CUR_ALGO);
 }
 
 void initCurAlgo(){
