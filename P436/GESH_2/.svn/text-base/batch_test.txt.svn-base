@@ -1,6 +1,0 @@
-ls -1
-pwd
-ls -a; sleep 3; echo test
-mkdir testdir
-ls -all; sleep 1
-rmdir testdir
