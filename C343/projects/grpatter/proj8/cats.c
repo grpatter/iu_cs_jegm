@@ -1,5 +1,6 @@
-
-
+/* File: utils.c
+ * Greg Patterson grpatter
+ */
 #include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
@@ -8,7 +9,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#define DEBUG 0
 #define NIL ((CatID)-1)
 #define COUNTER_SENTINEL (-1)
 
@@ -28,13 +28,14 @@ typedef struct {
   int counter;
 } Cat;
 
-Cat cats[NUM_CATS * 2];
 int sym_t[NUM_CATS];
+Cat cats[NUM_CATS * 2];
 
 int CATMEM_LOC = 0;
 int MEMSIZE = NUM_CATS * 2;
 int MEMEND = NUM_CATS;
 int spc_ptr = NUM_CATS;
+
 int vals[2];
 char *op;
 int index;
@@ -372,7 +373,7 @@ void query_descendants(CatID cat, int max_depth) {
 }
 
 ////////////////
-// Save function
+// Save functions
 ////////////////
 
 int getFirst(int cat, int c) {  
@@ -387,26 +388,13 @@ int getFirst(int cat, int c) {
   }
 }
 
-void clearDestSpace(int st, int end) {
-  for (int i = st; i < end; i++) {
-    cats[i].sire = NIL;
-    cats[i].dam = NIL;
-    cats[i].eldest_child = NIL;
-    cats[i].youngest_child = NIL;
-    cats[i].next_younger_by_sire = NIL;
-    cats[i].next_younger_by_dam = NIL;
-    cats[i].sym_t_entry = -1;
-    cats[i].counter = COUNTER_SENTINEL;    
-  }
-}
-
 void copy(int i, int j) {
   cats[i].eldest_child = cats[j].eldest_child;
   cats[i].next_younger_by_sire = cats[j].next_younger_by_sire;
   cats[i].next_younger_by_dam = cats[j].next_younger_by_dam; 
   cats[i].sym_t_entry = cats[j].sym_t_entry;
   sym_t[cats[j].sym_t_entry] = i;
-  printf("Copied cat from %d to %d...\n",i,j);
+  //printf("Copied cat from %d to %d...\n",i,j);
 }
 
 void setupLinks() {
@@ -447,8 +435,20 @@ int moveDam(int i, int j) {
   cats[i].next_younger_by_dam = -1; 
   cats[i].sym_t_entry = cats[j].sym_t_entry;
   sym_t[cats[j].sym_t_entry] = i;
-
   return spc_ptr++;
+}
+
+void clearDestSpace(int st, int end) {
+  for (int i = st; i < end; i++) {
+    cats[i].sire = NIL;
+    cats[i].dam = NIL;
+    cats[i].eldest_child = NIL;
+    cats[i].youngest_child = NIL;
+    cats[i].next_younger_by_sire = NIL;
+    cats[i].next_younger_by_dam = NIL;
+    cats[i].sym_t_entry = -1;
+    cats[i].counter = COUNTER_SENTINEL;    
+  }
 }
 
 void saveDescs(int cat, int c) {
@@ -543,7 +543,6 @@ void cmdHandler(int c_index, int p_index, char *op) {
 }
 
 int main() {
-  // initialize the cats  
   for (unsigned int i = 0; i < sizeof(cats) / sizeof(cats[0]); i++) {
     cats[i].sire = NIL;
     cats[i].dam = NIL;
