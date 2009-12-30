@@ -90,6 +90,8 @@ const struct timespec ACCESS_TIME_DISK  = {0, 10000000};
  */
 #define DEFAULT_NUM_FRAMES 16384
 
+#define DEFAULT_PAGE_ALGO "random"
+
 /*
  * Generic address type
  */
@@ -164,6 +166,14 @@ typedef struct {
 } frame_ref_t;
 
 /*
+ * My Frame with algorithm type
+*/
+typedef struct {
+	char* algo;
+	int frameCount;
+} ram;
+
+/*
  * Structure for keeping track of stats
  */
 typedef struct {
@@ -195,6 +205,9 @@ typedef struct {
     int tlb_size;
     int num_pages;
     int num_frames;
+
+	pid_t processList[5000000];
+	char* algo;
 } stat_entry_t;
 
 /*

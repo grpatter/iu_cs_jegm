@@ -75,6 +75,23 @@ int check_address(int addr) {
     return 0;
 }
 
+int check_page_dir(pid_t pid, char mode, addr_t address, frame_t *frame) {
+	addr_t dir_offset = GET_PAGE_IND(address);
+
+	bool present = false;
+	nanosleep(&ACCESS_TIME_RAM, NULL);
+
+	if (page_dir.dir_e[dir_offset].exists) {
+		sys_proc_table = page_dir.dir_e[dir_offset].table_ref;
+		check_page_table(pid, mode, address, frame);
+	}
+	else {
+		dir_entry directEntry = create_dir_entry(pid);
+		page_dir.dir_e[dir_offset] = directEntry;
+	}
+	sys_proc_table = NULL;
+}
+
 int check_page_table(pid_t pid, char mode, addr_t address, frame_t *frame) {
     bool found = false;
     int i, index;
@@ -101,7 +118,7 @@ int check_page_table(pid_t pid, char mode, addr_t address, frame_t *frame) {
      */
     if( !found ) {
         printf("%s: New Process (%*d), Creating Page Table\n", current_ref,
-               MAX_PID_LEN, pid);
+                MAX_PID_LEN, pid);
 
         index = num_pids;
         if( 0 != create_new_page_table(pid) ) {
