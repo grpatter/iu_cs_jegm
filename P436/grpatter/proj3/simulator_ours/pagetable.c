@@ -33,6 +33,10 @@ static void display_page_table(int index);
  */
 static int find_page_table_entry(addr_t address, int index, page_table_leaf_t **page_entry);
 
+/*
+** 
+*/
+
 /*********************************************************
  * Page Table
  *********************************************************/
@@ -86,6 +90,8 @@ int free_page_table(void) {
     return 0;
 }
 
+//----------------------------------------------------------------------------
+
 int check_address(int addr) {
     /* If beyond the number of pages */
     //if( num_pages <= GET_PAGE(addr) ) {
@@ -104,6 +110,7 @@ int check_address(int addr) {
 
     return 0;
 }
+//----------------------------------------------------------------------------
 
 
 int check_page_dir(pid_t pid, char mode, addr_t address, frame_t *frame){

@@ -152,10 +152,12 @@ typedef struct {
 /*
  * RAM Info data structure
  */
+//----------------------------------------------------------------------------
 typedef struct {
 	int n_frames;
 	char *algorithm;
 }ram_info_t;
+//----------------------------------------------------------------------------
 
 /*
  * Page Table

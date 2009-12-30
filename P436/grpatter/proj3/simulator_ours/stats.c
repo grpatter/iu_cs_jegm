@@ -7,7 +7,9 @@
 #include "simulator.h"
 #include <list>
 
+//----------------------------------------------------------------------------
 stat_entry_t stats;
+//----------------------------------------------------------------------------
 
 /*
  * EAT = Effective Access Time
@@ -26,7 +28,8 @@ void display_stats(void) {
     stats.page_fault_rate = 0.0;
 
     stats.swap_out_ratio  = 0.0;
-	
+
+	//----------------------------------------------------------------------------	
 	//determine real # of pids
 	std::list<pid_t> pid_c;
 	for(int i = 0; i < DEFAULT_NUM_PAGES; i++){
@@ -38,6 +41,8 @@ void display_stats(void) {
 	pid_c.unique();
 	stats.num_procs = pid_c.size();
 	
+	//----------------------------------------------------------------------------
+
     printf("------------------------------------\n");
     printf("General:\n");
     printf("   Num. Procs      : %10d\n", stats.num_procs);
