@@ -5,10 +5,14 @@
  *
  */
 #include "simulator.h"
+//----------------------------------------------------------------------------
 #include "pagealgorithms.c"
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 static int num_frames = 0;
 static char *algorithm_str = "random";
+//----------------------------------------------------------------------------
 
 /*
  * Free Frame tracking (stack based)
@@ -42,13 +46,18 @@ static int swap_in(page_table_leaf_t *page_entry);
  * Frame Management
  *********************************************************/
 //int allocate_ram(int n) {
+
+//----------------------------------------------------------------------------
 int allocate_ram(ram_info_t ram_info) {
+//----------------------------------------------------------------------------
     int i;
 
     //num_frames = n;
+	//----------------------------------------------------------------------------
     num_frames = ram_info.n_frames;
 	algorithm_str = ram_info.algorithm;//
 	initAlgorithm(algorithm_str);//
+	//----------------------------------------------------------------------------
 
     /* Physical Memory (RAM) */
     physical_mem = (frame_ref_t*)malloc(sizeof(frame_ref_t) * num_frames);
@@ -172,6 +181,7 @@ static int random_page_replacement_alg(frame_t *victim) {
 
 static int page_replacement_alg(frame_t *victim) {
 	printf("\nRequested to use Page Eviction Algorithm: %s\n", algorithm_str);//
+	//----------------------------------------------------------------------------
 	int v_res = getVictim(victim);
 	if(v_res != -1){
 		printf("%s: Page Rep. Alg. Victim = %5d\n", current_ref, *victim);
@@ -179,6 +189,8 @@ static int page_replacement_alg(frame_t *victim) {
 	}else{
 		return random_page_replacement_alg(victim);
 	}	
+	//----------------------------------------------------------------------------
+
 }
 
 static int swap_out(frame_t victim) {
@@ -255,7 +267,8 @@ static int swap_in(page_table_leaf_t *page_entry) {
 	/*
 	 * Tell algorithm to update
 	 */
+	//----------------------------------------------------------------------------
 	swapInActionAlgo(fframe);//
-	
+	//----------------------------------------------------------------------------
     return 0;
 }

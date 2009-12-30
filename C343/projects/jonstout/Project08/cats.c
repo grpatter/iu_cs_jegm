@@ -179,6 +179,7 @@ int nextFreeCat() {
 }
 
 int getCat(int index) {
+	// EDIT ME
   return symTable[index];
 }
 
@@ -191,6 +192,7 @@ void add_parent(CatID child, CatID parent) {
   if (childPointer == NIL) {
     childPointer = nextFreeCat();
     cats[childPointer].tableEntry = child;
+	// EDIT ME
     symTable[child] = childPointer;
   }
 
@@ -207,6 +209,7 @@ void add_parent(CatID child, CatID parent) {
   if (parentPointer == NIL) {
     parentPointer = nextFreeCat();
     cats[parentPointer].tableEntry = parent;
+	// EDIT ME
     symTable[parent] = parentPointer;
   }
 
@@ -428,6 +431,7 @@ void copyCat(int i, int j) {
   cats[i].next_younger_by_dam = cats[j].next_younger_by_dam;
  
   cats[i].tableEntry = cats[j].tableEntry;
+  // EDIT ME
   symTable[cats[j].tableEntry] = i;
 
   //printf("symTable at %d points to %d. eldest: %d yS: %d yD: %d\n", 
@@ -500,6 +504,7 @@ int move_saved_dam(int i, int j) {
   cats[i].next_younger_by_dam = -1;
  
   cats[i].tableEntry = cats[j].tableEntry;
+  // EDIT ME
   symTable[cats[j].tableEntry] = i;
 
   //printf("symTable at %d points to %d. eldest: %d yS: %d yD: %d\n", 
@@ -662,7 +667,8 @@ int main() {
   cats[-1].dam = NIL;
 
   for (int i = 0; i < NUM_CATS; i++) {
-    symTable[i] = -1;
+	  // EDIT ME
+	  symTable[i] = -1;
   }
 
   while(!done) {
