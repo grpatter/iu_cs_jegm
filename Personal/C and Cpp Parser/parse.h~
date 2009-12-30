@@ -1,0 +1,46 @@
+/*
+** Indiana University | parse.h
+** (c) Jonathan M. Stout
+*/
+
+/*
+** Parses command arguments:
+** Get commands passed in on
+** launch.
+*/
+void parseCommandArgs(int arg, char** argv);
+
+/*
+** Parses command arguments:
+** Get commands being passed in while
+** program is running from stdin.
+*/
+void parseCurrentArgs();
+
+/*
+** Add argument:
+** e.g. addOption("size") | e.g. addOption('s')
+*/
+void addOption(char* l_Opt);
+void addOption(char s_Opt);
+
+/*
+** Add argument:
+** e.g. addFlag("help") | e.g. addFlag('h')
+*/
+void addFlag(char* l_Flag);
+void addFlag(char s_Flag);
+
+/*
+** Get option:
+** getOption("size") | getOption('s)
+*/
+char* getOption(char* option);
+char* getOption(char option);
+
+/*
+** Get flag:
+** getFlag("help") | getFlag('h')
+*/
+bool getFlag(char* flag);
+bool getFlag(char flag);
