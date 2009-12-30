@@ -17,7 +17,7 @@ char *current_ref = NULL;
 static int parse_args(int argc, char **argv,
                       char **access_file,
                       int *n_pages, int *n_frames,
-                      int *n_cache, int *n_tlb);
+                      int *n_cache, int *n_tlb, char **algo);
 
 /*
  * Extract argument set from the input file
@@ -36,8 +36,11 @@ static pid_t last_pid = -1;
 
 /********************** ************************/
 int main(int argc,char *argv[]) {
-    int n_pages  = 0;
-    int n_frames = 0;
+	ram myRam;
+	myRam.algo = NULL;
+	myRam.frameCount = 0;
+	//int n_pages  = 0;
+    //int n_frames = 0;
     int n_cache  = 0;
     int n_tlb    = 0;
     char *access_file = NULL;
@@ -50,7 +53,7 @@ int main(int argc,char *argv[]) {
     /*
      * Parse arguments
      */
-    if( 0 != parse_args(argc, argv, &access_file, &n_pages, &n_frames, &n_cache, &n_tlb) ) {
+    if( 0 != parse_args(argc, argv, &access_file, &n_pages, &n_frames, &n_cache, &n_tlb, &ram.algo) ) {
         return -1;
     }
 
@@ -64,12 +67,12 @@ int main(int argc,char *argv[]) {
     stats.cache_size = n_cache;
     stats.tlb_size   = n_tlb;
     stats.num_pages  = n_pages;
-    stats.num_frames = n_frames;
+    stats.num_frames = ram.frameCount;
 
     allocate_cache(n_cache);
     allocate_tlb(n_tlb);
     allocate_page_table(n_pages);
-    allocate_ram(n_frames);
+    allocate_ram(myRam);
 
     /*
      * Open the file that we are going to read
@@ -141,16 +144,17 @@ int main(int argc,char *argv[]) {
 static int parse_args(int argc, char **argv,
                       char **access_file,
                       int *n_pages, int *n_frames,
-                      int *n_cache, int *n_tlb)
+                      int *n_cache, int *n_tlb, char** algo)
 {
-    if( argc < 2 || argc > 6 ) {
-        fprintf(stderr, "Usage: InputFile [NumPages] [NumFrames] [SizeCache] [SizeTLB]\n");
+    if( argc < 2 || argc > 7 ) {
+        fprintf(stderr, "Usage: InputFile [NumPages] [NumFrames] [SizeCache] [SizeTLB] [EvictionAlgorithm]\n");
         fprintf(stderr, " - A negative or 0 value for any of the optional arguments implies default\n");
         fprintf(stderr, "Defaults\n");
         fprintf(stderr, "  [NumPages]  = %10d\n", DEFAULT_NUM_PAGES);
         fprintf(stderr, "  [NumFrames] = %10d\n", DEFAULT_NUM_FRAMES);
         fprintf(stderr, "  [SizeCache] = %10d\n", DEFAULT_CACHE_ENTRIES);
         fprintf(stderr, "  [SizeTLB]   = %10d\n", DEFAULT_TLB_ENTRIES);
+		fprintf(stderr, "  [Algorithm]   = %s\n", DEFAULT_PAGE_ALGO);
         return -1;
     }
 
@@ -228,6 +232,15 @@ static int parse_args(int argc, char **argv,
     }
     printf("\n");
 
+	if (argc > 6) {
+		*algo = strdup(argv[6]);
+	}
+	else {
+		*algo = DEFAULT_PAGE_ALGO;
+	}
+
+	printf("Curnt Algo  : %10s\n\n", *algo);
+
     printf("------------------------------------\n");
 
     return 0;
@@ -237,6 +250,7 @@ static int extract_args(char *ref, pid_t *pid, char *mode, addr_t *address) {
     sscanf(ref, "%d, %c, %i\n", pid, mode, address);
     return 0;
 }
+
 
 /*********************************************************
  * Core Memory Management Operation
@@ -251,6 +265,8 @@ static int access_page(pid_t pid, char mode, addr_t address, addr_t *physical_ad
     if(last_pid != pid ) {
         last_pid = pid;
         stats.num_context_switch++;
+		// Add to list of processes
+		stats.processList[stats.num_procs++] = pid;
     }
 
     /*
@@ -322,7 +338,8 @@ static int access_page(pid_t pid, char mode, addr_t address, addr_t *physical_ad
      *   - Update Page Table
      *   - Update TLB, Cache
      */
-    ret = check_page_table(pid, mode, address, &frame);
+
+    ret = check_page_dir(pid, mode, address, &frame);
     if( ret < 0 ) {
         fprintf(stderr, "Error: Page Table lookup failed!\n");
         stats.num_errors++;
